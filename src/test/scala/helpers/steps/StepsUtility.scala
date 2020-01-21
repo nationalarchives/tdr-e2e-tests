@@ -11,7 +11,7 @@ object StepsUtility {
       case value : String if value.nonEmpty =>
         if (webDriver.isEmpty) {
           val chromeOptions = new ChromeOptions
-          chromeOptions.setHeadless(true)
+          chromeOptions.setHeadless(false)
           chromeOptions.addArguments("--no-sandbox")
           chromeOptions.addArguments("--disable-dev-shm-usage")
           chromeOptions.addArguments("--verbose")

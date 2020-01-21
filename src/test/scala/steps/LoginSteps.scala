@@ -4,6 +4,7 @@ import com.typesafe.config.ConfigFactory
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.steps.StepsUtility
 import org.junit.Assert
+import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.{By, WebDriver}
 import org.scalatest.Matchers
 
@@ -14,7 +15,7 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
   val authUrl: String = configuration.getString("tdr.auth.url")
 
   Before() { scenario =>
-    webDriver = StepsUtility.getWebDriver
+    webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
   }
 
   After() { scenario =>
@@ -27,7 +28,6 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
 
   When("^the logged out user visits url") {
     webDriver.get(s"$baseUrl")
-    //webDriver.navigate()
   }
 
   And("^the logged out user clicks the (.*) element$") {

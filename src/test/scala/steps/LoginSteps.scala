@@ -3,6 +3,7 @@ package steps
 import com.typesafe.config.ConfigFactory
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.steps.StepsUtility
+import helpers.users.{KeycloakClient, RandomUtility}
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.{By, WebDriver}
@@ -10,9 +11,13 @@ import org.scalatest.Matchers
 
 class LoginSteps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
+  var userId: String = ""
+
   val configuration = ConfigFactory.load()
   val baseUrl: String = configuration.getString("tdr.base.url")
   val authUrl: String = configuration.getString("tdr.auth.url")
+  val userName: String = RandomUtility.randomString()
+  val password: String = RandomUtility.randomString(10)
 
   Before() { scenario =>
     webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
@@ -20,10 +25,11 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
 
   After() { scenario =>
     webDriver.quit()
+    KeycloakClient.deleteUser(userId)
   }
 
   Given("^A logged out user") {
-
+    userId = KeycloakClient.createUser(userName, password)
   }
 
   When("^the logged out user visits url") {
@@ -48,12 +54,10 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
     val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
     val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
 
-    val userName = System.getenv("TDR_USER_NAME")
-    val password = System.getenv("TDR_PASSWORD")
-
     userNameElement.sendKeys(userName)
     passwordElement.sendKeys(password)
   }
+
   Then("^the logged in user should be at the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl

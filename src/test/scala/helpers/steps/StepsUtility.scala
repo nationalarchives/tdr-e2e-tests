@@ -8,7 +8,7 @@ object StepsUtility {
     val chromeOptions: ChromeOptions = new ChromeOptions
     val chromeDriverLocation = System.getenv("CHROME_DRIVER")
 
-    chromeOptions.setHeadless(true)
+    chromeOptions.setHeadless(false)
     chromeOptions.addArguments("--no-sandbox")
     chromeOptions.addArguments("--disable-dev-shm-usage")
     chromeOptions.addArguments("--verbose")

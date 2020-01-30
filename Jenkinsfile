@@ -32,10 +32,27 @@ pipeline {
                 }
                 stage ("Run Tests") {
                     steps {
-                        sh "sbt test -Dconfig.file=application.${params.STAGE}.conf"
+                        script {
+                            def account_number = getAccountNumberFromStage()
+                            def keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
+                            def keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
+                            def keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true)
+                            def keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key}", returnStdout: true)
+                            sh "sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password}"
+                        }
                     }
                 }
             }
         }
     }
+}
+
+def getAccountNumberFromStage() {
+    def stageToAccountMap = [
+            "intg": env.INTG_ACCOUNT,
+            "staging": env.STAGING_ACCOUNT,
+            "prod": env.PROD_ACCOUNT
+    ]
+
+    return stageToAccountMap.get(params.STAGE)
 }

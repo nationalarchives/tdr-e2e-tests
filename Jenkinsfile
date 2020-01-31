@@ -4,10 +4,27 @@ pipeline {
     }
     parameters {
         choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
-        string(name: "TDR_USER", defaultValue: "[enter test user name]")
-        string(name: "TDR_PASSWORD", defaultValue: "[enter test user password]")
     }
     stages {
+        stage ("Retrieve Keycloak credentials for environment") {
+            agent {
+                ecs {
+                    inheritFrom "aws"
+                    taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeReadParamsRole${params.STAGE}"
+                }
+            }
+            steps {
+                script {
+                    def account_number = getAccountNumberFromStage()
+                    def keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
+                    def keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
+                    def keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key} >keycloak_user.txt", returnStdout: true)
+                    def keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key} >keycloak_password.txt", returnStdout: true)
+                    stash includes: "keycloak_user.txt", name: "keycloak_user"
+                    stash includes: "keycloak_password.txt", name: "keycloak_password"
+                }
+            }
+        }
         stage("Configure and Run Tests") {
             agent {
                 ecs {
@@ -33,12 +50,14 @@ pipeline {
                 stage ("Run Tests") {
                     steps {
                         script {
-                            def account_number = getAccountNumberFromStage()
-                            def keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
-                            def keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
-                            def keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true)
-                            def keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key}", returnStdout: true)
-                            sh "sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password}"
+                            unstash "keycloak_user"
+                            unstash "keycloak_password"
+                            def keycloak_user = sh(script: 'cat keycloak_user.txt', returnStdout: true).trim()
+                            def keycloak_password = sh(script: 'cat keycloak_password.txt', returnStdout: true).trim()
+                            sh '''
+                                set +x
+                                sbt test '-Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password}'
+                            '''
                         }
                     }
                 }

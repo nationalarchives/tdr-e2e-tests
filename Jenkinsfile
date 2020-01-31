@@ -10,7 +10,7 @@ pipeline {
             agent {
                 ecs {
                     inheritFrom "aws"
-                    taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeReadParamsRole${params.STAGE}"
+                    taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeReadParamsRole${params.STAGE.capitalize()}"
                 }
             }
             steps {
@@ -52,12 +52,13 @@ pipeline {
                         script {
                             unstash "keycloak_user"
                             unstash "keycloak_password"
-                            def keycloak_user = sh(script: 'cat keycloak_user.txt', returnStdout: true).trim()
-                            def keycloak_password = sh(script: 'cat keycloak_password.txt', returnStdout: true).trim()
-                            sh '''
+                            keycloak_user = sh(script: 'cat keycloak_user.txt', returnStdout: true).trim()
+                            keycloak_password = sh(script: 'cat keycloak_password.txt', returnStdout: true).trim()
+                            //Hide the output of the test command to stop keycloak credentials appearing in console output
+                            sh """
                                 set +x
-                                sbt test '-Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password}'
-                            '''
+                                sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password}
+                            """
                         }
                     }
                 }

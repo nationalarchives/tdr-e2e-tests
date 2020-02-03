@@ -13,7 +13,6 @@ libraryDependencies += "org.jboss.resteasy" % "resteasy-client" % "3.6.0.Final" 
 libraryDependencies += "org.jboss.resteasy" % "resteasy-jackson2-provider" % "3.6.0.Final" % Test
 libraryDependencies += "org.jboss.resteasy" % "resteasy-multipart-provider" % "3.6.0.Final" % Test
 
-
 libraryDependencies ++= Seq(
   "io.cucumber" % "cucumber-core" % "4.7.1" % "test",
   "io.cucumber" %% "cucumber-scala" % "4.7.1" % "test",

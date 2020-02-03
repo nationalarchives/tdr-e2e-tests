@@ -15,11 +15,11 @@ pipeline {
             }
             steps {
                 script {
-                    def account_number = getAccountNumberFromStage()
-                    def keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
-                    def keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
-                    def keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key} >keycloak_user.txt", returnStdout: true)
-                    def keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key} >keycloak_password.txt", returnStdout: true)
+                    account_number = getAccountNumberFromStage()
+                    keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
+                    keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
+                    keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key} >keycloak_user.txt", returnStdout: true)
+                    keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key} >keycloak_password.txt", returnStdout: true)
                     stash includes: "keycloak_user.txt", name: "keycloak_user"
                     stash includes: "keycloak_password.txt", name: "keycloak_password"
                 }
@@ -41,8 +41,8 @@ pipeline {
                 stage("Install Chrome Driver") {
                     steps {
                         checkout scm
-                        sh "wget -N http://chromedriver.storage.googleapis.com/${env.CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
-                        sh "unzip ~/chromedriver_linux64.zip -d ~/"
+                        sh "wget -q -N http://chromedriver.storage.googleapis.com/${env.CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
+                        sh "unzip -q ~/chromedriver_linux64.zip -d ~/"
                         sh "rm ~/chromedriver_linux64.zip"
                         sh "mv -f ~/chromedriver src"
                     }

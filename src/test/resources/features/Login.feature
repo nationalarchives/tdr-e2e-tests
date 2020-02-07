@@ -19,7 +19,7 @@ Feature: Login
     Then the logged out user will remain on the auth page
     And the user will see an error message
 
-  Scenario:
+  Scenario: Navigate to TDR Home Page as a logged in user with correct credentials and navigate away
     Given A logged out user
     When the logged out user visits url
     And the logged out user clicks the .govuk-button--start element

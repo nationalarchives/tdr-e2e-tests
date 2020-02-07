@@ -99,11 +99,4 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
       val clickableElement = webDriver.findElement(By.cssSelector(selector))
       clickableElement.click()
   }
-
-  Then("^the logged in user should be at the (.*) page") {
-    page: String =>
-      val currentUrl: String = webDriver.getCurrentUrl
-
-      Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
-  }
 }

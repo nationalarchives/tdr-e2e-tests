@@ -9,7 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.{By, WebDriver}
 import org.scalatest.Matchers
 
-class LoginSteps extends ScalaDsl with EN with Matchers {
+class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
   var userId: String = ""
 
@@ -19,6 +19,7 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
   val userName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
   val otherPageUrl: String = configuration.getString("redirect.base.url")
+  val seriesPageUrl: String = configuration.getString("series.base.url")
 
   Before() { scenario =>
     webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
@@ -35,6 +36,10 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
 
   When("^the logged out user visits url") {
     webDriver.get(s"$baseUrl")
+  }
+
+  When("^the logged in user visits series page") {
+    webDriver.get(s"$seriesPageUrl") // hardcoded the series page url, maybe not best idea, change this?
   }
 
   And("^the logged out user clicks the (.*) element$") {
@@ -99,4 +104,30 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
       val clickableElement = webDriver.findElement(By.cssSelector(selector))
       clickableElement.click()
   }
+
+  When("^the logged in goes to the series page") {
+    webDriver.get(s"$seriesPageUrl")
+  }
+
+  And("^the logged in user selects nothing") {
+    // intentionally left blank for when submit button is created
+  }
+
+  Then("^the logged in user should stay at the (.*) page") {
+    page: String =>
+      val currentUrl: String = webDriver.getCurrentUrl
+      Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
+
+  }
+
+  And("^the logged in user selects the (.*) element$") {
+    selector: String =>
+      val clickableElement = webDriver.findElement(By.cssSelector(selector))
+      clickableElement.click()
+  }
+
+  And("^the logged in user clicks a series") {
+    // to be filled in with a series element later
+  }
+
 }

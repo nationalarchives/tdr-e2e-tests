@@ -27,7 +27,7 @@ Feature: Login
     And the logged out user enters valid credentials
     And the logged out user clicks the [name='login'] element
     Then the logged in user should be at the dashboard page
-    When the logged in user navigates to google
+    When the logged in user navigates to another website
     And the logged in user navigates back to TDR Home Page
     And the logged in user clicks the .govuk-button--start element
     Then the logged in user should be at the dashboard page

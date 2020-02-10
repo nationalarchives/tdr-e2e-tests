@@ -18,7 +18,7 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
   val authUrl: String = configuration.getString("tdr.auth.url")
   val userName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
-  val googleUrl: String = configuration.getString("redirect.base.url")
+  val otherPageUrl: String = configuration.getString("redirect.base.url")
 
   Before() { scenario =>
     webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
@@ -86,8 +86,8 @@ class LoginSteps extends ScalaDsl with EN with Matchers {
     Assert.assertEquals("Invalid username or password.", errorElement.getText)
   }
 
-  When("^the logged in user navigates to google") {
-    webDriver.get(s"$googleUrl")
+  When("^the logged in user navigates to another website") {
+    webDriver.get(s"$otherPageUrl")
   }
 
   And("^the logged in user navigates back to TDR Home Page") {

@@ -57,3 +57,15 @@ To run the tests as a Jenkins job the Jenkins pipeline script carries out the fo
     * the Keycloak credentials are unstashed and passed in as system properties when running the tests
 
 * The sbt run test command is hidden to ensure the keycloak credentials do not appear in the Jenkins console output.
+
+## Cucumber Reports
+
+### Running Locally
+
+Cucumber reports for the test run are available when running locally here: [project folder]/target/cucumber/html/index.html
+
+### Jenkins job
+
+The Jenkins cucumber reports plugin (https://plugins.jenkins.io/cucumber-reports/) generates a set of reports after each test run.
+
+The test reports are available via a link "Cucumber reports" on the Jenkins' job home page.

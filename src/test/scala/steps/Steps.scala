@@ -18,8 +18,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   val authUrl: String = configuration.getString("tdr.auth.url")
   val userName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
-  val otherPageUrl: String = configuration.getString("redirect.base.url")
-  val seriesPageUrl: String = configuration.getString("series.base.url")
+  val nonTdrPageUrl: String = configuration.getString("redirect.base.url")
 
   Before() { scenario =>
     webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
@@ -34,12 +33,21 @@ class Steps extends ScalaDsl with EN with Matchers {
     userId = KeycloakClient.createUser(userName, password)
   }
 
-  When("^the logged out user visits url") {
+  Given("^A logged in user") {
+    userId = KeycloakClient.createUser(userName, password)
+    webDriver.get(s"$baseUrl")
+    val startElement = webDriver.findElement(By.cssSelector(".govuk-button--start"))
+    startElement.click()
+    StepsUtility.userLogin(webDriver, userName, password)
+  }
+
+  When("^the logged out user navigates to TDR Home Page") {
     webDriver.get(s"$baseUrl")
   }
 
-  When("^the logged in user visits series page") {
-    webDriver.get(s"$seriesPageUrl") // hardcoded the series page url, maybe not best idea, change this?
+  When("^the logged in user navigates to the (.*) page") {
+    page: String =>
+      webDriver.get(s"$baseUrl/$page") // hardcoded the series page url, maybe not best idea, change this?
   }
 
   And("^the logged out user clicks the (.*) element$") {
@@ -56,12 +64,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Then("^the logged out user enters valid credentials") {
-
-    val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
-    val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
-
-    userNameElement.sendKeys(userName)
-    passwordElement.sendKeys(password)
+    StepsUtility.enterUserCredentials(webDriver, userName, password)
   }
 
   Then("^the logged in user should be at the (.*) page") {
@@ -92,7 +95,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   When("^the logged in user navigates to another website") {
-    webDriver.get(s"$otherPageUrl")
+    webDriver.get(s"$nonTdrPageUrl")
   }
 
   And("^the logged in user navigates back to TDR Home Page") {
@@ -105,10 +108,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       clickableElement.click()
   }
 
-  When("^the logged in goes to the series page") {
-    webDriver.get(s"$seriesPageUrl")
-  }
-
   And("^the logged in user selects nothing") {
     // intentionally left blank for when submit button is created
   }
@@ -117,7 +116,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
       Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
-
   }
 
   And("^the logged in user selects the (.*) element$") {

@@ -47,7 +47,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   When("^the logged in user navigates to the (.*) page") {
     page: String =>
-      webDriver.get(s"$baseUrl/$page") // hardcoded the series page url, maybe not best idea, change this?
+      webDriver.get(s"$baseUrl/$page")
   }
 
   And("^the logged out user clicks the (.*) element$") {

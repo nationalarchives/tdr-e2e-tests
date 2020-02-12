@@ -18,10 +18,8 @@ pipeline {
                     account_number = getAccountNumberFromStage()
                     keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
                     keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
-                    keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key} >keycloak_user.txt", returnStdout: true)
-                    keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key} >keycloak_password.txt", returnStdout: true)
-                    stash includes: "keycloak_user.txt", name: "keycloak_user"
-                    stash includes: "keycloak_password.txt", name: "keycloak_password"
+                    keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true).trim()
+                    keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key}", returnStdout: true).trim()
                 }
             }
         }
@@ -34,8 +32,6 @@ pipeline {
             environment {
                 CHROME_DRIVER = "src/chromedriver"
                 CHROME_DRIVER_VERSION = "79.0.3945.36"
-                TDR_USER_NAME = "${params.TDR_USER}"
-                TDR_PASSWORD = "${params.TDR_PASSWORD}"
             }
             stages {
                 stage("Install Chrome Driver") {
@@ -50,10 +46,6 @@ pipeline {
                 stage ("Run Tests") {
                     steps {
                         script {
-                            unstash "keycloak_user"
-                            unstash "keycloak_password"
-                            keycloak_user = sh(script: 'cat keycloak_user.txt', returnStdout: true).trim()
-                            keycloak_password = sh(script: 'cat keycloak_password.txt', returnStdout: true).trim()
                             //Hide the output of the test command to stop keycloak credentials appearing in console output
                             sh """
                                 set +x

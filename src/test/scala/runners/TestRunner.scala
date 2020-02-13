@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
   features = Array("classpath:features/"),
   tags = Array("not @Wip", "not @Integration"),
   glue = Array("classpath:steps/"),
-  plugin = Array("pretty", "html:target/cucumber/html"))
+  plugin = Array("pretty", "html:target/cucumber/html", "json:target/cucumber.json"))
 class TestRunner {
 
 }

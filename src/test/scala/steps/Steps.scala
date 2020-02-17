@@ -3,7 +3,7 @@ package steps
 import com.typesafe.config.ConfigFactory
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.steps.StepsUtility
-import helpers.users.{KeycloakClient, RandomUtility}
+import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.{By, WebDriver}
@@ -19,6 +19,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   val userName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
   val nonTdrPageUrl: String = configuration.getString("redirect.base.url")
+  val userCredentials: UserCredentials = UserCredentials(userName, password)
 
   Before() { scenario =>
     webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
@@ -30,15 +31,15 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Given("^A logged out user") {
-    userId = KeycloakClient.createUser(userName, password)
+    userId = KeycloakClient.createUser(userCredentials)
   }
 
   Given("^A logged in user") {
-    userId = KeycloakClient.createUser(userName, password)
+    userId = KeycloakClient.createUser(userCredentials)
     webDriver.get(s"$baseUrl")
     val startElement = webDriver.findElement(By.cssSelector(".govuk-button--start"))
     startElement.click()
-    StepsUtility.userLogin(webDriver, userName, password)
+    StepsUtility.userLogin(webDriver, userCredentials)
   }
 
   When("^the logged out user navigates to TDR Home Page") {
@@ -64,7 +65,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Then("^the logged out user enters valid credentials") {
-    StepsUtility.enterUserCredentials(webDriver, userName, password)
+    StepsUtility.enterUserCredentials(webDriver, userCredentials)
   }
 
   Then("^the logged in user should be at the (.*) page") {

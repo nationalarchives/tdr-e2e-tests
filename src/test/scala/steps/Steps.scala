@@ -20,7 +20,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   val password: String = RandomUtility.randomString(10)
   val nonTdrPageUrl: String = configuration.getString("redirect.base.url")
   val userCredentials: UserCredentials = UserCredentials(userName, password)
-  println("username: " + userName + " password; " + password)
+
   Before() { scenario =>
     webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
   }
@@ -71,8 +71,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the logged in user should be at the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
-      println(currentUrl)
-      println(s"$baseUrl/$page")
+
       Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
   }
 

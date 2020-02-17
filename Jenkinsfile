@@ -18,8 +18,8 @@ pipeline {
                     account_number = getAccountNumberFromStage()
                     keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
                     keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
-                    keycloak_user = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true).trim()
-                    keycloak_password = sh(script: "python /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key}", returnStdout: true).trim()
+                    keycloak_user = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true).trim()
+                    keycloak_password = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key}", returnStdout: true).trim()
                 }
             }
         }

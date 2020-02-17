@@ -26,18 +26,18 @@ object KeycloakClient {
   private val realm: RealmResource = keyCloakAdminClient.realm("tdr")
   private val userResource: UsersResource = realm.users()
 
-  def createUser(userName: String, password: String): String = {
+  def createUser(userCredentials: UserCredentials): String = {
 
     val userRepresentation: UserRepresentation = new UserRepresentation
 
     val credentials: CredentialRepresentation = new CredentialRepresentation
     credentials.setTemporary(false)
     credentials.setType(CredentialRepresentation.PASSWORD)
-    credentials.setValue(password)
+    credentials.setValue(userCredentials.password)
 
     val creds = List(credentials).asJava
 
-    userRepresentation.setUsername(userName)
+    userRepresentation.setUsername(userCredentials.userName)
     userRepresentation.setEnabled(true)
     userRepresentation.setCredentials(creds)
 
@@ -50,3 +50,5 @@ object KeycloakClient {
     userResource.get(userId).remove
   }
 }
+
+case class UserCredentials(userName: String, password: String)

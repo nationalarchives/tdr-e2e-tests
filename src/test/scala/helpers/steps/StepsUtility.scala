@@ -1,5 +1,6 @@
 package helpers.steps
 
+import helpers.users.UserCredentials
 import org.openqa.selenium.{By, WebDriver}
 import org.openqa.selenium.chrome.ChromeOptions
 
@@ -9,7 +10,7 @@ object StepsUtility {
     val chromeOptions: ChromeOptions = new ChromeOptions
     val chromeDriverLocation = System.getenv("CHROME_DRIVER")
 
-    chromeOptions.setHeadless(true)
+    chromeOptions.setHeadless(false)
     chromeOptions.addArguments("--no-sandbox")
     chromeOptions.addArguments("--disable-dev-shm-usage")
     chromeOptions.addArguments("--verbose")
@@ -18,17 +19,17 @@ object StepsUtility {
     chromeOptions
   }
 
-  def userLogin(webDriver: WebDriver, userName: String, password: String) = {
-    enterUserCredentials(webDriver, userName, password)
+  def userLogin(webDriver: WebDriver, userCredentials: UserCredentials) = {
+    enterUserCredentials(webDriver, userCredentials)
     val clickableElement = webDriver.findElement(By.cssSelector("[name='login']"))
     clickableElement.click()
   }
 
-  def enterUserCredentials(webDriver: WebDriver, userName: String, password: String) = {
+  def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials) = {
     val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
     val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
 
-    userNameElement.sendKeys(userName)
-    passwordElement.sendKeys(password)
+    userNameElement.sendKeys(userCredentials.userName)
+    passwordElement.sendKeys(userCredentials.password)
   }
 }

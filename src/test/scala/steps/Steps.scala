@@ -1,13 +1,16 @@
 package steps
 
+import java.util
+
 import com.typesafe.config.ConfigFactory
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.{By, WebDriver}
+import org.openqa.selenium.{By, WebDriver, WebElement}
 import org.scalatest.Matchers
+import org.openqa.selenium.support.ui.Select
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -46,12 +49,24 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.get(s"$baseUrl")
   }
 
+  Then("^the logged out user enters valid credentials") {
+    StepsUtility.enterUserCredentials(webDriver, userCredentials)
+  }
+
+  And("^the logged out user enters invalid credentials") {
+    val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
+    val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
+
+    userNameElement.sendKeys("dgfhfdgjhgfj")
+    passwordElement.sendKeys("fdghfdgh")
+  }
+
   When("^the logged in user navigates to the (.*) page") {
     page: String =>
       webDriver.get(s"$baseUrl/$page")
   }
 
-  And("^the logged out user clicks the (.*) element$") {
+  And("^the user clicks the (.*) element$") {
     selector: String =>
       val clickableElement = webDriver.findElement(By.cssSelector(selector))
       clickableElement.click()
@@ -64,53 +79,31 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(currentUrl.startsWith(s"$authUrl/$page"))
   }
 
-  Then("^the logged out user enters valid credentials") {
-    StepsUtility.enterUserCredentials(webDriver, userCredentials)
-  }
-
-  Then("^the logged in user should be at the (.*) page") {
+  Then("^the user should be at the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
 
-      Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
+      Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
-  And("^the logged out user enters invalid credentials") {
-    val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
-    val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
-
-    userNameElement.sendKeys("dgfhfdgjhgfj")
-    passwordElement.sendKeys("fdghfdgh")
-  }
-
-  Then("^the logged out user will remain on the (.*) page") {
+  Then("^the user will remain on the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
       Assert.assertTrue(currentUrl.startsWith(s"$authUrl/$page"))
   }
 
-  And("^the user will see an error message") {
-    val errorElement = webDriver.findElement(By.cssSelector("#error-details"))
-    Assert.assertNotNull(errorElement)
-    Assert.assertEquals("Invalid username or password.", errorElement.getText)
+  And("^the user will see the error message (.*)") {
+    errorMessage: String =>
+      val errorElement = webDriver.findElement(By.cssSelector("#error-details"))
+      Assert.assertNotNull(errorElement)
+      Assert.assertEquals(errorMessage, errorElement.getText)
   }
 
-  When("^the logged in user navigates to another website") {
-    webDriver.get(s"$nonTdrPageUrl")
-  }
-
-  And("^the logged in user navigates back to TDR Home Page") {
-    webDriver.get(s"$baseUrl")
-  }
-
-  And("^the logged in user clicks the (.*) element$") {
-    selector: String =>
-      val clickableElement = webDriver.findElement(By.cssSelector(selector))
-      clickableElement.click()
-  }
-
-  And("^the logged in user selects nothing") {
-    // intentionally left blank for when submit button is created
+  And("^the user will see a form error message (.*)") {
+    formErrorMessage: String =>
+      val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-message"))
+      Assert.assertNotNull(errorElement)
+      Assert.assertEquals(s"Error:\n" + formErrorMessage, errorElement.getText)
   }
 
   Then("^the logged in user should stay at the (.*) page") {
@@ -125,8 +118,14 @@ class Steps extends ScalaDsl with EN with Matchers {
       clickableElement.click()
   }
 
-  And("^the logged in user clicks a series") {
-    // to be filled in with a series element later
+  And("^the logged in user selects the series (.*)") {
+    selectedSeries: String =>
+      val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
+      seriesDropdown.selectByVisibleText(selectedSeries)
   }
 
+  And("^the user clicks the continue button") {
+    val button = webDriver.findElement(By.cssSelector("[type='submit']"))
+    button.click()
+  }
 }

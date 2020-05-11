@@ -6,6 +6,7 @@ import com.typesafe.config.ConfigFactory
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
+import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.{By, WebDriver, WebElement}
@@ -45,7 +46,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     StepsUtility.userLogin(webDriver, userCredentials)
   }
 
-  When("^the logged out user navigates to TDR Home Page") {
+  When("^the user navigates to TDR Home Page") {
     webDriver.get(s"$baseUrl")
   }
 
@@ -83,7 +84,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
 
-      Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+      Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
   Then("^the user will remain on the (.*) page") {
@@ -110,12 +111,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
       Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
-  }
-
-  And("^the logged in user selects the (.*) element$") {
-    selector: String =>
-      val clickableElement = webDriver.findElement(By.cssSelector(selector))
-      clickableElement.click()
   }
 
   And("^the logged in user selects the series (.*)") {

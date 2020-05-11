@@ -42,7 +42,7 @@ object KeycloakClient {
     userRepresentation.setCredentials(creds)
     userRepresentation.setAttributes(Map("body" -> List("MOCK1 Department").asJava).asJava)
     userRepresentation.setRealmRoles(List("tdr_user").asJava)
-    
+
     val response: Response = userResource.create(userRepresentation)
 
     response.getLocation.getPath.replaceAll(".*/([^/]+)$", "$1")

@@ -2,6 +2,9 @@ pipeline {
     agent {
         label "master"
     }
+    options {
+        quietPeriod(180)
+    }
     parameters {
         choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
     }

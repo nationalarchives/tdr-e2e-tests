@@ -9,7 +9,7 @@ pipeline {
     parameters {
         choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")
         string(name: "DEPLOY_JOB", defaultValue: "", description: "Name of Jenkins deploy job that triggered the end to end tests")
-        string(name: "DEPLOY_JOB_BUILD_NUMBER", defaultValue: "", description: "Build number of Jenkins deploy job that triggered the end to end tests"")
+        string(name: "DEPLOY_JOB_BUILD_NUMBER", defaultValue: "", description: "Build number of Jenkins deploy job that triggered the end to end tests")
     }
     stages {
         stage ("Retrieve Keycloak credentials for environment") {

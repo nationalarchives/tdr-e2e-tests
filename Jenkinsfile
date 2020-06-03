@@ -1,7 +1,5 @@
 library("tdr-jenkinslib")
 
-def jenkinsBaseUrl = "https://jenkins.tdr-management.nationalarchives.gov.uk"
-
 pipeline {
     agent {
         label "master"

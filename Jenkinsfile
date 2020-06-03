@@ -8,8 +8,7 @@ pipeline {
     }
     parameters {
         choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")
-        string(name: "DEPLOY_JOB", defaultValue: "", description: "Name of Jenkins deploy job that triggered the end to end tests")
-        string(name: "DEPLOY_JOB_BUILD_NUMBER", defaultValue: "", description: "Build number of Jenkins deploy job that triggered the end to end tests")
+        string(name: "DEPLOY_JOB_URL", defaultValue: "Not given", description: "URL of Jenkins deploy job that triggered the end to end tests")
     }
     stages {
         stage ("Retrieve Keycloak credentials for environment") {
@@ -81,7 +80,7 @@ pipeline {
             node('master') {
                 slackSend(
                     color: '#FF0000', //red
-                    message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${jenkinsBaseUrl}/job/${DEPLOY_JOB}/Deploy/${DEPLOY_JOB_BUILD_NUMBER} \n *Cucumber report*: ${jenkinsBaseUrl}/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
+                    message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${jenkinsBaseUrl}/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
                 )
             }
         }

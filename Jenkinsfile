@@ -1,11 +1,15 @@
 library("tdr-jenkinslib")
 
+def jenkinsBaseUrl = "https://jenkins.tdr-management.nationalarchives.gov.uk"
+
 pipeline {
     agent {
         label "master"
     }
     parameters {
-        choice(name: "STAGE", choices: ["intg", "staging"], description: "The stage you are building the front end for")
+        choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")
+        string(name: "DEPLOY_JOB", defaultValue: "", description: "Name of Jenkins deploy job that triggered the end to end tests")
+        string(name: "DEPLOY_JOB_BUILD_NUMBER", defaultValue: "", description: "Build number of Jenkins deploy job that triggered the end to end tests"")
     }
     stages {
         stage ("Retrieve Keycloak credentials for environment") {
@@ -76,8 +80,8 @@ pipeline {
         failure {
             node('master') {
                 slackSend(
-                    color: "good",
-                    message: "End to end failed for ${params.STAGE} TDR environment.\n See cucumber report: https://jenkins.tdr-management.nationalarchives.gov.uk/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
+                    color: '#FF0000', //red
+                    message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${jenkinsBaseUrl}/job/${DEPLOY_JOB}/Deploy/${DEPLOY_JOB_BUILD_NUMBER} \n *Cucumber report*: ${jenkinsBaseUrl}/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
                 )
             }
         }

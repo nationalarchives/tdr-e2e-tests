@@ -5,7 +5,7 @@ pipeline {
         label "master"
     }
     parameters {
-        choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
+        choice(name: "STAGE", choices: ["intg", "staging"], description: "The stage you are building the front end for")
     }
     stages {
         stage ("Retrieve Keycloak credentials for environment") {
@@ -75,9 +75,10 @@ pipeline {
     post {
         failure {
             node('master') {
-                slackSend
-                    color: "red",
+                slackSend(
+                    color: "good",
                     message: "End to end failed for ${params.STAGE} TDR environment.\n See cucumber report: https://jenkins.tdr-management.nationalarchives.gov.uk/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
+                )
             }
         }
     }

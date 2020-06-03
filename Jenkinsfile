@@ -80,7 +80,7 @@ pipeline {
             node('master') {
                 slackSend(
                     color: '#FF0000', //red
-                    message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${jenkinsBaseUrl}/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#bot-testing"
+                    message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${jenkinsBaseUrl}/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
                 )
             }
         }

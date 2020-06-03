@@ -1,3 +1,5 @@
+library("tdr-jenkinslib")
+
 pipeline {
     agent {
         label "master"
@@ -15,7 +17,7 @@ pipeline {
             }
             steps {
                 script {
-                    account_number = getAccountNumberFromStage()
+                    account_number = tdr.getAccountNumberFromStage(params.STAGE)
                     keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
                     keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
                     keycloak_user = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true).trim()
@@ -70,14 +72,13 @@ pipeline {
             }
         }
     }
-}
-
-def getAccountNumberFromStage() {
-    def stageToAccountMap = [
-            "intg": env.INTG_ACCOUNT,
-            "staging": env.STAGING_ACCOUNT,
-            "prod": env.PROD_ACCOUNT
-    ]
-
-    return stageToAccountMap.get(params.STAGE)
+    post {
+        failure {
+            node('master') {
+                slackSend
+                    color: "red",
+                    message: "End to end failed for ${params.STAGE} TDR environment.\n See cucumber report: https://jenkins.tdr-management.nationalarchives.gov.uk/job/${JOB_NAME}/${BUILD_NUMBER}/cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
+            }
+        }
+    }
 }

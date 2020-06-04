@@ -1,9 +1,12 @@
+library("tdr-jenkinslib")
+
 pipeline {
     agent {
         label "master"
     }
     parameters {
-        choice(name: "STAGE", choices: ["intg", "staging", "prod"], description: "The stage you are building the front end for")
+        choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")
+        string(name: "DEPLOY_JOB_URL", defaultValue: "Not given", description: "URL of Jenkins deploy job that triggered the end to end tests")
     }
     stages {
         stage ("Retrieve Keycloak credentials for environment") {
@@ -15,7 +18,7 @@ pipeline {
             }
             steps {
                 script {
-                    account_number = getAccountNumberFromStage()
+                    account_number = tdr.getAccountNumberFromStage(params.STAGE)
                     keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
                     keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
                     keycloak_user = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true).trim()
@@ -53,31 +56,31 @@ pipeline {
                             """
                         }
                     }
-                }
-                stage("Generate HTML report") {
-                    steps {
-                        cucumber buildStatus: 'UNSTABLE',
+                    post {
+                        always {
+                            cucumber buildStatus: 'UNSTABLE',
                                 fileIncludePattern: '**/*.json',
                                 trendsLimit: 10,
                                 classifications: [
-                                        [
-                                                'key':'Browser',
-                                                'value':'Chrome'
-                                        ]
+                                    [
+                                        'key':'Browser',
+                                        'value':'Chrome'
+                                    ]
                                 ]
+                        }
                     }
                 }
             }
         }
     }
-}
-
-def getAccountNumberFromStage() {
-    def stageToAccountMap = [
-            "intg": env.INTG_ACCOUNT,
-            "staging": env.STAGING_ACCOUNT,
-            "prod": env.PROD_ACCOUNT
-    ]
-
-    return stageToAccountMap.get(params.STAGE)
+    post {
+        failure {
+            node('master') {
+                slackSend(
+                    color: '#FF0000', //red
+                    message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html", channel: "#tdr-releases"
+                )
+            }
+        }
+    }
 }

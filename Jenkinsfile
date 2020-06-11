@@ -34,7 +34,7 @@ pipeline {
             }
             environment {
                 CHROME_DRIVER = "src/chromedriver"
-                CHROME_DRIVER_VERSION = "79.0.3945.36"
+                CHROME_DRIVER_VERSION = "83.0.4103.39"
             }
             stages {
                 stage("Install Chrome Driver") {

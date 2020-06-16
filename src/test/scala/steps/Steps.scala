@@ -12,6 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.{By, WebDriver, WebElement}
 import org.scalatest.Matchers
 import org.openqa.selenium.support.ui.Select
+import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -34,16 +35,31 @@ class Steps extends ScalaDsl with EN with Matchers {
     KeycloakClient.deleteUser(userId)
   }
 
-  Given("^A logged out user") {
-    userId = KeycloakClient.createUser(userCredentials)
-  }
-
-  Given("^A logged in user") {
-    userId = KeycloakClient.createUser(userCredentials)
+  private def login = {
     webDriver.get(s"$baseUrl")
     val startElement = webDriver.findElement(By.cssSelector(".govuk-button--start"))
     startElement.click()
     StepsUtility.userLogin(webDriver, userCredentials)
+  }
+
+  Given("^A logged out user") {
+    userId = KeycloakClient.createUser(userCredentials)
+  }
+
+  Given("^A logged in user who is a member of (.*) transferring body") {
+    body: String =>
+      userId = KeycloakClient.createUser(userCredentials, Some(body))
+      login
+  }
+
+  Given("^A logged in user who is not a member of a transferring body") {
+    userId = KeycloakClient.createUser(userCredentials, Option.empty)
+    login
+  }
+
+  Given("^A logged in user") {
+    userId = KeycloakClient.createUser(userCredentials)
+    login
   }
 
   When("^the user navigates to TDR Home Page") {
@@ -93,6 +109,15 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(currentUrl.startsWith(s"$authUrl/$page"))
   }
 
+  Then("^the user should see a user specific general error (.*)") {
+    errorMessage: String =>
+      val errorElement = webDriver.findElement(By.cssSelector("#general-error"))
+      Assert.assertNotNull(errorElement)
+      val specificError = errorMessage.replace("{userId}", s"Some($userId)")
+
+      Assert.assertTrue(errorElement.getText.contains(specificError))
+  }
+
   And("^the user will see the error message (.*)") {
     errorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector("#error-details"))
@@ -105,6 +130,22 @@ class Steps extends ScalaDsl with EN with Matchers {
       val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-message"))
       Assert.assertNotNull(errorElement)
       Assert.assertEquals(s"Error:\n" + formErrorMessage, errorElement.getText)
+  }
+
+  Then("^the user should see the (.*) dropdown values (.*)") {
+    (name: String, expectedValues: String) =>
+      val seriesList: List[String] = expectedValues.split(",").toList
+      val seriesDropdown = new Select(webDriver.findElement(By.name(name)))
+      val seriesText: List[String] = seriesDropdown.getOptions.asScala.map(_.getText).toList.tail
+
+      Assert.assertEquals(seriesList, seriesText)
+  }
+
+  Then("^the user should see an empty (.*) dropdown") {
+    name: String =>
+      val seriesDropdown = new Select(webDriver.findElement(By.name(name)))
+      val seriesText: List[String] = seriesDropdown.getOptions.asScala.map(_.getText).toList.tail
+      Assert.assertTrue(seriesText.isEmpty)
   }
 
   Then("^the logged in user should stay at the (.*) page") {

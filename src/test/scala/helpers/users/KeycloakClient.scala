@@ -26,7 +26,7 @@ object KeycloakClient {
   private val realm: RealmResource = keyCloakAdminClient.realm("tdr")
   private val userResource: UsersResource = realm.users()
 
-  def createUser(userCredentials: UserCredentials): String = {
+  def createUser(userCredentials: UserCredentials, body: Option[String] = Some("MOCK1 Department")): String = {
 
     val userRepresentation: UserRepresentation = new UserRepresentation
 
@@ -40,7 +40,7 @@ object KeycloakClient {
     userRepresentation.setUsername(userCredentials.userName)
     userRepresentation.setEnabled(true)
     userRepresentation.setCredentials(creds)
-    userRepresentation.setAttributes(Map("body" -> List("MOCK1 Department").asJava).asJava)
+    body.foreach(b => userRepresentation.setAttributes(Map("body" -> List(b).asJava).asJava))
     userRepresentation.setRealmRoles(List("tdr_user").asJava)
 
     val response: Response = userResource.create(userRepresentation)

@@ -20,3 +20,23 @@ Feature: Series Page
     When the logged in user navigates to the series page
     And the user clicks the .govuk-back-link element
     Then the user should be at the dashboard page
+
+  Scenario: User from MOCK1 Department transferring body sees the correct series choices
+   Given A logged in user who is a member of MOCK1 Department transferring body
+   When the logged in user navigates to the series page
+   Then the user should see the series dropdown values MOCK1 123
+
+  Scenario: User from MOCK2 Department transferring body sees the correct series choices
+    Given A logged in user who is a member of MOCK2 Department transferring body
+    When the logged in user navigates to the series page
+    Then the user should see the series dropdown values MOCK2 234,MOCK2 345
+
+  Scenario: User with no transferring body set sees an error message
+    Given A logged in user who is not a member of a transferring body
+    When the logged in user navigates to the series page
+    Then the user should see a user specific general error Transferring body missing from token for user {userId}
+
+  Scenario: User from MOCK4 Department should see an empty series list
+    Given A logged in user who is a member of MOCK4 Department transferring body
+    When the logged in user navigates to the series page
+    Then the user should see an empty series dropdown

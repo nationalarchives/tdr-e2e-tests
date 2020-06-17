@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
 import cucumber.api.scala.{EN, ScalaDsl}
-import helpers.graphql.{GraphqlUtility}
+import helpers.graphql.GraphqlUtility
 import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
 import org.junit.Assert
@@ -62,6 +62,16 @@ class Steps extends ScalaDsl with EN with Matchers {
   Given("^A logged in user") {
     userId = KeycloakClient.createUser(userCredentials)
     login
+  }
+
+  And("^a logged in user on the (.*) page") {
+    page: String =>
+      loadPage(page)
+      StepsUtility.userLogin(webDriver, userCredentials)
+  }
+
+  Given("^an existing user") {
+    userId = KeycloakClient.createUser(userCredentials)
   }
 
   When("^the user navigates to TDR Home Page") {
@@ -207,7 +217,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the page will redirect to the (.*) page after upload") {
     page: String =>
-      val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page))
+      val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
   }
 
   private def loadPage(page: String) = {

@@ -25,7 +25,6 @@ class Steps extends ScalaDsl with EN with Matchers {
   val authUrl: String = configuration.getString("tdr.auth.url")
   val userName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
-  val nonTdrPageUrl: String = configuration.getString("redirect.base.url")
   val userCredentials: UserCredentials = UserCredentials(userName, password)
 
   Before() { scenario =>
@@ -106,6 +105,12 @@ class Steps extends ScalaDsl with EN with Matchers {
       clickableElement.click()
   }
 
+  And("^the user clicks the (.*) checkbox$") {
+    selector: String =>
+      val clickableElement = webDriver.findElement(By.id(selector))
+      clickableElement.click()
+  }
+
   Then("^the logged out user should be at the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
@@ -114,6 +119,13 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Then("^the user should be at the (.*) page") {
+    page: String =>
+      val currentUrl: String = webDriver.getCurrentUrl
+
+      Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+  }
+
+  And("^the user navigates to the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
 
@@ -226,5 +238,16 @@ class Steps extends ScalaDsl with EN with Matchers {
       case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)
+  }
+
+  When("^the user selects yes to all transfer agreement checks") {
+    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
+    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
+    val recordsAllEnglish = webDriver.findElement(By.id("englishtrue"))
+    val recordsAllDigital = webDriver.findElement(By.id("digitaltrue"))
+    recordsAllPublicRecords.click()
+    recordsAllCrownCopyright.click()
+    recordsAllEnglish.click()
+    recordsAllDigital.click()
   }
 }

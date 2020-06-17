@@ -1,22 +1,24 @@
 package steps
 
-import java.util
+import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
 import cucumber.api.scala.{EN, ScalaDsl}
+import helpers.graphql.{GraphqlUtility}
 import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
-import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.{By, WebDriver, WebElement}
+import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
 import org.scalatest.Matchers
-import org.openqa.selenium.support.ui.Select
+import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
+
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
   var userId: String = ""
+  var consignmentId: UUID = _
 
   val configuration = ConfigFactory.load()
   val baseUrl: String = configuration.getString("tdr.base.url")
@@ -80,7 +82,12 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   When("^the logged in user navigates to the (.*) page") {
     page: String =>
-      webDriver.get(s"$baseUrl/$page")
+      loadPage(page)
+  }
+
+  And("^the (.*) page is loaded") {
+    page: String =>
+      loadPage(page)
   }
 
   And("^the user clicks the (.*) element$") {
@@ -163,5 +170,51 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the continue button") {
     val button = webDriver.findElement(By.cssSelector("[type='submit']"))
     button.click()
+  }
+
+  And("^an existing consignment for transferring body (.*)") {
+    body: String =>
+      val client = GraphqlUtility(userCredentials)
+      consignmentId = client.createConsignment(body).get.addConsignment.consignmentid.get
+  }
+
+  And("^an existing transfer agreement") {
+    val client = GraphqlUtility(userCredentials)
+    client.createTransferAgreement(consignmentId)
+  }
+
+  When("^the user uploads a file") {
+    new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      val executor = driver.asInstanceOf[JavascriptExecutor]
+      executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
+    })
+
+    val input = webDriver.findElement(By.cssSelector("#file-selection"))
+    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles")
+    webDriver.findElement(By.cssSelector(".govuk-button")).click()
+  }
+
+  Then("^the (.*) should (.*) visible") {
+    (element: String, visible: String) =>
+      val id = element.replaceAll(" ", "-")
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val element = driver.findElement(By.cssSelector(s"#$id"))
+        val shouldBeVisible = visible.equals("be")
+        val isVisible = !element.getAttribute("class").contains("hide")
+        shouldBeVisible || !isVisible
+      })
+  }
+
+  And("^the page will redirect to the (.*) page after upload") {
+    page: String =>
+      val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page))
+  }
+
+  private def loadPage(page: String) = {
+    val pageWithConsignment = page match {
+      case "series" => s"$baseUrl/$page"
+      case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
+    }
+    webDriver.get(pageWithConsignment)
   }
 }

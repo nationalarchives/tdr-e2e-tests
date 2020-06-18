@@ -64,7 +64,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     login
   }
 
-  And("^a logged in user on the (.*) page") {
+  And("^the user is logged in on the (.*) page") {
     page: String =>
       loadPage(page)
       StepsUtility.userLogin(webDriver, userCredentials)
@@ -215,7 +215,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  And("^the page will redirect to the (.*) page after upload") {
+  And("^the page will redirect to the (.*) page after upload is complete") {
     page: String =>
       val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
   }

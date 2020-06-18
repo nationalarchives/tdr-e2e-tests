@@ -54,6 +54,3 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
 object GraphqlClient {
   def apply[Data, Variables](userCredentials: UserCredentials)(implicit decoder: Decoder[Data], encoder: Encoder[Variables]): GraphqlClient[Data, Variables] = new GraphqlClient(userCredentials)(decoder, encoder)
 }
-
-
-

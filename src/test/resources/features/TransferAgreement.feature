@@ -1,14 +1,10 @@
 Feature: Transfer Agreement Page
 
   Scenario: A logged in user completes the Transfer Agreement form correctly
-    Given A logged in user
-    And the logged in user navigates to the series page
-    And the user clicks the .govuk-select element
-    And the logged in user selects the series MOCK1 123
-    And the user clicks the continue button
-    And the user navigates to the transfer-agreement page
+    Given an existing user
+    And an existing consignment for transferring body MOCK1 Department
+    And the user is logged in on the Transfer Agreement page
     When the user selects yes to all transfer agreement checks
-    And the user clicks the droAppraisalSelection checkbox
-    And the user clicks the droSensitivity checkbox
+    And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
-    Then the user should be at the upload page
+    Then the user will be on a page with the title Upload Records

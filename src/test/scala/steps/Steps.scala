@@ -2,7 +2,7 @@ package steps
 
 import java.util.UUID
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.graphql.GraphqlUtility
 import helpers.steps.StepsUtility
@@ -20,12 +20,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   var userId: String = ""
   var consignmentId: UUID = _
 
-  val configuration = ConfigFactory.load()
+  val configuration: Config = ConfigFactory.load()
   val baseUrl: String = configuration.getString("tdr.base.url")
   val authUrl: String = configuration.getString("tdr.auth.url")
   val userName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
-  val nonTdrPageUrl: String = configuration.getString("redirect.base.url")
   val userCredentials: UserCredentials = UserCredentials(userName, password)
 
   Before() { scenario =>
@@ -37,11 +36,19 @@ class Steps extends ScalaDsl with EN with Matchers {
     KeycloakClient.deleteUser(userId)
   }
 
-  private def login = {
+  private def login(): Unit = {
     webDriver.get(s"$baseUrl")
     val startElement = webDriver.findElement(By.cssSelector(".govuk-button--start"))
     startElement.click()
     StepsUtility.userLogin(webDriver, userCredentials)
+  }
+
+  private def loadPage(page: String): Unit = {
+    val pageWithConsignment = page match {
+      case "series" => s"$baseUrl/$page"
+      case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
+    }
+    webDriver.get(pageWithConsignment)
   }
 
   Given("^A logged out user") {
@@ -51,27 +58,27 @@ class Steps extends ScalaDsl with EN with Matchers {
   Given("^A logged in user who is a member of (.*) transferring body") {
     body: String =>
       userId = KeycloakClient.createUser(userCredentials, Some(body))
-      login
+      login()
   }
 
   Given("^A logged in user who is not a member of a transferring body") {
     userId = KeycloakClient.createUser(userCredentials, Option.empty)
-    login
+    login()
   }
 
   Given("^A logged in user") {
     userId = KeycloakClient.createUser(userCredentials)
-    login
+    login()
+  }
+
+  Given("^an existing user") {
+    userId = KeycloakClient.createUser(userCredentials)
   }
 
   And("^the user is logged in on the (.*) page") {
     page: String =>
       loadPage(page)
       StepsUtility.userLogin(webDriver, userCredentials)
-  }
-
-  Given("^an existing user") {
-    userId = KeycloakClient.createUser(userCredentials)
   }
 
   When("^the user navigates to TDR Home Page") {
@@ -100,6 +107,12 @@ class Steps extends ScalaDsl with EN with Matchers {
       loadPage(page)
   }
 
+  And("^the user clicks on the (.*) button") {
+    button: String =>
+      webDriver.findElement(By.linkText(button)).click()
+
+  }
+
   And("^the user clicks the (.*) element$") {
     selector: String =>
       val clickableElement = webDriver.findElement(By.cssSelector(selector))
@@ -120,10 +133,23 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
+  And("^the user navigates to the (.*) page") {
+    page: String =>
+      val currentUrl: String = webDriver.getCurrentUrl
+
+      Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+  }
+
   Then("^the user will remain on the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
       Assert.assertTrue(currentUrl.startsWith(s"$authUrl/$page"))
+  }
+
+  Then("^the user will be on a page with the title (.*)") {
+    page: String =>
+      val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
+      Assert.assertTrue(page == pageTitle)
   }
 
   Then("^the user should see a user specific general error (.*)") {
@@ -171,7 +197,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
   }
 
-  And("^the logged in user selects the series (.*)") {
+  And ("^the user selects the series (.*)") {
     selectedSeries: String =>
       val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       seriesDropdown.selectByVisibleText(selectedSeries)
@@ -180,6 +206,19 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the continue button") {
     val button = webDriver.findElement(By.cssSelector("[type='submit']"))
     button.click()
+  }
+
+  And("^the user clicks the (.*) checkbox$") {
+    selector: String =>
+      val clickableElement = webDriver.findElement(By.id(selector))
+      clickableElement.click()
+  }
+
+  And ("^the user confirms that DRO has signed off on the records") {
+    val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
+    val dropSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
+    droAppraisalAndSelection.click()
+    dropSensitivityAndOpen.click()
   }
 
   And("^an existing consignment for transferring body (.*)") {
@@ -220,11 +259,14 @@ class Steps extends ScalaDsl with EN with Matchers {
       val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
   }
 
-  private def loadPage(page: String) = {
-    val pageWithConsignment = page match {
-      case "series" => s"$baseUrl/$page"
-      case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
-    }
-    webDriver.get(pageWithConsignment)
+  When("^the user selects yes to all transfer agreement checks") {
+    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
+    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
+    val recordsAllEnglish = webDriver.findElement(By.id("englishtrue"))
+    val recordsAllDigital = webDriver.findElement(By.id("digitaltrue"))
+    recordsAllPublicRecords.click()
+    recordsAllCrownCopyright.click()
+    recordsAllEnglish.click()
+    recordsAllDigital.click()
   }
 }

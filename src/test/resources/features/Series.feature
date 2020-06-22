@@ -10,8 +10,7 @@ Feature: Series Page
   Scenario: Logged in user selects a series from the dropdown
     Given A logged in user
     When the logged in user navigates to the series page
-    And the user clicks the .govuk-select element
-    And the logged in user selects the series MOCK1 123
+    And the user selects the series MOCK1 123
     And the user clicks the continue button
     Then the user should be at the transfer-agreement page
 

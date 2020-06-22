@@ -1,6 +1,6 @@
 Feature: Full user journey
 
-  Scenario: A happy path of TDR as a whole
+  Scenario: Full transfer workflow
     Given A logged out user
     When the user navigates to TDR Home Page
     And the user clicks on the Start now button

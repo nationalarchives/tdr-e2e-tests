@@ -113,12 +113,6 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   }
 
-  And("^the user clicks the (.*) element$") {
-    selector: String =>
-      val clickableElement = webDriver.findElement(By.cssSelector(selector))
-      clickableElement.click()
-  }
-
   Then("^the logged out user should be at the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
@@ -208,12 +202,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     button.click()
   }
 
-  And("^the user clicks the (.*) checkbox$") {
-    selector: String =>
-      val clickableElement = webDriver.findElement(By.id(selector))
-      clickableElement.click()
-  }
-
   And ("^the user confirms that DRO has signed off on the records") {
     val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
     val dropSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
@@ -257,6 +245,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the page will redirect to the (.*) page after upload is complete") {
     page: String =>
       val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
+  }
+
+  And("^the user clicks the (.*) link") {
+    linkClicked: String =>
+      webDriver.findElement(By.linkText(linkClicked)).click()
   }
 
   When("^the user selects yes to all transfer agreement checks") {

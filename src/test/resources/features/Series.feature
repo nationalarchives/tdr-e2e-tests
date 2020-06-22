@@ -3,7 +3,7 @@ Feature: Series Page
   Scenario: Logged in user selects nothing from dropdown
     Given A logged in user
     When the logged in user navigates to the series page
-    And the user clicks the .govuk-button element
+    And the user clicks the continue button
     Then the logged in user should stay at the series page
     And the user will see a form error message This field is required
 
@@ -17,7 +17,7 @@ Feature: Series Page
   Scenario: Logged in user selects 'back' when on Series page
     Given A logged in user
     When the logged in user navigates to the series page
-    And the user clicks the .govuk-back-link element
+    And the user clicks the Back link
     Then the user should be at the dashboard page
 
   Scenario: User from MOCK1 Department transferring body sees the correct series choices

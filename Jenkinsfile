@@ -75,17 +75,15 @@ pipeline {
     }
     post {
         failure {
-            slackSend(
-                color: '#FF0000', //red
-                message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html",
-                channel: "#tdr-releases"
+            tdr.postToDaTdrSlackChannel(colour: "danger",
+                                        message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n" +
+                                                 "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
             )
         }
         fixed {
-            slackSend(
-                color: '#00FF00', //green
-                message: " :green_heart: *End to End Tests Succeeded*\n *TDR Environment*: ${params.STAGE}\n *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html",
-                channel: "#tdr-releases"
+            tdr.postToDaTdrSlackChannel(colour: "good",
+                                        message: " :green_heart: *End to End Tests Succeeded*\n *TDR Environment*: ${params.STAGE}\n" +
+                                                 "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
             )
         }
     }

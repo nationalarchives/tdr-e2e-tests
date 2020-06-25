@@ -74,17 +74,22 @@ pipeline {
         }
     }
     post {
+
         failure {
-            tdr.postToDaTdrSlackChannel(colour: "danger",
-                                        message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n" +
-                                                 "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
-            )
+            script {
+                tdr.postToDaTdrSlackChannel(colour: "danger",
+                                            message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n" +
+                                                     "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
+                )
+            }
         }
         fixed {
-            tdr.postToDaTdrSlackChannel(colour: "good",
-                                        message: " :green_heart: *End to End Tests Succeeded*\n *TDR Environment*: ${params.STAGE}\n" +
-                                                 "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
-            )
+            script {
+                tdr.postToDaTdrSlackChannel(colour: "good",
+                                            message: " :green_heart: *End to End Tests Succeeded*\n *TDR Environment*: ${params.STAGE}\n" +
+                                                     "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
+                )
+            }
         }
     }
 }

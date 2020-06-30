@@ -202,10 +202,15 @@ class Steps extends ScalaDsl with EN with Matchers {
     button.click()
   }
 
-  And ("^the user confirms that DRO has signed off on the records") {
+  And("^the user confirms that DRO has signed off on the records") {
     val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
     val dropSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
     droAppraisalAndSelection.click()
+    dropSensitivityAndOpen.click()
+  }
+
+  And("^the user does not confirm DRO sign off for the records") {
+    val dropSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
     dropSensitivityAndOpen.click()
   }
 
@@ -250,6 +255,15 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the (.*) link") {
     linkClicked: String =>
       webDriver.findElement(By.linkText(linkClicked)).click()
+  }
+
+  When("^the user selects yes to only some of the transfer agreement checks") {
+    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
+    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
+    val recordsAllEnglish = webDriver.findElement(By.id("englishtrue"))
+    recordsAllPublicRecords.click()
+    recordsAllCrownCopyright.click()
+    recordsAllEnglish.click()
   }
 
   When("^the user selects yes to all transfer agreement checks") {

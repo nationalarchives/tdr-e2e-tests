@@ -77,7 +77,7 @@ pipeline {
 
         failure {
             script {
-                tdr.postToDaTdrSlackChannel(colour: "danger",
+                tdr.postToDaTdrSlackChannel(colour: "#FF0000", //red
                                             message: " :warning: *End to End Test Failure*\n *TDR Environment*: ${params.STAGE}\n" +
                                                      "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
                 )
@@ -85,7 +85,7 @@ pipeline {
         }
         fixed {
             script {
-                tdr.postToDaTdrSlackChannel(colour: "good",
+                tdr.postToDaTdrSlackChannel(colour: "#00FF00", //green
                                             message: " :green_heart: *End to End Tests Succeeded*\n *TDR Environment*: ${params.STAGE}\n" +
                                                      "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
                 )

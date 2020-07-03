@@ -162,7 +162,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertEquals(errorMessage, errorElement.getText)
   }
 
-  And("^the user will see a form error message (.*)") {
+  And("^the user will see a form error message \"(.*)\"") {
     formErrorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-message"))
       Assert.assertNotNull(errorElement)
@@ -202,11 +202,36 @@ class Steps extends ScalaDsl with EN with Matchers {
     button.click()
   }
 
-  And ("^the user confirms that DRO has signed off on the records") {
+  When("^the user selects yes for all checks except \"The records are all Digital\"") {
+    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
+    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
+    val recordsAllEnglish = webDriver.findElement(By.id("englishtrue"))
+    recordsAllPublicRecords.click()
+    recordsAllCrownCopyright.click()
+    recordsAllEnglish.click()
+  }
+
+  When("^the user selects yes to all transfer agreement checks") {
+    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
+    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
+    val recordsAllEnglish = webDriver.findElement(By.id("englishtrue"))
+    val recordsAllDigital = webDriver.findElement(By.id("digitaltrue"))
+    recordsAllPublicRecords.click()
+    recordsAllCrownCopyright.click()
+    recordsAllEnglish.click()
+    recordsAllDigital.click()
+  }
+
+  And("^the user confirms that DRO has signed off on the records") {
     val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
-    val dropSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
+    val droSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
     droAppraisalAndSelection.click()
-    dropSensitivityAndOpen.click()
+    droSensitivityAndOpen.click()
+  }
+
+  And("^the user does not confirm DRO sign off for the records") {
+    val droSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
+    droSensitivityAndOpen.click()
   }
 
   And("^an existing consignment for transferring body (.*)") {
@@ -250,16 +275,5 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the (.*) link") {
     linkClicked: String =>
       webDriver.findElement(By.linkText(linkClicked)).click()
-  }
-
-  When("^the user selects yes to all transfer agreement checks") {
-    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
-    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
-    val recordsAllEnglish = webDriver.findElement(By.id("englishtrue"))
-    val recordsAllDigital = webDriver.findElement(By.id("digitaltrue"))
-    recordsAllPublicRecords.click()
-    recordsAllCrownCopyright.click()
-    recordsAllEnglish.click()
-    recordsAllDigital.click()
   }
 }

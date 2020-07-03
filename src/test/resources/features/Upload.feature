@@ -12,6 +12,7 @@ Feature: Upload
     And an existing transfer agreement
     And the user is logged in on the upload page
     When the user uploads a file
+    And the user clicks the continue button
     Then the progress bar should be visible
 
   Scenario: The records page is shown when the upload is completed
@@ -20,4 +21,5 @@ Feature: Upload
     And an existing transfer agreement
     And the user is logged in on the upload page
     When the user uploads a file
+    And the user clicks the continue button
     Then the page will redirect to the records page after upload is complete

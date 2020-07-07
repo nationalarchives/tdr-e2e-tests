@@ -33,7 +33,7 @@ Feature: Series Page
   Scenario: User with no transferring body set sees an error message
     Given A logged in user who is not a member of a transferring body
     When the logged in user navigates to the series page
-    Then the user should see a user specific general error Transferring body missing from token for user {userId}
+    Then the user should see a user-specific general error Transferring body missing from token for user {userId}
 
   Scenario: User from MOCK4 Department should see an empty series list
     Given A logged in user who is a member of MOCK4 Department transferring body

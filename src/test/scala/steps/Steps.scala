@@ -102,6 +102,12 @@ class Steps extends ScalaDsl with EN with Matchers {
       loadPage(page)
   }
 
+  Then("^the user goes back to the consignment upload page") {
+    webDriver.navigate().back()
+//      loadPage(s"http://localhost:9000/consignment/$consignmentId/upload")
+//      StepsUtility.userLogin(webDriver, userCredentials)
+  }
+
   And("^the (.*) page is loaded") {
     page: String =>
       loadPage(page)
@@ -110,7 +116,6 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks on the (.*) button") {
     button: String =>
       webDriver.findElement(By.linkText(button)).click()
-
   }
 
   Then("^the logged out user should be at the (.*) page") {
@@ -146,13 +151,24 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(page == pageTitle)
   }
 
-  Then("^the user should see a user specific general error (.*)") {
+  Then("^the user should see a user-specific general error (.*)") {
     errorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector("#general-error"))
       Assert.assertNotNull(errorElement)
       val specificError = errorMessage.replace("{userId}", s"Some($userId)")
 
       Assert.assertTrue(errorElement.getText.contains(specificError))
+  }
+
+  Then("^the user should see a user-specific upload error (.*)") {
+    errorMessage: String =>
+
+      val errorElement = webDriver.findElement(By.cssSelector(".upload-error__message"))
+      println(errorElement, errorElement.getText)
+      Assert.assertNotNull(errorElement)
+      val specificError = errorMessage.replace("{consignmentId}", s"$consignmentId")
+      println(errorElement.getText, specificError)
+      Assert.assertEquals(errorElement.getText, specificError)
   }
 
   And("^the user will see the error message (.*)") {
@@ -200,6 +216,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the continue button") {
     val button = webDriver.findElement(By.cssSelector("[type='submit']"))
     button.click()
+//    Thread.sleep(6000)
   }
 
   When("^the user selects yes for all checks except \"The records are all Digital\"") {
@@ -245,7 +262,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createTransferAgreement(consignmentId)
   }
 
-  When("^the user uploads a file") {
+  When("^the user selects a directory") {
     new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
       val executor = driver.asInstanceOf[JavascriptExecutor]
       executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
@@ -266,7 +283,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  And("^the page will redirect to the (.*) page after upload is complete") {
+  Then("^the page will redirect to the (.*) page after upload is complete") {
     page: String =>
       val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
   }

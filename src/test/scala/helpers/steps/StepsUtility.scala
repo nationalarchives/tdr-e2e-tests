@@ -10,7 +10,7 @@ object StepsUtility {
     val chromeOptions: ChromeOptions = new ChromeOptions
     val chromeDriverLocation = System.getenv("CHROME_DRIVER")
 
-    chromeOptions.setHeadless(true)
+    chromeOptions.setHeadless(false)
     chromeOptions.addArguments("--no-sandbox")
     chromeOptions.addArguments("--disable-dev-shm-usage")
     chromeOptions.addArguments("--verbose")
@@ -19,13 +19,13 @@ object StepsUtility {
     chromeOptions
   }
 
-  def userLogin(webDriver: WebDriver, userCredentials: UserCredentials) = {
+  def userLogin(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
     enterUserCredentials(webDriver, userCredentials)
     val clickableElement = webDriver.findElement(By.cssSelector("[name='login']"))
     clickableElement.click()
   }
 
-  def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials) = {
+  def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
     val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
     val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
 

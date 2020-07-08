@@ -256,15 +256,18 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 
-  Then("^the (.*) should (.*) visible") {
-    (element: String, visible: String) =>
-      val id = element.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
-        val element = driver.findElement(By.cssSelector(s"#$id"))
-        val shouldBeVisible = visible.equals("be")
-        val isVisible = !element.getAttribute("class").contains("hide")
-        shouldBeVisible || !isVisible
-      })
+  Then("^the (.*) should be visible") {
+    (targetIdName: String) => {
+      val isVisible = !StepsUtility.elementHasClassHide(targetIdName, webDriver)
+      Assert.assertTrue(isVisible)
+    }
+  }
+
+  Then("^the (.*) should not be visible") {
+    (targetIdName: String) => {
+      val isNotVisible = StepsUtility.elementHasClassHide(targetIdName, webDriver)
+      Assert.assertTrue(isNotVisible)
+    }
   }
 
   And("^the page will redirect to the (.*) page after upload is complete") {

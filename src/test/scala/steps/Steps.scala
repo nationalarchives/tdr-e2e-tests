@@ -9,9 +9,9 @@ import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
 import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
 import org.scalatest.Matchers
-import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
 
 import scala.jdk.CollectionConverters._
 
@@ -258,21 +258,28 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the (.*) should be visible") {
     (targetIdName: String) => {
-      val isVisible = !StepsUtility.elementHasClassHide(targetIdName, webDriver)
-      Assert.assertTrue(isVisible)
+      val id = targetIdName.replaceAll(" ", "-")
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val isVisible = !StepsUtility.elementHasClassHide(id, driver)
+        isVisible
+      })
     }
   }
 
   Then("^the (.*) should not be visible") {
     (targetIdName: String) => {
-      val isNotVisible = StepsUtility.elementHasClassHide(targetIdName, webDriver)
-      Assert.assertTrue(isNotVisible)
+      val id = targetIdName.replaceAll(" ", "-")
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val isNotVisible = StepsUtility.elementHasClassHide(id, webDriver)
+        isNotVisible
+      })
     }
   }
 
   And("^the page will redirect to the (.*) page after upload is complete") {
     page: String =>
-      val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
+      val expectedUrl = s"$baseUrl/consignment/$consignmentId/$page"
+      new WebDriverWait(webDriver, 10).until(ExpectedConditions.urlMatches(expectedUrl))
   }
 
   And("^the user clicks the (.*) link") {

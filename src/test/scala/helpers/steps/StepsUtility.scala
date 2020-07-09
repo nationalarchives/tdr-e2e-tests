@@ -33,8 +33,7 @@ object StepsUtility {
     passwordElement.sendKeys(userCredentials.password)
   }
 
-  def elementHasClassHide(targetIdName: String, webDriver: WebDriver): Boolean = {
-    val id = targetIdName.replaceAll(" ", "-")
+  def elementHasClassHide(id: String, webDriver: WebDriver): Boolean = {
     val element = webDriver.findElement(By.cssSelector(s"#$id"))
     element.getAttribute("class").contains("hide")
   }

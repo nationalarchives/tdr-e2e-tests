@@ -1,3 +1,4 @@
+@wip
 Feature: Upload
   Scenario: The progress bar is hidden before file upload
     Given an existing user

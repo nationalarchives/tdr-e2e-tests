@@ -9,9 +9,9 @@ import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
 import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
 import org.scalatest.Matchers
-import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
 
 import scala.jdk.CollectionConverters._
 
@@ -142,8 +142,10 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
-      val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
-      Assert.assertTrue(page == pageTitle)
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
+        page == pageTitle
+      })
   }
 
   Then("^the user should see a user specific general error (.*)") {
@@ -256,20 +258,24 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 
-  Then("^the (.*) should (.*) visible") {
-    (element: String, visible: String) =>
-      val id = element.replaceAll(" ", "-")
+  Then("^the (.*) should be visible") {
+    (targetIdName: String) => {
+      val id = targetIdName.replaceAll(" ", "-")
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
-        val element = driver.findElement(By.cssSelector(s"#$id"))
-        val shouldBeVisible = visible.equals("be")
-        val isVisible = !element.getAttribute("class").contains("hide")
-        shouldBeVisible || !isVisible
+        val isVisible = !StepsUtility.elementHasClassHide(id, driver)
+        isVisible
       })
+    }
   }
 
-  And("^the page will redirect to the (.*) page after upload is complete") {
-    page: String =>
-      val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
+  Then("^the (.*) should not be visible") {
+    (targetIdName: String) => {
+      val id = targetIdName.replaceAll(" ", "-")
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val isNotVisible = StepsUtility.elementHasClassHide(id, webDriver)
+        isNotVisible
+      })
+    }
   }
 
   And("^the user clicks the (.*) link") {

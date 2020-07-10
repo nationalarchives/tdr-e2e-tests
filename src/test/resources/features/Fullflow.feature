@@ -1,3 +1,5 @@
+#Feature skipped due to following bug with chromedriver: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
+@wip
 Feature: Full user journey
 
   Scenario: Full transfer workflow
@@ -16,4 +18,4 @@ Feature: Full user journey
     And the user clicks the continue button
     Then the user will be on a page with the title Upload Records
     When the user uploads a file
-    Then the page will redirect to the records page after upload is complete
+    Then the user will be on a page with the title Records

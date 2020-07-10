@@ -41,6 +41,23 @@ To view the tests running in the Chrome browser locally change the chromedriver 
 chromeOptions.setHeadless(false)
 ```
 
+#### Debugging in "Headless" Chromedriver
+
+It is possible to debug in the "headless" mode:
+1. Set the follow chrome option in the StepsUtility.scala: `chromeOptions.addArguments("--remote-debugging-port=9222")`  
+2. Open a new browser window and go to: `localhost:9222`
+3. Run the test and refresh the browser window. Can then view the developer tools/outputs for the headless Chromedriver running the tests
+
+See here for more details: https://developers.google.com/web/updates/2017/04/headless-chrome#frontend.
+
+To retrieve and view the console logs from the headless browser it is possible to retreive them from the webDriver in the test code. For example in a step add the following code:
+
+```
+val logEntries: LogEntries = webDriver.manage().logs().get("browser")
+```
+
+This will retrieve the logs, they can then be processed/used as required.
+
 ## Keycloak Version
 
 The version of Keycloak that the project uses must match the version used by the Keycloak server.

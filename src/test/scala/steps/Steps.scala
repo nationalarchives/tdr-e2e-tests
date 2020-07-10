@@ -9,9 +9,9 @@ import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
 import org.junit.Assert
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
 import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
 import org.scalatest.Matchers
-import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
 
 import scala.jdk.CollectionConverters._
 
@@ -102,12 +102,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       loadPage(page)
   }
 
-  Then("^the user goes back to the consignment upload page") {
-    webDriver.navigate().back()
-//      loadPage(s"http://localhost:9000/consignment/$consignmentId/upload")
-//      StepsUtility.userLogin(webDriver, userCredentials)
-  }
-
   And("^the (.*) page is loaded") {
     page: String =>
       loadPage(page)
@@ -116,6 +110,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks on the (.*) button") {
     button: String =>
       webDriver.findElement(By.linkText(button)).click()
+
   }
 
   Then("^the logged out user should be at the (.*) page") {
@@ -147,8 +142,10 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
-      val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
-      Assert.assertTrue(page == pageTitle)
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
+        page == pageTitle
+      })
   }
 
   Then("^the user should see a user-specific general error (.*)") {
@@ -158,17 +155,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       val specificError = errorMessage.replace("{userId}", s"Some($userId)")
 
       Assert.assertTrue(errorElement.getText.contains(specificError))
-  }
-
-  Then("^the user should see a user-specific upload error (.*)") {
-    errorMessage: String =>
-
-      val errorElement = webDriver.findElement(By.cssSelector(".upload-error__message"))
-      println(errorElement, errorElement.getText)
-      Assert.assertNotNull(errorElement)
-      val specificError = errorMessage.replace("{consignmentId}", s"$consignmentId")
-      println(errorElement.getText, specificError)
-      Assert.assertEquals(errorElement.getText, specificError)
   }
 
   And("^the user will see the error message (.*)") {
@@ -207,7 +193,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
   }
 
-  And("^the user selects the series (.*)") {
+  And ("^the user selects the series (.*)") {
     selectedSeries: String =>
       val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       seriesDropdown.selectByVisibleText(selectedSeries)
@@ -216,7 +202,6 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the continue button") {
     val button = webDriver.findElement(By.cssSelector("[type='submit']"))
     button.click()
-//    Thread.sleep(6000)
   }
 
   When("^the user selects yes for all checks except \"The records are all Digital\"") {
@@ -270,22 +255,27 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     val input = webDriver.findElement(By.cssSelector("#file-selection"))
     input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles")
+    webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 
-  Then("^the (.*) should (.*) visible") {
-    (element: String, visible: String) =>
-      val id = element.replaceAll(" ", "-")
+  Then("^the (.*) should be visible") {
+    (targetIdName: String) => {
+      val id = targetIdName.replaceAll(" ", "-")
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
-        val element = driver.findElement(By.cssSelector(s"#$id"))
-        val shouldBeVisible = visible.equals("be")
-        val isVisible = !element.getAttribute("class").contains("hide")
-        shouldBeVisible || !isVisible
+        val isVisible = !StepsUtility.elementHasClassHide(id, driver)
+        isVisible
       })
+    }
   }
 
-  Then("^the page will redirect to the (.*) page after upload is complete") {
-    page: String =>
-      val _ = new WebDriverWait(webDriver, 10).until(ExpectedConditions.titleContains(page.capitalize))
+  Then("^the (.*) should not be visible") {
+    (targetIdName: String) => {
+      val id = targetIdName.replaceAll(" ", "-")
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val isNotVisible = StepsUtility.elementHasClassHide(id, webDriver)
+        isNotVisible
+      })
+    }
   }
 
   And("^the user clicks the (.*) link") {

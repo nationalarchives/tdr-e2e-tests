@@ -1,7 +1,6 @@
 #Feature skipped due to following bug with chromedriver: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
 @wip
 Feature: Full user journey
-
   Scenario: Full transfer workflow
     Given A logged out user
     When the user navigates to TDR Home Page
@@ -17,5 +16,6 @@ Feature: Full user journey
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
     Then the user will be on a page with the title Upload Records
-    When the user uploads a file
+    When the user selects a directory
+    And the user clicks the continue button
     Then the user will be on a page with the title Records

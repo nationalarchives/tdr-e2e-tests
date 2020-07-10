@@ -193,7 +193,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
   }
 
-  And ("^the user selects the series (.*)") {
+  And("^the user selects the series (.*)") {
     selectedSeries: String =>
       val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       seriesDropdown.selectByVisibleText(selectedSeries)
@@ -255,7 +255,6 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     val input = webDriver.findElement(By.cssSelector("#file-selection"))
     input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles")
-    webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 
   Then("^the (.*) should be visible") {
@@ -281,5 +280,18 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the (.*) link") {
     linkClicked: String =>
       webDriver.findElement(By.linkText(linkClicked)).click()
+  }
+
+  Then("^the user clicks their browser's back button") {
+    webDriver.navigate().back()
+  }
+
+  Then("^the user should see a user-specific upload error (.*)") {
+    errorMessage: String =>
+
+      val errorElement = webDriver.findElement(By.cssSelector(".upload-error__message"))
+      Assert.assertNotNull(errorElement)
+      val specificError = errorMessage.replace("{consignmentId}", s"$consignmentId")
+      Assert.assertEquals(specificError, errorElement.getText)
   }
 }

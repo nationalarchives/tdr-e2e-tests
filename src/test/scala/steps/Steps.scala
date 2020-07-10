@@ -142,8 +142,10 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
-      val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
-      Assert.assertTrue(page == pageTitle)
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
+        page == pageTitle
+      })
   }
 
   Then("^the user should see a user specific general error (.*)") {
@@ -274,12 +276,6 @@ class Steps extends ScalaDsl with EN with Matchers {
         isNotVisible
       })
     }
-  }
-
-  And("^the page will redirect to the (.*) page after upload is complete") {
-    page: String =>
-      val expectedUrl = s"$baseUrl/consignment/$consignmentId/$page"
-      new WebDriverWait(webDriver, 10).until(ExpectedConditions.urlMatches(expectedUrl))
   }
 
   And("^the user clicks the (.*) link") {

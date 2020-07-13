@@ -282,16 +282,15 @@ class Steps extends ScalaDsl with EN with Matchers {
       webDriver.findElement(By.linkText(linkClicked)).click()
   }
 
-  Then("^the user clicks their browser's back button") {
+  When("^the user clicks their browser's back button") {
     webDriver.navigate().back()
   }
 
-  Then("^the user should see a user-specific upload error (.*)") {
+  Then("^the user should see a consignment-specific upload error \"(.*)\"") {
     errorMessage: String =>
-
       val errorElement = webDriver.findElement(By.cssSelector(".upload-error__message"))
       Assert.assertNotNull(errorElement)
       val specificError = errorMessage.replace("{consignmentId}", s"$consignmentId")
-      Assert.assertEquals(specificError, errorElement.getText)
+      Assert.assertTrue(errorElement.getText.contains(specificError))
   }
 }

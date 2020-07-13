@@ -34,7 +34,7 @@ Feature: Upload
     When the user selects a directory
     And the user clicks the continue button
     Then the user will be on a page with the title Records
-    Then the user clicks their browser's back button
-    When the user selects a directory
+    When the user clicks their browser's back button
+    And the user selects a directory
     And the user clicks the continue button
-    Then the user should see a user-specific upload error GraphQL error: Upload already occurred for consignment: {consignmentId}
+    Then the user should see a consignment-specific upload error "Upload already occurred for consignment: {consignmentId}"

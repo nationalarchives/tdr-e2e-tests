@@ -4,7 +4,7 @@ Feature: Series Page
     Given A logged in user
     When the logged in user navigates to the series page
     And the user clicks the continue button
-    Then the logged in user should stay at the series page
+    Then the user will remain on the series page
     And the user will see a form error message "This field is required"
 
   Scenario: Logged in user selects a series from the dropdown
@@ -12,13 +12,13 @@ Feature: Series Page
     When the logged in user navigates to the series page
     And the user selects the series MOCK1 123
     And the user clicks the continue button
-    Then the user should be at the transfer-agreement page
+    Then the user should be on the transfer-agreement page
 
   Scenario: Logged in user selects 'back' when on Series page
     Given A logged in user
     When the logged in user navigates to the series page
     And the user clicks the Back link
-    Then the user should be at the dashboard page
+    Then the user should be on the dashboard page
 
   Scenario: User from MOCK1 Department transferring body sees the correct series choices
    Given A logged in user who is a member of MOCK1 Department transferring body

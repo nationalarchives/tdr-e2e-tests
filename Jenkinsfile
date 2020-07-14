@@ -7,6 +7,7 @@ pipeline {
     parameters {
         choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")
         string(name: "DEPLOY_JOB_URL", defaultValue: "Not given", description: "URL of Jenkins deploy job that triggered the end to end tests")
+        choice(name: "BROWSER", choices: ["firefox", "chrome"], description: "The browser to run the tests in")
     }
     stages {
         stage ("Retrieve Keycloak credentials for environment") {
@@ -33,17 +34,29 @@ pipeline {
                 }
             }
             environment {
-                CHROME_DRIVER = "src/chromedriver"
+                DRIVER_LOCATION = "src/driver"
                 CHROME_DRIVER_VERSION = "83.0.4103.39"
+                FIREFOX_DRIVER_VERSION = "v0.26.0"
             }
             stages {
-                stage("Install Chrome Driver") {
+                stage("Install Driver") {
                     steps {
                         checkout scm
-                        sh "wget -q -N http://chromedriver.storage.googleapis.com/${env.CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
-                        sh "unzip -q ~/chromedriver_linux64.zip -d ~/"
-                        sh "rm ~/chromedriver_linux64.zip"
-                        sh "mv -f ~/chromedriver src"
+                        script {
+                            if(params.BROWSER == "firefox") {
+
+                                    sh "wget -q -N https://github.com/mozilla/geckodriver/releases/download/${env.FIREFOX_DRIVER_VERSION}/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz -P ~/"
+                                    sh "tar -C ~/ -xzf ~/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz"
+                                    sh "rm -f ~/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz"
+                                    sh "mv ~/geckodriver src/driver"
+                                }
+                                if(params.BROWSER == "chrome") {
+                                    sh "wget -q -N http://chromedriver.storage.googleapis.com/${env.CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
+                                    sh "unzip -q ~/chromedriver_linux64.zip -d ~/"
+                                    sh "rm ~/chromedriver_linux64.zip"
+                                    sh "mv -f ~/chromedriver src/driver"
+                                }
+                        }
                     }
                 }
                 stage ("Run Tests") {
@@ -52,7 +65,7 @@ pipeline {
                             //Hide the output of the test command to stop keycloak credentials appearing in console output
                             sh """
                                 set +x
-                                sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password}
+                                sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password} -Dbrowser=${params.BROWSER}
                             """
                         }
                     }
@@ -64,7 +77,7 @@ pipeline {
                                 classifications: [
                                     [
                                         'key':'Browser',
-                                        'value':'Chrome'
+                                        'value': params.BROWSER.capitalize()
                                     ]
                                 ]
                         }

@@ -39,6 +39,5 @@ object DriverUtility {
       case "chrome" => new ChromeDriver(chromeOptions)
       case "firefox" => new FirefoxDriver(firefoxOptions)
     }
-
   }
 }

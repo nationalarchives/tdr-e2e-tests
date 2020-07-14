@@ -7,7 +7,7 @@ pipeline {
     parameters {
         choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")
         string(name: "DEPLOY_JOB_URL", defaultValue: "Not given", description: "URL of Jenkins deploy job that triggered the end to end tests")
-        string(name: "BROWSER", choices: ["firefox", "chrome"], description: "The browser to run the tests in")
+        choice(name: "BROWSER", choices: ["firefox", "chrome"], description: "The browser to run the tests in")
         string(name: "DRIVER_VERSION", defaultValue: "v0.26.0", description: "The version of the driver")
     }
     stages {

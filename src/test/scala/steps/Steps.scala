@@ -256,7 +256,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     })
 
     val input = webDriver.findElement(By.cssSelector("#file-selection"))
-    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles")
+    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/testfile1")
     webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 

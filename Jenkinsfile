@@ -44,7 +44,7 @@ pipeline {
                         script {
                             if(params.BROWSER == "firefox") {
                                     sh "wget -q -N https://github.com/mozilla/geckodriver/releases/download/${params.DRIVER_VERSION}/geckodriver-${params.DRIVER_VERSION}-linux64.tar.gz -P ~/"
-                                    sh "tar -C ~/ -xzf geckodriver-${params.DRIVER_VERSION}-linux64.tar.gz"
+                                    sh "tar -C ~/ -xzf ~/geckodriver-${params.DRIVER_VERSION}-linux64.tar.gz"
                                     sh "rm -f ~/geckodriver-${params.DRIVER_VERSION}-linux64.tar.gz"
                                     sh "mv ~/geckodriver src/driver"
                                 }

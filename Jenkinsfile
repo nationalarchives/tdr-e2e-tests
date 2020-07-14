@@ -8,7 +8,6 @@ pipeline {
         choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")
         string(name: "DEPLOY_JOB_URL", defaultValue: "Not given", description: "URL of Jenkins deploy job that triggered the end to end tests")
         choice(name: "BROWSER", choices: ["firefox", "chrome"], description: "The browser to run the tests in")
-        string(name: "DRIVER_VERSION", defaultValue: "v0.26.0", description: "The version of the driver")
     }
     stages {
         stage ("Retrieve Keycloak credentials for environment") {
@@ -36,6 +35,8 @@ pipeline {
             }
             environment {
                 DRIVER_LOCATION = "src/driver"
+                CHROME_DRIVER_VERSION = "83.0.4103.39"
+                FIREFOX_DRIVER_VERSION = "v0.26.0"
             }
             stages {
                 stage("Install Driver") {
@@ -43,13 +44,14 @@ pipeline {
                         checkout scm
                         script {
                             if(params.BROWSER == "firefox") {
-                                    sh "wget -q -N https://github.com/mozilla/geckodriver/releases/download/${params.DRIVER_VERSION}/geckodriver-${params.DRIVER_VERSION}-linux64.tar.gz -P ~/"
-                                    sh "tar -C ~/ -xzf ~/geckodriver-${params.DRIVER_VERSION}-linux64.tar.gz"
-                                    sh "rm -f ~/geckodriver-${params.DRIVER_VERSION}-linux64.tar.gz"
+
+                                    sh "wget -q -N https://github.com/mozilla/geckodriver/releases/download/${env.FIREFOX_DRIVER_VERSION}/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz -P ~/"
+                                    sh "tar -C ~/ -xzf ~/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz"
+                                    sh "rm -f ~/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz"
                                     sh "mv ~/geckodriver src/driver"
                                 }
                                 if(params.BROWSER == "chrome") {
-                                    sh "wget -q -N http://chromedriver.storage.googleapis.com/${params.DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
+                                    sh "wget -q -N http://chromedriver.storage.googleapis.com/${env.CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
                                     sh "unzip -q ~/chromedriver_linux64.zip -d ~/"
                                     sh "rm ~/chromedriver_linux64.zip"
                                     sh "mv -f ~/chromedriver src/driver"
@@ -75,7 +77,7 @@ pipeline {
                                 classifications: [
                                     [
                                         'key':'Browser',
-                                        'value':'Chrome'
+                                        'value': params.BROWSER.capitalize()
                                     ]
                                 ]
                         }

@@ -14,6 +14,7 @@ import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
 import org.scalatest.Matchers
 
 import scala.jdk.CollectionConverters._
+import helpers.drivers.DriverUtility._
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -27,8 +28,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   val password: String = RandomUtility.randomString(10)
   val userCredentials: UserCredentials = UserCredentials(userName, password)
 
+
   Before() { scenario =>
-    webDriver = new ChromeDriver(StepsUtility.getChromeOptions)
+    webDriver = initDriver
   }
 
   After() { scenario =>
@@ -235,7 +237,8 @@ class Steps extends ScalaDsl with EN with Matchers {
     })
 
     val input = webDriver.findElement(By.cssSelector("#file-selection"))
-    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles")
+    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/testfile1")
+    webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 
   Then("^the (.*) should be visible") {

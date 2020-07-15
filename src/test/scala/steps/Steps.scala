@@ -270,7 +270,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.navigate().back()
   }
 
-  Then("^the user should see a consignment-specific upload error \"(.*)\"") {
+  Then("^the user should see the upload error message \"(.*)\"") {
     errorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector(".upload-error__message"))
       Assert.assertNotNull(errorElement)

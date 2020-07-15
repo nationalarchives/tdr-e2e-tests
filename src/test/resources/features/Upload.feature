@@ -37,4 +37,4 @@ Feature: Upload
     When the user clicks their browser's back button
     And the user selects a directory
     And the user clicks the continue button
-    Then the user should see a consignment-specific upload error "Upload already occurred for consignment: {consignmentId}"
+    Then the user should see the upload error message "Upload already occurred for consignment: {consignmentId}"

@@ -8,10 +8,13 @@ It currently run tests against the Chrome browser only.
 
 1. Set up TDR frontend application locally (including keycloak and redis): https://github.com/nationalarchives/tdr-transfer-frontend/blob/master/README.md
 
-2. Ensure that the Chrome browser is available locally
+2. Ensure that the Chrome/Firefox browsers are available locally
 
-3. Download and unzip chromedriver locally: https://chromedriver.chromium.org/downloads
+3. Depending on which browser you want to run the tests on:
+   
+   (a) Download and unzip chromedriver locally: https://chromedriver.chromium.org/downloads
    * **NOTE:** Ensure the chromedriver version is compatible with the local Chrome browser version
+   (b) Download and unzip geckodriver locally: https://github.com/mozilla/geckodriver/releases/download
  
 4. Clone the TDR End to End Tests project
 
@@ -23,7 +26,7 @@ It currently run tests against the Chrome browser only.
 
 6. Set environment variable:
    ```
-   $ export CHROME_DRIVER=[location of chromedriver]
+   $ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]
    ```
 
 7. Run the tests
@@ -70,7 +73,7 @@ To run the tests as a Jenkins job the Jenkins pipeline script carries out the fo
     * The individual TDR environment keycloak credentials are stored in the environment's parameter store
     * The management account needs access to these credentials to access Keycloak for the TDR environment to create and delete test users
 2. In the transfer-frontend agent:
-    * Chromedriver is downloaded to the workspace
+    * Chromedriver or Geckodriver is downloaded to the workspace
     * the Keycloak credentials are unstashed and passed in as system properties when running the tests
 
 * The sbt run test command is hidden to ensure the keycloak credentials do not appear in the Jenkins console output.

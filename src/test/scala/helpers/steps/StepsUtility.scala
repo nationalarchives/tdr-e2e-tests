@@ -6,13 +6,13 @@ import org.openqa.selenium.chrome.ChromeOptions
 
 object StepsUtility {
 
-  def userLogin(webDriver: WebDriver, userCredentials: UserCredentials) = {
+  def userLogin(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
     enterUserCredentials(webDriver, userCredentials)
     val clickableElement = webDriver.findElement(By.cssSelector("[name='login']"))
     clickableElement.click()
   }
 
-  def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials) = {
+  def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
     val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
     val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
 

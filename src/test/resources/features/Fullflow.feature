@@ -1,20 +1,21 @@
 #Feature will not work with chromedriver in headless mode due to following bug: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
-Feature: Full user journey
 
+Feature: Full user journey
   Scenario: Full transfer workflow
     Given A logged out user
     When the user navigates to TDR Home Page
     And the user clicks on the Start now button
     And the logged out user enters valid credentials
     And the user clicks the continue button
-    Then the user should be at the dashboard page
+    Then the user should be on the dashboard page
     When the logged in user navigates to the series page
     And the user selects the series MOCK1 123
     And the user clicks the continue button
-    Then the user should be at the transfer-agreement page
+    Then the user should be on the transfer-agreement page
     When the user selects yes to all transfer agreement checks
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
     Then the user will be on a page with the title Upload Records
-    When the user uploads a file
+    When the user selects a directory
+    And the user clicks the continue button
     Then the user will be on a page with the title Records

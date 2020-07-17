@@ -73,10 +73,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     login()
   }
 
-  Given("^an existing user") {
-    userId = KeycloakClient.createUser(userCredentials)
-  }
-
   And("^the user is logged in on the (.*) page") {
     page: String =>
       loadPage(page)
@@ -87,7 +83,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.get(s"$baseUrl")
   }
 
-  Then("^the logged out user enters valid credentials") {
+  And("^the logged out user enters valid credentials") {
     StepsUtility.enterUserCredentials(webDriver, userCredentials)
   }
 
@@ -115,31 +111,23 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   }
 
-  Then("^the logged out user should be at the (.*) page") {
-    page: String =>
+  Then("^the logged out user should be on the auth page") {
       val currentUrl: String = webDriver.getCurrentUrl
-
-      Assert.assertTrue(currentUrl.startsWith(s"$authUrl/$page"))
-  }
-
-  Then("^the user should be at the (.*) page") {
-    page: String =>
-      val currentUrl: String = webDriver.getCurrentUrl
-
-      Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
-  }
-
-  And("^the user navigates to the (.*) page") {
-    page: String =>
-      val currentUrl: String = webDriver.getCurrentUrl
-
-      Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+      Assert.assertTrue(currentUrl.startsWith(s"$authUrl/auth"))
   }
 
   Then("^the user will remain on the (.*) page") {
     page: String =>
+    val currentUrl: String = webDriver.getCurrentUrl
+    val url = if (page == "auth") authUrl else baseUrl
+    Assert.assertTrue(currentUrl.startsWith(s"$url/$page"))
+  }
+
+  Then("^the user should be on the (.*) page") {
+    page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
-      Assert.assertTrue(currentUrl.startsWith(s"$authUrl/$page"))
+
+      Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
   Then("^the user will be on a page with the title (.*)") {
@@ -150,7 +138,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  Then("^the user should see a user specific general error (.*)") {
+  Then("^the user should see a user-specific general error (.*)") {
     errorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector("#general-error"))
       Assert.assertNotNull(errorElement)
@@ -173,29 +161,22 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertEquals(s"Error:\n" + formErrorMessage, errorElement.getText)
   }
 
-  Then("^the user should see the (.*) dropdown values (.*)") {
-    (name: String, expectedValues: String) =>
+  Then("^the user should see the series dropdown values (.*)") {
+    expectedValues: String =>
       val seriesList: List[String] = expectedValues.split(",").toList
-      val seriesDropdown = new Select(webDriver.findElement(By.name(name)))
+      val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       val seriesText: List[String] = seriesDropdown.getOptions.asScala.map(_.getText).toList.tail
 
       Assert.assertEquals(seriesList, seriesText)
   }
 
-  Then("^the user should see an empty (.*) dropdown") {
-    name: String =>
-      val seriesDropdown = new Select(webDriver.findElement(By.name(name)))
+  Then("^the user should see an empty series dropdown") {
+      val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       val seriesText: List[String] = seriesDropdown.getOptions.asScala.map(_.getText).toList.tail
       Assert.assertTrue(seriesText.isEmpty)
   }
 
-  Then("^the logged in user should stay at the (.*) page") {
-    page: String =>
-      val currentUrl: String = webDriver.getCurrentUrl
-      Assert.assertTrue(currentUrl.startsWith(s"$baseUrl/$page"))
-  }
-
-  And ("^the user selects the series (.*)") {
+  And("^the user selects the series (.*)") {
     selectedSeries: String =>
       val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       seriesDropdown.selectByVisibleText(selectedSeries)
@@ -249,7 +230,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createTransferAgreement(consignmentId)
   }
 
-  When("^the user uploads a file") {
+  When("^the user selects a directory") {
     new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
       val executor = driver.asInstanceOf[JavascriptExecutor]
       executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
@@ -257,7 +238,6 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     val input = webDriver.findElement(By.cssSelector("#file-selection"))
     input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/testfile1")
-    webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 
   Then("^the (.*) should be visible") {
@@ -283,5 +263,17 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the (.*) link") {
     linkClicked: String =>
       webDriver.findElement(By.linkText(linkClicked)).click()
+  }
+
+  When("^the user clicks their browser's back button") {
+    webDriver.navigate().back()
+  }
+
+  Then("^the user should see the upload error message \"(.*)\"") {
+    errorMessage: String =>
+      val errorElement = webDriver.findElement(By.cssSelector(".upload-error__message"))
+      Assert.assertNotNull(errorElement)
+      val specificError = errorMessage.replace("{consignmentId}", s"$consignmentId")
+      Assert.assertTrue(errorElement.getText.contains(specificError))
   }
 }

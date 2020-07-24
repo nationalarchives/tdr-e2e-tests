@@ -1,4 +1,5 @@
 #Feature will not work with chromedriver in headless mode due to following bug: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
+@wip
 Feature: Upload
   Scenario: The progress bar is hidden before file upload
     Given an existing user

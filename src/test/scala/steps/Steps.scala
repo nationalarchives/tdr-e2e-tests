@@ -144,7 +144,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 60).until((driver: WebDriver) => {
         val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
         page == pageTitle
       })
@@ -256,7 +256,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     })
 
     val input = webDriver.findElement(By.cssSelector("#file-selection"))
-    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/testfile1")
+    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/largefile")
     webDriver.findElement(By.cssSelector(".govuk-button")).click()
   }
 

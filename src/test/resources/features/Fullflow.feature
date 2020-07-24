@@ -16,5 +16,5 @@ Feature: Full user journey
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
     Then the user will be on a page with the title Upload Records
-    When the user uploads a file
+    When the user uploads file: testfile1
     Then the user will be on a page with the title Records

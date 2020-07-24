@@ -21,6 +21,7 @@ object StepsUtility {
   }
 
   def elementHasClassHide(id: String, webDriver: WebDriver): Boolean = {
+    println("Element Has Class Hide URL: " + webDriver.getCurrentUrl)
     val element = webDriver.findElement(By.cssSelector(s"#$id"))
     element.getAttribute("class").contains("hide")
   }

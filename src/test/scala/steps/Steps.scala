@@ -144,7 +144,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
-      new WebDriverWait(webDriver, 60).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
         val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
         page == pageTitle
       })
@@ -249,15 +249,17 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createTransferAgreement(consignmentId)
   }
 
-  When("^the user uploads a file") {
-    new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
-      val executor = driver.asInstanceOf[JavascriptExecutor]
-      executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
-    })
+  When("^the user uploads file: (.*)") {
+    (fileName: String) => {
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val executor = driver.asInstanceOf[JavascriptExecutor]
+        executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
+      })
 
-    val input = webDriver.findElement(By.cssSelector("#file-selection"))
-    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/largefile")
-    webDriver.findElement(By.cssSelector(".govuk-button")).click()
+      val input = webDriver.findElement(By.cssSelector("#file-selection"))
+      input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${fileName}")
+      webDriver.findElement(By.cssSelector(".govuk-button")).click()
+    }
   }
 
   Then("^the (.*) should be visible") {

@@ -13,7 +13,7 @@ Feature: Upload
     And an existing consignment for transferring body MOCK1 Department
     And an existing transfer agreement
     And the user is logged in on the upload page
-    When the user uploads a file
+    When the user uploads file: largefile
     Then the progress bar should be visible
 
   Scenario: The records page is shown when the upload is completed
@@ -21,5 +21,5 @@ Feature: Upload
     Given an existing consignment for transferring body MOCK1 Department
     And an existing transfer agreement
     And the user is logged in on the upload page
-    When the user uploads a file
+    When the user uploads file: testfile1
     Then the user will be on a page with the title Records

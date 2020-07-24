@@ -230,14 +230,16 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createTransferAgreement(consignmentId)
   }
 
-  When("^the user selects a directory") {
-    new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
-      val executor = driver.asInstanceOf[JavascriptExecutor]
-      executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
-    })
+  When("^the user selects directory containing: (.*)") {
+    (fileName: String) => {
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+        val executor = driver.asInstanceOf[JavascriptExecutor]
+        executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
+      })
 
-    val input = webDriver.findElement(By.cssSelector("#file-selection"))
-    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/testfile1")
+      val input = webDriver.findElement(By.cssSelector("#file-selection"))
+      input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${fileName}")
+    }
   }
 
   Then("^the (.*) should be visible") {

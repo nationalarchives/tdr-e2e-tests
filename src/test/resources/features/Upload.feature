@@ -13,7 +13,7 @@ Feature: Upload
     And an existing consignment for transferring body MOCK1 Department
     And an existing transfer agreement
     And the user is logged in on the upload page
-    When the user selects a directory
+    When the user selects directory containing: largefile
     And the user clicks the continue button
     Then the progress bar should be visible
 
@@ -22,7 +22,7 @@ Feature: Upload
     And an existing consignment for transferring body MOCK1 Department
     And an existing transfer agreement
     And the user is logged in on the upload page
-    When the user selects a directory
+    When the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user will be on a page with the title Records
 
@@ -31,10 +31,10 @@ Feature: Upload
     And an existing consignment for transferring body MOCK1 Department
     And an existing transfer agreement
     And the user is logged in on the upload page
-    When the user selects a directory
+    When the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user will be on a page with the title Records
     When the user clicks their browser's back button
-    And the user selects a directory
+    And the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user should see the upload error message "Upload already occurred for consignment: {consignmentId}"

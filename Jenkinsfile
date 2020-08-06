@@ -1,4 +1,5 @@
 library("tdr-jenkinslib")
+def repo = "tdr-e2e-tests"
 
 pipeline {
   agent {
@@ -10,6 +11,16 @@ pipeline {
     choice(name: "BROWSER", choices: ["firefox", "chrome"], description: "The browser to run the tests in")
   }
   stages {
+    stage("Run git secrets") {
+      agent {
+        label "master"
+      }
+      steps {
+        script {
+          tdr.runGitSecrets(repo)
+        }
+      }
+    }
     stage ("Retrieve Keycloak credentials for environment") {
       agent {
         ecs {

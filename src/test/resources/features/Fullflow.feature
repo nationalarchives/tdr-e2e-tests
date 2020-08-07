@@ -18,4 +18,4 @@ Feature: Full user journey
     Then the user will be on a page with the title Upload Records
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title Records
+    Then the user will be on a page with the title Checking your records

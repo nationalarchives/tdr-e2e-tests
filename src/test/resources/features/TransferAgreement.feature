@@ -7,7 +7,7 @@ Feature: Transfer Agreement Page
     When the user selects yes to all transfer agreement checks
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
-    Then the user will be on a page with the title Upload Records
+    Then the user will be on a page with the title "Upload Records"
 
   Scenario: A logged in user submits Transfer Agreement without DRO approval
     Given A logged out user

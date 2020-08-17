@@ -14,7 +14,7 @@ It currently run tests against the Chrome browser only.
    
    (a) Download and unzip chromedriver locally: https://chromedriver.chromium.org/downloads
    * **NOTE:** Ensure the chromedriver version is compatible with the local Chrome browser version
-   (b) Download and unzip geckodriver locally: https://github.com/mozilla/geckodriver/releases/download
+   (b) Download and unzip geckodriver locally: https://github.com/mozilla/geckodriver/releases
  
 4. Clone the TDR End to End Tests project
 

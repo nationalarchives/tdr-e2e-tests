@@ -4,8 +4,7 @@ Feature: File Checks Page
     Given A logged out user
     And an existing consignment for transferring body MOCK1 Department
     And an existing transfer agreement
-    And the user is logged in on the upload page
-    And the user selects directory containing: testfile1
-    When the user clicks the continue button
+    And an existing upload
+    And the user is logged in on the records page
     Then the user will be on a page with the title "Checking your records"
     And the av metadata progress bar should be visible

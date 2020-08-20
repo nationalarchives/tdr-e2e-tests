@@ -26,6 +26,8 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val input = AddTransferAgreementInput(consignmentId, Some(true), Some(true), Some(true), Some(true), Some(true), Some(true))
     client.result(ata.document, ata.Variables(input))
   }
+
+
 }
 
 object GraphqlUtility {

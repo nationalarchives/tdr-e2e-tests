@@ -7,12 +7,15 @@ scalaVersion := "2.13.1"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test
 libraryDependencies += "org.keycloak" % "keycloak-core" % "9.0.0" % Test
 libraryDependencies += "org.keycloak" % "keycloak-admin-client" % "9.0.0" % Test
-libraryDependencies += "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.12"
-libraryDependencies += "uk.gov.nationalarchives" %% "tdr-generated-graphql" % "0.0.48"
+libraryDependencies += "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.13"
+libraryDependencies += "uk.gov.nationalarchives" %% "tdr-generated-graphql" % "0.0.59"
 libraryDependencies += "io.circe" %% "circe-core" % "0.13.0"
 libraryDependencies += "io.circe" %% "circe-generic" % "0.13.0"
 libraryDependencies += "com.softwaremill.sttp.client" %% "core" % "2.1.1"
 libraryDependencies += "com.softwaremill.sttp.client" %% "circe" % "2.1.1"
+libraryDependencies += "software.amazon.awssdk" % "s3" % "2.13.73"
+libraryDependencies += "com.github.seratch" %% "awscala" % "0.8.+"
+
 
 libraryDependencies ++= Seq(
   "io.cucumber" % "cucumber-core" % "4.7.1" % "test",

@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
+import helpers.UploadS3
 import helpers.graphql.GraphqlUtility
 import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
@@ -15,6 +16,8 @@ import org.scalatest.Matchers
 
 import scala.jdk.CollectionConverters._
 import helpers.drivers.DriverUtility._
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3Client
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -228,6 +231,12 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^an existing transfer agreement") {
     val client = GraphqlUtility(userCredentials)
     client.createTransferAgreement(consignmentId)
+  }
+
+  And("^an existing upload") {
+    val region: Region = Region.EU_WEST_2
+    val s3 = S3Client.builder.region(region).build
+    UploadS3.uploadToS3(s3, userId, consignmentId)
   }
 
   When("^the user selects directory containing: (.*)") {

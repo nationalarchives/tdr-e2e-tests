@@ -4,17 +4,16 @@ import java.util.UUID
 
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
+import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
 import helpers.steps.StepsUtility
 import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
 import org.junit.Assert
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.support.ui.{ExpectedConditions, Select, WebDriverWait}
-import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
+import org.openqa.selenium.support.ui.{Select, WebDriverWait}
+import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver}
 import org.scalatest.Matchers
 
 import scala.jdk.CollectionConverters._
-import helpers.drivers.DriverUtility._
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -132,7 +131,9 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 10)
+        .ignoring(classOf[StaleElementReferenceException])
+        .until((driver: WebDriver) => {
         val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
         page == pageTitle
       })
@@ -238,7 +239,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
 
       val input = webDriver.findElement(By.cssSelector("#file-selection"))
-      input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${fileName}")
+      input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
     }
   }
 

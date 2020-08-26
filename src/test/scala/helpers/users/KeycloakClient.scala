@@ -26,7 +26,7 @@ object KeycloakClient {
   private val realm: RealmResource = keyCloakAdminClient.realm("tdr")
   private val userResource: UsersResource = realm.users()
 
-  def createUser(userCredentials: UserCredentials, body: Option[String] = Some("MOCK1 Department")): String = {
+  def createUser(userCredentials: UserCredentials, body: Option[String] = Some("MOCK1")): String = {
 
     val userRepresentation: UserRepresentation = new UserRepresentation
 

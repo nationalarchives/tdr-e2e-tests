@@ -28,10 +28,7 @@ pipeline {
       steps {
         script {
           account_number = tdr.getAccountNumberFromStage(params.STAGE)
-          keycloak_user_key = "/${params.STAGE}/keycloak/admin/user"
-          keycloak_password_key = "/${params.STAGE}/keycloak/admin/password"
-          keycloak_user = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_user_key}", returnStdout: true).trim()
-          keycloak_password = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} ${keycloak_password_key}", returnStdout: true).trim()
+          tdr_realm_admin_client_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/realm_admin_client/secret", returnStdout: true).trim()
         }
       }
     }
@@ -73,7 +70,7 @@ pipeline {
               //Hide the output of the test command to stop keycloak credentials appearing in console output
               sh """
                 set +x
-                sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user=${keycloak_user} -Dkeycloak.password=${keycloak_password} -Dbrowser=${params.BROWSER}
+                sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.realm.secret=${tdr_realm_admin_client_secret} -Dbrowser=${params.BROWSER}
               """
             }
           }

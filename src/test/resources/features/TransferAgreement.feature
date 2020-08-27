@@ -2,7 +2,7 @@ Feature: Transfer Agreement Page
 
   Scenario: A logged in user completes the Transfer Agreement form correctly
     Given A logged out user
-    And an existing consignment for transferring body MOCK1 Department
+    And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes to all transfer agreement checks
     And the user confirms that DRO has signed off on the records
@@ -11,7 +11,7 @@ Feature: Transfer Agreement Page
 
   Scenario: A logged in user submits Transfer Agreement without DRO approval
     Given A logged out user
-    And an existing consignment for transferring body MOCK1 Department
+    And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes to all transfer agreement checks
     And the user does not confirm DRO sign off for the records
@@ -20,7 +20,7 @@ Feature: Transfer Agreement Page
 
   Scenario: A logged in user submits Transfer Agreement without responding yes to all questions
     Given A logged out user
-    And an existing consignment for transferring body MOCK1 Department
+    And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes for all checks except "The records are all Digital"
     And the user confirms that DRO has signed off on the records

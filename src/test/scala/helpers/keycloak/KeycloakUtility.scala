@@ -10,7 +10,7 @@ import scala.language.postfixOps
 object KeycloakUtility {
   val configuration = ConfigFactory.load
 
-  def bearerAccessToken(requestBody: Map[String, String]) = {
+  def bearerAccessToken(requestBody: Map[String, String]): BearerAccessToken = {
 
     implicit val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
 

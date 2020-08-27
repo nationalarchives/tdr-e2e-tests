@@ -2,7 +2,7 @@ package helpers.graphql
 
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import com.typesafe.config.ConfigFactory
-import helpers.users.UserCredentials
+import helpers.keycloak.{KeycloakUtility, UserCredentials}
 import io.circe.generic.auto._
 import io.circe.{Decoder, Encoder}
 import sangria.ast.Document

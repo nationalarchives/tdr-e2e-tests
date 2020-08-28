@@ -16,19 +16,20 @@ object KeycloakClient {
 
   private val configuration = ConfigFactory.load()
   private val authUrl: String = configuration.getString("tdr.auth.url")
-  private val realmClientSecret: String = System.getProperty("keycloak.realm.secret")
+  private val userAdminClient: String = configuration.getString("keycloak.user.admin.client")
+  private val userAdminSecret: String = System.getProperty("keycloak.user.admin.secret")
   private val token: BearerAccessToken = {
     KeycloakUtility.bearerAccessToken(Map(
       "grant_type" -> "client_credentials",
-      "client_id" -> "tdr-realm-admin",
-      "client_secret" -> realmClientSecret
+      "client_id" -> userAdminClient,
+      "client_secret" -> userAdminSecret
     ))
   }
 
   private val keyCloakAdminClient: Keycloak = Keycloak.getInstance(
     s"$authUrl/auth",
     "tdr",
-    "tdr-realm-admin",
+    userAdminClient,
     token.getValue
   )
 

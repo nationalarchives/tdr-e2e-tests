@@ -2,11 +2,9 @@
 
 This repository provides end to end test for the TDR application.
 
-It currently run tests against the Chrome browser only.
-
 ## Running Tests Locally
 
-1. Set up TDR frontend application locally (including keycloak and redis): https://github.com/nationalarchives/tdr-transfer-frontend/blob/master/README.md
+1. Set up TDR frontend application to run the full stack locally: https://github.com/nationalarchives/tdr-transfer-frontend/blob/master/README.md
 
 2. Ensure that the Chrome/Firefox browsers are available locally
 
@@ -31,11 +29,10 @@ It currently run tests against the Chrome browser only.
 
 7. Run the tests
    ```
-   $ sbt test -Dconfig.file=application.conf -Dkeycloak.user=[local keycloak admin user] -Dkeycloak.password=[local keycloak admin user password]
+   $ sbt test -Dconfig.file=application.conf -Dkeycloak.user.admin.secret=[local tdr user admin client secret]
    ```
-   * `-Dkeycloak.user`: this should be the administrator user name set for the local Keycloak server when setting up the TDR frontend application
-   * `-Dkeycloak.password`: this should be the administrator user password set for the local Keycloak server when setting up the TDR frontend application
-
+   * `-Dkeycloak.user.admin.secret`: this should the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
+   
 ### "Headless" Chromedriver option
 
 To view the tests running in the Chrome browser locally change the chromedriver option in the StepsUtility.scala to "false":

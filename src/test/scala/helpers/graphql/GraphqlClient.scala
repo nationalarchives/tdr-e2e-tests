@@ -5,7 +5,7 @@ import com.typesafe.config.ConfigFactory
 import helpers.keycloak.{KeycloakUtility, UserCredentials}
 import io.circe.{Decoder, Encoder}
 import sangria.ast.Document
-import uk.gov.nationalarchives.tdr.GraphQLClient
+import uk.gov.nationalarchives.tdr.{GraphQLClient, GraphQlResponse}
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global

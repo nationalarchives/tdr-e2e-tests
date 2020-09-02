@@ -5,7 +5,9 @@ import java.util.UUID
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
-import graphql.codegen.types.{AddConsignmentInput, AddTransferAgreementInput}
+import graphql.codegen.AddFiles.addFiles.{AddFiles => af}
+import graphql.codegen.AddAntivirusMetadata.{AddAntivirusMetadata => aav}
+import graphql.codegen.types.{AddConsignmentInput, AddTransferAgreementInput, AddFilesInput, AddAntivirusMetadataInput}
 import helpers.keycloak.UserCredentials
 
 class GraphqlUtility(userCredentials: UserCredentials) {
@@ -26,6 +28,12 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val input = AddTransferAgreementInput(consignmentId, Some(true), Some(true), Some(true), Some(true), Some(true), Some(true))
     client.result(ata.document, ata.Variables(input))
   }
+
+//  def createFiles(fileId: UUID, consignmentId: UUID): Unit = {
+//    val client = GraphqlClient[af]
+//  }
+
+  def createAVMetadata(consignmentId: UUID): Unit = {}
 }
 
 object GraphqlUtility {

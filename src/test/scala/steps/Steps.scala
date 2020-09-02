@@ -11,7 +11,7 @@ import helpers.steps.StepsUtility
 import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{Select, WebDriverWait}
-import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
+import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver}
 import org.scalatest.Matchers
 
 import scala.jdk.CollectionConverters._
@@ -132,7 +132,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
       new WebDriverWait(webDriver, 10)
-        .ignoring(classOf[StaleElementReferenceException])
+        .ignoring(classOf[StaleElementReferenceException])  // ignore exception until css class appears on page
         .until((driver: WebDriver) => {
         val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
         page == pageTitle

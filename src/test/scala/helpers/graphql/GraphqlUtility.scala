@@ -6,7 +6,7 @@ import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
 import graphql.codegen.types.{AddConsignmentInput, AddTransferAgreementInput}
-import helpers.users.UserCredentials
+import helpers.keycloak.UserCredentials
 
 class GraphqlUtility(userCredentials: UserCredentials) {
 

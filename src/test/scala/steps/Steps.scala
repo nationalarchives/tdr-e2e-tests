@@ -6,11 +6,12 @@ import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
+import helpers.keycloak.{KeycloakClient, UserCredentials}
 import helpers.steps.StepsUtility
-import helpers.users.{KeycloakClient, RandomUtility, UserCredentials}
+import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{Select, WebDriverWait}
-import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver}
+import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
 import org.scalatest.Matchers
 
 import scala.jdk.CollectionConverters._
@@ -26,7 +27,6 @@ class Steps extends ScalaDsl with EN with Matchers {
   val userName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
   val userCredentials: UserCredentials = UserCredentials(userName, password)
-
 
   Before() { scenario =>
     webDriver = initDriver

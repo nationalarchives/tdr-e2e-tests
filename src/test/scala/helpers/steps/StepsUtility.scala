@@ -1,8 +1,7 @@
 package helpers.steps
 
-import helpers.users.UserCredentials
+import helpers.keycloak.UserCredentials
 import org.openqa.selenium.{By, WebDriver}
-import org.openqa.selenium.chrome.ChromeOptions
 
 object StepsUtility {
 

@@ -131,9 +131,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title (.*)") {
     page: String =>
-      new WebDriverWait(webDriver, 10)
-        .ignoring(classOf[StaleElementReferenceException])  // ignore exception until css class appears on page
-        .until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
         val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
         page == pageTitle
       })

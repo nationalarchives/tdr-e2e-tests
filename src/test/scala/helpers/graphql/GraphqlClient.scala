@@ -23,8 +23,16 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
     "password" -> userCredentials.password,
     "client_id" -> "tdr-fe"
   )
+  def userToken: BearerAccessToken = {
+    KeycloakUtility.bearerAccessToken(body)
+  }
 
-  private val backendChecksSecret: String = System.getProperty("keycloak.backendchecks.secret")
+  def result(document: Document, variables: Variables) = {
+    val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
+    Await.result(client.getResult(userToken, document, Some(variables)), 10 seconds)
+  }
+
+  private val backendChecksSecret: String = configuration.getString("keycloak.backendchecks.secret")
 
   private val backendChecksToken: BearerAccessToken = {
     KeycloakUtility.bearerAccessToken(Map(
@@ -37,15 +45,6 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
   def backendChecksResult(document: Document, variables: Variables) = {
     val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
     Await.result(client.getResult(backendChecksToken, document, Some(variables)), 10 seconds)
-  }
-
-  def userToken: BearerAccessToken = {
-    KeycloakUtility.bearerAccessToken(body)
-  }
-
-  def result(document: Document, variables: Variables) = {
-    val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
-    Await.result(client.getResult(userToken, document, Some(variables)), 10 seconds)
   }
 
 }

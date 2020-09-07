@@ -35,7 +35,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   After() { scenario =>
-//    webDriver.quit()
+    webDriver.quit()
     KeycloakClient.deleteUser(userId)
   }
 

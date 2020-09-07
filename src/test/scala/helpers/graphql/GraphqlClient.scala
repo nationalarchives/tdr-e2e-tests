@@ -24,7 +24,7 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
     "client_id" -> "tdr-fe"
   )
 
-  private val backendChecksSecret: String = System.getenv("BACKEND_CHECKS_CLIENT_SECRET")
+  private val backendChecksSecret: String = System.getProperty("keycloak.backendchecks.secret")
 
   private val backendChecksToken: BearerAccessToken = {
     KeycloakUtility.bearerAccessToken(Map(

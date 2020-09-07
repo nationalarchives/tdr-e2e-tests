@@ -5,10 +5,11 @@ import java.util.UUID
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
-import graphql.codegen.AddFiles.addFiles.{AddFiles => af}
+import graphql.codegen.AddFiles.{addFiles => af}
 import graphql.codegen.AddAntivirusMetadata.{AddAntivirusMetadata => aav}
-import graphql.codegen.types.{AddConsignmentInput, AddTransferAgreementInput, AddFilesInput, AddAntivirusMetadataInput}
+import graphql.codegen.types.{AddAntivirusMetadataInput, AddConsignmentInput, AddFilesInput, AddTransferAgreementInput}
 import helpers.keycloak.UserCredentials
+import uk.gov.nationalarchives.tdr.GraphQlResponse
 
 class GraphqlUtility(userCredentials: UserCredentials) {
 
@@ -29,11 +30,18 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(ata.document, ata.Variables(input))
   }
 
-//  def createFiles(fileId: UUID, consignmentId: UUID): Unit = {
-//    val client = GraphqlClient[af]
-//  }
+  def createFiles(consignmentId: UUID): List[UUID] = {
+    val client = GraphqlClient[af.Data, af.Variables](userCredentials)
+    val input = AddFilesInput(consignmentId, 4)
+    client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
+  }
 
-  def createAVMetadata(consignmentId: UUID): Unit = {}
+  def createAVMetadata(fileId: UUID): GraphQlResponse[aav.Data] = {
+    val client = GraphqlClient[aav.Data, aav.Variables](userCredentials)
+    val input = AddAntivirusMetadataInput(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", "E2E test result", System.currentTimeMillis)
+    client.backendChecksResult(aav.document, aav.Variables(input))
+  }
+
 }
 
 object GraphqlUtility {

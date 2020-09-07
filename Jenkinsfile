@@ -29,6 +29,7 @@ pipeline {
         script {
           account_number = tdr.getAccountNumberFromStage(params.STAGE)
           tdr_user_admin_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/user_admin_client/secret", returnStdout: true).trim()
+          tdr_backend_checks_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/backend_checks_client/secret", returnStdout: true).trim()
         }
       }
     }
@@ -88,25 +89,6 @@ pipeline {
             }
           }
         }
-      }
-    }
-  }
-  post {
-
-    failure {
-      script {
-        tdr.postToDaTdrSlackChannel(colour: "danger",
-                      message: " :warning: *End to end tests have failed*\n *TDR Environment*: ${params.STAGE}\n" +
-                                              "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
-        )
-      }
-    }
-    fixed {
-      script {
-        tdr.postToDaTdrSlackChannel(colour: "good",
-                      message: " :green_heart: *End to end tests have succeeded after previous failure*\n *TDR Environment*: ${params.STAGE}\n" +
-                                                  "  *Deploy Job*: ${DEPLOY_JOB_URL} \n *Cucumber report*: ${BUILD_URL}cucumber-html-reports/overview-features.html"
-        )
       }
     }
   }

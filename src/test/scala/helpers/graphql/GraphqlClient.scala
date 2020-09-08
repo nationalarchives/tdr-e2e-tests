@@ -17,24 +17,30 @@ import scala.language.postfixOps
 class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit val decoder: Decoder[Data], val encoder: Encoder[Variables]) {
   implicit val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
   val configuration = ConfigFactory.load
+
   val body: Map[String, String] = Map(
     "grant_type" -> "password",
     "username" -> userCredentials.userName,
     "password" -> userCredentials.password,
     "client_id" -> "tdr-fe"
   )
+
   def userToken: BearerAccessToken = {
     KeycloakUtility.bearerAccessToken(body)
   }
 
-  def result(document: Document, variables: Variables) = {
+  private def sendApiRequest(document: Document, variables: Variables, token: BearerAccessToken) = {
     val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
-    Await.result(client.getResult(userToken, document, Some(variables)), 10 seconds)
+    Await.result(client.getResult(token, document, Some(variables)), 10 seconds)
+  }
+
+  def result(document: Document, variables: Variables): GraphQlResponse[Data] = {
+    sendApiRequest(document, variables, userToken)
   }
 
   private val backendChecksSecret: String = configuration.getString("keycloak.backendchecks.secret")
 
-  private val backendChecksToken: BearerAccessToken = {
+  def backendChecksToken: BearerAccessToken = {
     KeycloakUtility.bearerAccessToken(Map(
       "grant_type" -> "client_credentials",
       "client_id" -> "tdr-backend-checks",
@@ -42,9 +48,8 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
     ))
   }
 
-  def backendChecksResult(document: Document, variables: Variables) = {
-    val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
-    Await.result(client.getResult(backendChecksToken, document, Some(variables)), 10 seconds)
+  def backendChecksResult(document: Document, variables: Variables): GraphQlResponse[Data] = {
+    sendApiRequest(document, variables, backendChecksToken)
   }
 
 }

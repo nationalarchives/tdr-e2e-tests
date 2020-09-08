@@ -25,22 +25,20 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
     "client_id" -> "tdr-fe"
   )
 
-  def userToken: BearerAccessToken = {
+  private def userToken: BearerAccessToken = {
     KeycloakUtility.bearerAccessToken(body)
   }
 
-  private def sendApiRequest(document: Document, variables: Variables, token: BearerAccessToken) = {
-    val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
-    Await.result(client.getResult(token, document, Some(variables)), 10 seconds)
-  }
-
   def result(document: Document, variables: Variables): GraphQlResponse[Data] = {
-    sendApiRequest(document, variables, userToken)
+    GraphqlClient.sendApiRequest(document, variables, userToken)
   }
+}
 
+class BackendApiClient[Data, Variables](implicit val decoder: Decoder[Data], val encoder: Encoder[Variables]) {
+  val configuration = ConfigFactory.load
   private val backendChecksSecret: String = configuration.getString("keycloak.backendchecks.secret")
 
-  def backendChecksToken: BearerAccessToken = {
+  private def backendChecksToken: BearerAccessToken = {
     KeycloakUtility.bearerAccessToken(Map(
       "grant_type" -> "client_credentials",
       "client_id" -> "tdr-backend-checks",
@@ -48,12 +46,19 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
     ))
   }
 
-  def backendChecksResult(document: Document, variables: Variables): GraphQlResponse[Data] = {
-    sendApiRequest(document, variables, backendChecksToken)
+  def sendRequest(document: Document, variables: Variables): GraphQlResponse[Data] = {
+    GraphqlClient.sendApiRequest(document, variables, backendChecksToken)
   }
-
 }
 
 object GraphqlClient {
   def apply[Data, Variables](userCredentials: UserCredentials)(implicit decoder: Decoder[Data], encoder: Encoder[Variables]): GraphqlClient[Data, Variables] = new GraphqlClient(userCredentials)(decoder, encoder)
+
+  implicit private val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
+  private val configuration = ConfigFactory.load
+
+  def sendApiRequest[Data, Variables](document: Document, variables: Variables, token: BearerAccessToken)(implicit decoder: Decoder[Data], encoder: Encoder[Variables]) = {
+    val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
+    Await.result(client.getResult(token, document, Some(variables)), 10 seconds)
+  }
 }

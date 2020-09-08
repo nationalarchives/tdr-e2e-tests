@@ -37,9 +37,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   }
 
   def createAVMetadata(fileId: UUID): GraphQlResponse[aav.Data] = {
-    val client = GraphqlClient[aav.Data, aav.Variables](userCredentials)
+    val client = new BackendApiClient[aav.Data, aav.Variables]
     val input = AddAntivirusMetadataInput(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", "E2E test result", System.currentTimeMillis)
-    client.backendChecksResult(aav.document, aav.Variables(input))
+    client.sendRequest(aav.document, aav.Variables(input))
   }
 
 }

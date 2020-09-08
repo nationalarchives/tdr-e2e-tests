@@ -12,7 +12,7 @@ import helpers.steps.StepsUtility
 import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{Select, WebDriverWait}
-import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
+import org.openqa.selenium.{By, JavascriptExecutor, WebDriver, WebElement}
 import org.scalatest.Matchers
 import uk.gov.nationalarchives.tdr.GraphQlResponse
 
@@ -271,10 +271,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^the av metadata progress bar should have (.*)% progress") {
-    (barProgress: String) => {
-      val avProgress: String = webDriver.findElement(By.id("av-metadata-progress-bar")).getAttribute("value")
-      Assert.assertTrue(barProgress == avProgress)
+  And("^the (.*) should have (.*)% progress") {
+    (targetIdName: String, percentageProgress: String) => {
+      val fixedId: String = targetIdName.replaceAll(" ", "-")
+      val progressBar = webDriver.findElement(By.id(fixedId)).getAttribute("id")
+      val avProgress: String = webDriver.findElement(By.id(s"${fixedId}")).getAttribute("value")
+      Assert.assertTrue(progressBar == fixedId)
+      Assert.assertTrue(percentageProgress == avProgress)
     }
   }
 

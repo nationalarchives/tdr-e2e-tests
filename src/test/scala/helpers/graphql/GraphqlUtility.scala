@@ -14,24 +14,24 @@ import uk.gov.nationalarchives.tdr.GraphQlResponse
 class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createConsignment(body: String): Option[ac.Data] = {
-    val client = GraphqlClient[ac.Data, ac.Variables](userCredentials)
+    val client = new UserApiClient[ac.Data, ac.Variables](userCredentials)
     val seriesId = getSeries(body).get.getSeries.head.seriesid
     client.result(ac.document, ac.Variables(AddConsignmentInput(seriesId))).data
   }
 
   def getSeries(body: String): Option[gs.Data] = {
-    val client = GraphqlClient[gs.Data, gs.Variables](userCredentials)
+    val client = new UserApiClient[gs.Data, gs.Variables](userCredentials)
     client.result(gs.document, gs.Variables(body)).data
   }
 
   def createTransferAgreement(consignmentId: UUID): Unit = {
-    val client = GraphqlClient[ata.Data, ata.Variables](userCredentials)
+    val client = new UserApiClient[ata.Data, ata.Variables](userCredentials)
     val input = AddTransferAgreementInput(consignmentId, Some(true), Some(true), Some(true), Some(true), Some(true), Some(true))
     client.result(ata.document, ata.Variables(input))
   }
 
   def createFiles(consignmentId: UUID): List[UUID] = {
-    val client = GraphqlClient[af.Data, af.Variables](userCredentials)
+    val client = new UserApiClient[af.Data, af.Variables](userCredentials)
     val input = AddFilesInput(consignmentId, 4)
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }

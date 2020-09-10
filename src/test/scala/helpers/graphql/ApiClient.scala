@@ -2,7 +2,6 @@ package helpers.graphql
 
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import com.typesafe.config.ConfigFactory
-import helpers.keycloak.KeycloakClient.configuration
 import helpers.keycloak.{KeycloakUtility, UserCredentials}
 import io.circe.{Decoder, Encoder}
 import sangria.ast.Document
@@ -14,10 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit val decoder: Decoder[Data], val encoder: Encoder[Variables]) {
-  implicit val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
-  val configuration = ConfigFactory.load
-
+class UserApiClient[Data, Variables](userCredentials: UserCredentials)(implicit val decoder: Decoder[Data], val encoder: Encoder[Variables]) {
   val body: Map[String, String] = Map(
     "grant_type" -> "password",
     "username" -> userCredentials.userName,
@@ -30,7 +26,7 @@ class GraphqlClient[Data, Variables](userCredentials: UserCredentials)(implicit 
   }
 
   def result(document: Document, variables: Variables): GraphQlResponse[Data] = {
-    GraphqlClient.sendApiRequest(document, variables, userToken)
+    ApiClient.sendApiRequest(document, variables, userToken)
   }
 }
 
@@ -47,13 +43,11 @@ class BackendApiClient[Data, Variables](implicit val decoder: Decoder[Data], val
   }
 
   def sendRequest(document: Document, variables: Variables): GraphQlResponse[Data] = {
-    GraphqlClient.sendApiRequest(document, variables, backendChecksToken)
+    ApiClient.sendApiRequest(document, variables, backendChecksToken)
   }
 }
 
-object GraphqlClient {
-  def apply[Data, Variables](userCredentials: UserCredentials)(implicit decoder: Decoder[Data], encoder: Encoder[Variables]): GraphqlClient[Data, Variables] = new GraphqlClient(userCredentials)(decoder, encoder)
-
+object ApiClient {
   implicit private val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
   private val configuration = ConfigFactory.load
 

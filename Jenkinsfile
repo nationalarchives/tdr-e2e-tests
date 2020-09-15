@@ -29,6 +29,7 @@ pipeline {
         script {
           account_number = tdr.getAccountNumberFromStage(params.STAGE)
           tdr_user_admin_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/user_admin_client/secret", returnStdout: true).trim()
+          tdr_backend_checks_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/backend_checks_client/secret", returnStdout: true).trim()
         }
       }
     }
@@ -70,7 +71,7 @@ pipeline {
               //Hide the output of the test command to stop keycloak credentials appearing in console output
               sh """
                 set +x
-                sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user.admin.secret=${tdr_user_admin_secret} -Dbrowser=${params.BROWSER}
+                sbt test -Dconfig.file=application.${params.STAGE}.conf -Dkeycloak.user.admin.secret=${tdr_user_admin_secret} -Dkeycloak.backendchecks.secret=${tdr_backend_checks_secret} -Dbrowser=${params.BROWSER}
               """
             }
           }
@@ -92,7 +93,6 @@ pipeline {
     }
   }
   post {
-
     failure {
       script {
         tdr.postToDaTdrSlackChannel(colour: "danger",
@@ -111,4 +111,3 @@ pipeline {
     }
   }
 }
-

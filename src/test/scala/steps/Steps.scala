@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
+import graphql.codegen.AddFiles.addFiles
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
 import helpers.keycloak.{KeycloakClient, UserCredentials}
@@ -11,8 +12,9 @@ import helpers.steps.StepsUtility
 import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{Select, WebDriverWait}
-import org.openqa.selenium.{By, JavascriptExecutor, WebDriver}
+import org.openqa.selenium.{By, JavascriptExecutor, WebDriver, WebElement}
 import org.scalatest.Matchers
+import uk.gov.nationalarchives.tdr.GraphQlResponse
 
 import scala.jdk.CollectionConverters._
 
@@ -129,7 +131,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
-  Then("^the user will be on a page with the title (.*)") {
+  Then("^the user will be on a page with the title \"(.*)\"") {
     page: String =>
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
         val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
@@ -229,6 +231,14 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createTransferAgreement(consignmentId)
   }
 
+  And("^an existing upload") {
+//  with this step, we can add the associated metadata processing as they are added to the front-end project (AVMetadata, Checksum, FileFormat).
+//  75% progress has been chosen for the AVMetadata progress as this is a more realistic test than using 100% or 0%.
+    val client = GraphqlUtility(userCredentials)
+    val createdFiles: List[UUID] = client.createFiles(consignmentId)
+    createdFiles.drop(1).foreach(id => client.createAVMetadata(id))
+  }
+
   When("^the user selects directory containing: (.*)") {
     (fileName: String) => {
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
@@ -258,6 +268,16 @@ class Steps extends ScalaDsl with EN with Matchers {
         val isNotVisible = StepsUtility.elementHasClassHide(id, webDriver)
         isNotVisible
       })
+    }
+  }
+
+  And("^the (.*) should have (.*)% progress") {
+    (targetIdName: String, percentageProgress: String) => {
+      val fixedId: String = targetIdName.replaceAll(" ", "-")
+      val progressBar = webDriver.findElement(By.id(fixedId)).getAttribute("id")
+      val avProgress: String = webDriver.findElement(By.id(s"${fixedId}")).getAttribute("value")
+      Assert.assertTrue(progressBar == fixedId)
+      Assert.assertTrue(percentageProgress == avProgress)
     }
   }
 

@@ -17,4 +17,4 @@ Feature: Records Check Page
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title Record check results
+    Then the user will be on a page with the title "Record check results"

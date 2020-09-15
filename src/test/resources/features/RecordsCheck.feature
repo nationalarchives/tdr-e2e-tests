@@ -7,7 +7,7 @@ Feature: Records Check Page
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user should see the AV Metadata progress bar
+    Then the user should see the Antivirus Metadata progress bar
     And the user should see the checksum progress bar
 
   Scenario: User is redirected to results page when the record checks are complete

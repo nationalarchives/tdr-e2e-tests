@@ -282,7 +282,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user should see the (.*) progress bar") {
     progressBarName: String =>
       new WebDriverWait(webDriver, 120).until((driver: WebDriver) => {
-        val id = progressBarName.replaceAll("\\s", "-").toLowerCase
+        val id = progressBarName match {
+          case "Antivirus Metadata" => "av-metadata"
+          case "checksum" => "checksum-metadata"
+        }
         driver.findElement(By.cssSelector(s"#$id-progress-bar")) != null
       })
   }

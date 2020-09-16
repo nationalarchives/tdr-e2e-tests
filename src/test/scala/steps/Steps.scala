@@ -133,7 +133,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title \"(.*)\"") {
     page: String =>
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 120).until((driver: WebDriver) => {
         val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
         page == pageTitle
       })
@@ -246,8 +246,9 @@ class Steps extends ScalaDsl with EN with Matchers {
         executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
       })
 
-      val input = webDriver.findElement(By.cssSelector("#file-selection"))
+      val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
       input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
+      webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
     }
   }
 
@@ -297,4 +298,16 @@ class Steps extends ScalaDsl with EN with Matchers {
       val specificError = errorMessage.replace("{consignmentId}", s"$consignmentId")
       Assert.assertTrue(errorElement.getText.contains(specificError))
   }
+
+  Then("^the user should see the (.*) progress bar") {
+    progressBarName: String =>
+      new WebDriverWait(webDriver, 120).until((driver: WebDriver) => {
+        val id = progressBarName match {
+          case "Antivirus Metadata" => "av-metadata"
+          case "checksum" => "checksum"
+        }
+        driver.findElement(By.cssSelector(s"#$id-progress-bar")) != null
+      })
+  }
+
 }

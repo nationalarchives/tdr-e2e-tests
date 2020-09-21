@@ -31,7 +31,7 @@ This repository provides end to end test for the TDR application.
    ```
    $ sbt test -Dconfig.file=application.conf -Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]
    ```
-   * `-Dkeycloak.user.admin.secret`: this should the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
+   * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
    
 ### "Headless" Chromedriver option
 

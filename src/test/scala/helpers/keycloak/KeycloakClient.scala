@@ -1,10 +1,10 @@
 package helpers.keycloak
 
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import com.typesafe.config.ConfigFactory
 import javax.ws.rs.core.Response
-import org.keycloak.admin.client.Keycloak
+import org.keycloak.OAuth2Constants
 import org.keycloak.admin.client.resource.{RealmResource, UsersResource}
+import org.keycloak.admin.client.{Keycloak, KeycloakBuilder}
 import org.keycloak.representations.idm.{CredentialRepresentation, UserRepresentation}
 import sttp.client.{HttpURLConnectionBackend, Identity, NothingT, SttpBackend}
 
@@ -18,20 +18,14 @@ object KeycloakClient {
   private val authUrl: String = configuration.getString("tdr.auth.url")
   private val userAdminClient: String = configuration.getString("keycloak.user.admin.client")
   private val userAdminSecret: String = configuration.getString("keycloak.user.admin.secret")
-  private val token: BearerAccessToken = {
-    KeycloakUtility.bearerAccessToken(Map(
-      "grant_type" -> "client_credentials",
-      "client_id" -> userAdminClient,
-      "client_secret" -> userAdminSecret
-    ))
-  }
 
-  private val keyCloakAdminClient: Keycloak = Keycloak.getInstance(
-    s"$authUrl/auth",
-    "tdr",
-    userAdminClient,
-    token.getValue
-  )
+  private val keyCloakAdminClient: Keycloak = KeycloakBuilder.builder()
+    .serverUrl(s"$authUrl/auth")
+    .realm("tdr")
+    .clientId(userAdminClient)
+    .clientSecret(userAdminSecret)
+    .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+    .build()
 
   private val realm: RealmResource = keyCloakAdminClient.realm("tdr")
   private val userResource: UsersResource = realm.users()

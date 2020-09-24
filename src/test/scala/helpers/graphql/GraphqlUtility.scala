@@ -30,9 +30,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(ata.document, ata.Variables(input))
   }
 
-  def createFiles(consignmentId: UUID): List[UUID] = {
+  def createFiles(consignmentId: UUID, numberOfFiles: Int): List[UUID] = {
     val client = new UserApiClient[af.Data, af.Variables](userCredentials)
-    val input = AddFilesInput(consignmentId, 4)
+    val input = AddFilesInput(consignmentId, numberOfFiles)
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
 

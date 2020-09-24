@@ -241,7 +241,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 //  with this step, we can add the associated metadata processing as they are added to the front-end project (AVMetadata, Checksum, FileFormat).
 //  75% progress has been chosen for the AVMetadata progress as this is a more realistic test than using 100% or 0%.
     val client = GraphqlUtility(userCredentials)
-    val createdFiles: List[UUID] = client.createFiles(consignmentId)
+    val createdFiles: List[UUID] = client.createFiles(consignmentId, 4)
     createdFiles.drop(1).foreach(id => client.createAVMetadata(id))
   }
 

@@ -2,14 +2,14 @@ package helpers.graphql
 
 import java.util.UUID
 
-import graphql.codegen.AddConsignment.{addConsignment => ac}
-import graphql.codegen.GetSeries.{getSeries => gs}
-import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
-import graphql.codegen.AddFiles.{addFiles => af}
 import graphql.codegen.AddAntivirusMetadata.{AddAntivirusMetadata => aav}
-import graphql.codegen.types.{AddAntivirusMetadataInput, AddConsignmentInput, AddFilesInput, AddTransferAgreementInput}
+import graphql.codegen.AddConsignment.{addConsignment => ac}
+import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
+import graphql.codegen.AddFiles.{addFiles => af}
+import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
+import graphql.codegen.GetSeries.{getSeries => gs}
+import graphql.codegen.types._
 import helpers.keycloak.UserCredentials
-import uk.gov.nationalarchives.tdr.GraphQlResponse
 
 class GraphqlUtility(userCredentials: UserCredentials) {
 

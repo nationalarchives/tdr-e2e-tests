@@ -19,7 +19,7 @@ Feature: Full user journey
     When the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking your records"
-    And the user should see the Antivirus Metadata progress bar
+    And the av metadata progress bar should be visible
     And the user will be on a page with the title "Record check results"
 
 

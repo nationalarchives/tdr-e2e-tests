@@ -1,8 +1,10 @@
 package helpers.graphql
 
+import java.time.Instant
 import java.util.UUID
 
 import graphql.codegen.AddAntivirusMetadata.{AddAntivirusMetadata => aav}
+import graphql.codegen.AddClientFileMetadata.{AddClientFileMetadata => acf}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
 import graphql.codegen.AddFiles.{addFiles => af}
@@ -42,6 +44,26 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.sendRequest(aav.document, aav.Variables(input))
   }
 
+  def createClientsideMetadata(userCredentials: UserCredentials, fileId: UUID, checksumValue: String): Unit = {
+    val client = new UserApiClient[acf.Data, acf.Variables](userCredentials)
+    val dummyInstant = Instant.now()
+    val input = List(AddClientFileMetadataInput(
+      fileId,
+      Some("E2E_tests/original/path"),
+      Some(checksumValue),
+      Some("E2E tests checksumType"),
+      dummyInstant.toEpochMilli,
+      dummyInstant.toEpochMilli,
+      Some(1024),
+      dummyInstant.toEpochMilli))
+    client.result(acf.document, acf.Variables(input))
+  }
+
+  def createBackendChecksumMetadata(fileId: UUID): Unit = {
+    val client = new BackendApiClient[afm.Data, afm.Variables]
+    val input = AddFileMetadataInput("SHA256ServerSideChecksum", fileId, "checksumValue")
+    client.sendRequest(afm.document, afm.Variables(input))
+  }
 }
 
 object GraphqlUtility {

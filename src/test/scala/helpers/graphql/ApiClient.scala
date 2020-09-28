@@ -1,7 +1,7 @@
 package helpers.graphql
 
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import helpers.keycloak.{KeycloakUtility, UserCredentials}
 import io.circe.{Decoder, Encoder}
 import sangria.ast.Document
@@ -31,7 +31,7 @@ class UserApiClient[Data, Variables](userCredentials: UserCredentials)(implicit 
 }
 
 class BackendApiClient[Data, Variables](implicit val decoder: Decoder[Data], val encoder: Encoder[Variables]) {
-  val configuration = ConfigFactory.load
+  val configuration: Config = ConfigFactory.load
   private val backendChecksSecret: String = configuration.getString("keycloak.backendchecks.secret")
 
   private def backendChecksToken: BearerAccessToken = {
@@ -49,9 +49,9 @@ class BackendApiClient[Data, Variables](implicit val decoder: Decoder[Data], val
 
 object ApiClient {
   implicit private val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
-  private val configuration = ConfigFactory.load
+  private val configuration: Config = ConfigFactory.load
 
-  def sendApiRequest[Data, Variables](document: Document, variables: Variables, token: BearerAccessToken)(implicit decoder: Decoder[Data], encoder: Encoder[Variables]) = {
+  def sendApiRequest[Data, Variables](document: Document, variables: Variables, token: BearerAccessToken)(implicit decoder: Decoder[Data], encoder: Encoder[Variables]): GraphQlResponse[Data] = {
     val client = new GraphQLClient[Data, Variables](configuration.getString("tdr.api.url"))
     Await.result(client.getResult(token, document, Some(variables)), 10 seconds)
   }

@@ -4,7 +4,6 @@ import java.util.UUID
 
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
-import graphql.codegen.AddFiles.addFiles
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
 import helpers.keycloak.{KeycloakClient, UserCredentials}
@@ -14,7 +13,6 @@ import org.junit.Assert
 import org.openqa.selenium.support.ui.{Select, WebDriverWait}
 import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver, WebElement}
 import org.scalatest.Matchers
-import uk.gov.nationalarchives.tdr.GraphQlResponse
 
 import scala.jdk.CollectionConverters._
 
@@ -283,17 +281,15 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the (.*) should have (.*)% progress") {
     (targetIdName: String, percentageProgress: String) => {
-      val fixedId: String = targetIdName.replaceAll(" ", "-")
-      val progressBar = webDriver.findElement(By.id(fixedId)).getAttribute("id")
-      val avProgress: String = webDriver.findElement(By.id(s"${fixedId}")).getAttribute("value")
-      Assert.assertTrue(progressBar == fixedId)
-      Assert.assertTrue(percentageProgress == avProgress)
+      val id: String = targetIdName.replaceAll(" ", "-")
+      val progressValue: String = webDriver.findElement(By.id(id)).getAttribute("value")
+      Assert.assertTrue(percentageProgress == progressValue)
     }
   }
 
   And("^the user clicks the (.*) link") {
-    linkClicked: String =>
-      webDriver.findElement(By.linkText(linkClicked)).click()
+    linkToClick: String =>
+      webDriver.findElement(By.linkText(linkToClick)).click()
   }
 
   When("^the user clicks their browser's back button") {

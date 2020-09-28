@@ -38,7 +38,7 @@ class BackendApiClient[Data, Variables](implicit val decoder: Decoder[Data], val
     KeycloakUtility.bearerAccessToken(Map(
       "grant_type" -> "client_credentials",
       "client_id" -> "tdr-backend-checks",
-      "client_secret" -> s"${backendChecksSecret}"
+      "client_secret" -> s"$backendChecksSecret"
     ))
   }
 

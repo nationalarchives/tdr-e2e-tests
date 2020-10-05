@@ -20,6 +20,8 @@ class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
   var userId: String = ""
   var consignmentId: UUID = _
+  var createdFiles: List[UUID] = _
+  var fileWithoutMetadata: UUID = _
 
   val configuration: Config = ConfigFactory.load()
   val baseUrl: String = configuration.getString("tdr.base.url")
@@ -248,15 +250,22 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^an existing upload") {
-//  with this step, we can add the associated metadata processing as they are added to the front-end project (AVMetadata, Checksum, FileFormat).
-//  75% & 25% progress has been chosen for the AVMetadata & Checksum progress as these are more realistic tests than using 100% or 0%.
+//  75% progress has been chosen for the progress bars as this is more realistic to test than using 100% or 0%.
     val client = GraphqlUtility(userCredentials)
-    val createdFiles: List[UUID] = client.createFiles(consignmentId, 4)
+    createdFiles = client.createFiles(consignmentId, 4)
+    fileWithoutMetadata = createdFiles(0)
     createdFiles.foreach(id => client.createClientsideMetadata(userCredentials, id, "checksumValue"))
 //  checksumValue will be replaced with actual checksum soon
     createdFiles.drop(1).foreach(id => client.createAVMetadata(id))
-    createdFiles.drop(3).foreach(id => client.createBackendChecksumMetadata(id))
-    createdFiles.drop(2).foreach(id => client.createFFIDMetadata(id))
+    createdFiles.drop(1).foreach(id => client.createBackendChecksumMetadata(id))
+    createdFiles.drop(1).foreach(id => client.createFFIDMetadata(id))
+  }
+
+  And("^the user waits for the checks to complete") {
+    val client = GraphqlUtility(userCredentials)
+    client.createAVMetadata(fileWithoutMetadata)
+    client.createBackendChecksumMetadata(fileWithoutMetadata)
+    client.createFFIDMetadata(fileWithoutMetadata)
   }
 
   When("^the user selects directory containing: (.*)") {

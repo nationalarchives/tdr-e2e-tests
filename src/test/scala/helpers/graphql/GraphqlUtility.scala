@@ -11,6 +11,7 @@ import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddFiles.{addFiles => af}
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
 import graphql.codegen.GetSeries.{getSeries => gs}
+import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => aff}
 import graphql.codegen.types._
 import helpers.keycloak.UserCredentials
 
@@ -41,12 +42,6 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
 
-  def createAVMetadata(fileId: UUID): Unit = {
-    val client = new BackendApiClient[aav.Data, aav.Variables]
-    val input = AddAntivirusMetadataInput(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", "E2E test result", System.currentTimeMillis)
-    client.sendRequest(aav.document, aav.Variables(input))
-  }
-
   def createClientsideMetadata(userCredentials: UserCredentials, fileId: UUID, checksumValue: String): Unit = {
     val client = new UserApiClient[acf.Data, acf.Variables](userCredentials)
     val dummyInstant = Instant.now()
@@ -59,6 +54,12 @@ class GraphqlUtility(userCredentials: UserCredentials) {
       Some(1024),
       dummyInstant.toEpochMilli))
     client.result(acf.document, acf.Variables(input))
+  }
+
+  def createAVMetadata(fileId: UUID): Unit = {
+    val client = new BackendApiClient[aav.Data, aav.Variables]
+    val input = AddAntivirusMetadataInput(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", "E2E test result", System.currentTimeMillis)
+    client.sendRequest(aav.document, aav.Variables(input))
   }
 
   def createBackendChecksumMetadata(fileId: UUID): Unit = {

@@ -252,9 +252,11 @@ class Steps extends ScalaDsl with EN with Matchers {
 //  75% & 25% progress has been chosen for the AVMetadata & Checksum progress as these are more realistic tests than using 100% or 0%.
     val client = GraphqlUtility(userCredentials)
     val createdFiles: List[UUID] = client.createFiles(consignmentId, 4)
-    createdFiles.foreach(id => client.createClientsideMetadata(userCredentials, id, "checksumValue")) //checksumValue will be replaced with actual checksum soon
+    createdFiles.foreach(id => client.createClientsideMetadata(userCredentials, id, "checksumValue"))
+//  checksumValue will be replaced with actual checksum soon
     createdFiles.drop(1).foreach(id => client.createAVMetadata(id))
     createdFiles.drop(3).foreach(id => client.createBackendChecksumMetadata(id))
+    createdFiles.drop(2).foreach(id => client.createFFIDMetadata(id))
   }
 
   When("^the user selects directory containing: (.*)") {

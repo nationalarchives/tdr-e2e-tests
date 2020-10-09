@@ -34,7 +34,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createFiles(consignmentId: UUID, numberOfFiles: Int): List[UUID] = {
     val client = new UserApiClient[af.Data, af.Variables](userCredentials)
-    val input = AddFilesInput(consignmentId, numberOfFiles)
+    // I need the new graphql client in here because the API has been updated but this includes changes to the AddFilesInput class
+    // The ticket which changed this is still open so I'll put a placeholder in here until it's time to fix it properly.
+    val input = AddFilesInput(consignmentId, numberOfFiles, Option.empty)
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
 
@@ -52,7 +54,6 @@ class GraphqlUtility(userCredentials: UserCredentials) {
       Some("E2E_tests/original/path"),
       Some(checksumValue),
       Some("E2E tests checksumType"),
-      dummyInstant.toEpochMilli,
       dummyInstant.toEpochMilli,
       Some(1024),
       dummyInstant.toEpochMilli))

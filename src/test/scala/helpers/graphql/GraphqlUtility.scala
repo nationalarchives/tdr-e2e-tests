@@ -7,6 +7,7 @@ import graphql.codegen.AddAntivirusMetadata.{AddAntivirusMetadata => aav}
 import graphql.codegen.AddClientFileMetadata.{AddClientFileMetadata => acf}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
+import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddFiles.{addFiles => af}
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
 import graphql.codegen.GetSeries.{getSeries => gs}
@@ -64,6 +65,12 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val client = new BackendApiClient[afm.Data, afm.Variables]
     val input = AddFileMetadataInput("SHA256ServerSideChecksum", fileId, "checksumValue")
     client.sendRequest(afm.document, afm.Variables(input))
+  }
+
+  def createFfidMetadata(fileId: UUID): Unit = {
+    val client = new BackendApiClient[affm.Data, affm.Variables]
+    val input = FFIDMetadataInput(fileId, "", "", "", ", ", "", List())
+    client.sendRequest(affm.document, affm.Variables(input))
   }
 }
 

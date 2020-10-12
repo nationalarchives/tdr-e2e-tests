@@ -29,3 +29,11 @@ Feature: File Checks Page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user will be on a page with the title "Record check results"
+
+  Scenario: User is redirected to the results page if the checks are complete and they visit the record checks page
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the records checks are complete
+    When the user is logged in on the records page
+    Then the user will be on a page with the title "Record check results"

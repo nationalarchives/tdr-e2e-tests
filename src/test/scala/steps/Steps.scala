@@ -49,6 +49,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       case "series" => s"$baseUrl/$page"
       case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
+
     webDriver.get(pageWithConsignment)
   }
 
@@ -233,6 +234,17 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^an existing transfer agreement") {
     val client = GraphqlUtility(userCredentials)
     client.createTransferAgreement(consignmentId)
+  }
+
+  And("^the records checks are complete") {
+    val client = GraphqlUtility(userCredentials)
+    val createdFiles: List[UUID] = client.createFiles(consignmentId, 1)
+    createdFiles.foreach({
+      id => client.createClientsideMetadata(userCredentials, id, "checksumValue")
+      client.createAVMetadata(id)
+        client.createBackendChecksumMetadata(id)
+        client.createFfidMetadata(id)
+    })
   }
 
   And("^an existing upload") {

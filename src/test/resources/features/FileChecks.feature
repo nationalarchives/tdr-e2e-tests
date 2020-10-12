@@ -19,7 +19,7 @@ Feature: File Checks Page
     Then the user will be on a page with the title "Checking your records"
     And the checksum progress bar should be visible
     And the checksum progress bar should have 25% progress
-v
+
 #    This scenario still goes through the upload manually rather than using the helper methods so that the redirect can be tested
   Scenario: User is redirected to results page when the record checks are complete
     Given A logged out user

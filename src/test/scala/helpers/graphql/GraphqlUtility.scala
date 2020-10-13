@@ -11,7 +11,6 @@ import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddFiles.{addFiles => af}
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
 import graphql.codegen.GetSeries.{getSeries => gs}
-import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => aff}
 import graphql.codegen.types._
 import helpers.keycloak.UserCredentials
 

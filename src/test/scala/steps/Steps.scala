@@ -261,16 +261,18 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^(\\d+) of the (.*) scans have finished") {
     val client = GraphqlUtility(userCredentials)
-    (filesProcessed: Int, metadataType: String) => {
-      if (metadataType.contains("antivirus")) {
-        filesWithoutAVMetadata = createdFiles.drop(filesProcessed)
-        createdFiles.slice(0, filesProcessed).foreach(id => client.createAVMetadata(id))
-      } else if (metadataType.contains("FFID")) {
-        createdFiles.slice(0, filesProcessed).foreach(id => client.createFfidMetadata(id))
-        filesWithoutFFIDMetadata = createdFiles.drop(filesProcessed)
-      } else if (metadataType.contains("checksum")) {
-        createdFiles.slice(0, filesProcessed).foreach(id => client.createBackendChecksumMetadata(id))
-        filesWithoutChecksumMetadata = createdFiles.drop(filesProcessed)
+    (filesToProcess: Int, metadataType: String) => {
+      val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
+      metadataType match {
+        case "antivirus" =>
+          fileRangeToProcess.foreach(id => client.createAVMetadata(id))
+          filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
+        case "FFID" =>
+          fileRangeToProcess.foreach(id => client.createFfidMetadata(id))
+          filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
+        case "checksum" =>
+          fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id))
+          filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
       }
     }
   }

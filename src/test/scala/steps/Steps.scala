@@ -20,6 +20,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
   var userId: String = ""
   var consignmentId: UUID = _
+  var createdFiles: List[UUID] = _
+  var filesWithoutAVMetadata: List[UUID] = _
+  var filesWithoutFFIDMetadata: List[UUID] = _
+  var filesWithoutChecksumMetadata: List[UUID] = _
 
   val configuration: Config = ConfigFactory.load()
   val baseUrl: String = configuration.getString("tdr.base.url")
@@ -49,7 +53,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       case "series" => s"$baseUrl/$page"
       case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
-
     webDriver.get(pageWithConsignment)
   }
 
@@ -241,24 +244,51 @@ class Steps extends ScalaDsl with EN with Matchers {
     val createdFiles: List[UUID] = client.createFiles(consignmentId, 1)
     createdFiles.foreach({
       id => client.createClientsideMetadata(userCredentials, id, "checksumValue")
-      client.createAVMetadata(id)
+        client.createAVMetadata(id)
         client.createBackendChecksumMetadata(id)
         client.createFfidMetadata(id)
     })
   }
 
-  And("^an existing upload") {
-//  with this step, we can add the associated metadata processing as they are added to the front-end project (AVMetadata, Checksum, FileFormat).
-//  75% & 25% progress has been chosen for the AVMetadata & Checksum progress as these are more realistic tests than using 100% or 0%.
+  And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
-    val createdFiles: List[UUID] = client.createFiles(consignmentId, 4)
-    createdFiles.foreach(id => client.createClientsideMetadata(userCredentials, id, "checksumValue")) //checksumValue will be replaced with actual checksum soon
-    createdFiles.drop(1).foreach(id => client.createAVMetadata(id))
-    createdFiles.drop(3).foreach(id => client.createBackendChecksumMetadata(id))
+    numberOfFiles: Int => {
+      createdFiles = client.createFiles(consignmentId, numberOfFiles)
+      //  checksumValue will be replaced with actual checksum soon
+      createdFiles.foreach(id => client.createClientsideMetadata(userCredentials, id, "checksumValue"))
+    }
+  }
+
+  And("^(\\d+) of the (.*) scans have finished") {
+    val client = GraphqlUtility(userCredentials)
+    (filesToProcess: Int, metadataType: String) => {
+      val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
+      metadataType match {
+        case "antivirus" =>
+          fileRangeToProcess.foreach(id => client.createAVMetadata(id))
+          filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
+        case "FFID" =>
+          fileRangeToProcess.foreach(id => client.createFfidMetadata(id))
+          filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
+        case "checksum" =>
+          fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id))
+          filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
+      }
+    }
+  }
+
+  And("^the user waits for the checks to complete") {
+    val client = GraphqlUtility(userCredentials)
+    (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
+      id =>
+        client.createAVMetadata(id)
+        client.createBackendChecksumMetadata(id)
+        client.createFfidMetadata(id)
+    }
   }
 
   When("^the user selects directory containing: (.*)") {
-    (fileName: String) => {
+    fileName: String => {
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
         val executor = driver.asInstanceOf[JavascriptExecutor]
         executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
@@ -271,7 +301,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Then("^the (.*) should be visible") {
-    (targetIdName: String) => {
+    targetIdName: String => {
       val id = targetIdName.replaceAll(" ", "-")
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
         val isVisible = !StepsUtility.elementHasClassHide(id, driver)

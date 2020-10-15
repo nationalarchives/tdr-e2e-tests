@@ -21,6 +21,7 @@ Feature: Full user journey
     Then the user will be on a page with the title "Checking your records"
     And the av metadata progress bar should be visible
     And the checksum progress bar should be visible
+    And the ffid progress bar should be visible
     And the user will be on a page with the title "Record check results"
 
 

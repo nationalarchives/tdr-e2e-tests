@@ -51,13 +51,13 @@ pipeline {
             script {
               if(params.BROWSER == "firefox") {
 
-                  sh "wget -q -N https://github.com/mozilla/geckodriver/releases/download/${env.FIREFOX_DRIVER_VERSION}/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz -P ~/"
+                  sh "wget -q https://github.com/mozilla/geckodriver/releases/download/${env.FIREFOX_DRIVER_VERSION}/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz -P ~/"
                   sh "tar -C ~/ -xzf ~/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz"
                   sh "rm -f ~/geckodriver-${env.FIREFOX_DRIVER_VERSION}-linux64.tar.gz"
                   sh "mv ~/geckodriver src/driver"
                 }
                 if(params.BROWSER == "chrome") {
-                  sh "wget -q -N http://chromedriver.storage.googleapis.com/${env.CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
+                  sh "wget -q http://chromedriver.storage.googleapis.com/${env.CHROME_DRIVER_VERSION}/chromedriver_linux64.zip -P ~/"
                   sh "unzip -q ~/chromedriver_linux64.zip -d ~/"
                   sh "rm ~/chromedriver_linux64.zip"
                   sh "mv -f ~/chromedriver src/driver"

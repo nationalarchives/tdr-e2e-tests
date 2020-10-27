@@ -5,8 +5,8 @@ version := "0.1"
 scalaVersion := "2.13.1"
 
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test
-libraryDependencies += "org.keycloak" % "keycloak-core" % "11.0.1" % Test
-libraryDependencies += "org.keycloak" % "keycloak-admin-client" % "11.0.1" % Test
+libraryDependencies += "org.keycloak" % "keycloak-core" % "11.0.2" % Test
+libraryDependencies += "org.keycloak" % "keycloak-admin-client" % "11.0.2" % Test
 libraryDependencies += "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.15"
 libraryDependencies += "uk.gov.nationalarchives" %% "tdr-generated-graphql" % "0.0.64"
 libraryDependencies += "io.circe" %% "circe-core" % "0.13.0"

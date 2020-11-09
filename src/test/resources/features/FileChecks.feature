@@ -33,6 +33,8 @@ Feature: File Checks Page
     And the ffid progress bar should be visible
     And the ffid progress bar should have 25% progress
 
+#    @wip temporarily added to stop these tests from running as the upload process being used means the tests fail when trying to go to results page.
+#    The tag will be removed once the uploading process has been changed and tests run successfully again.
   @wip
   Scenario: User is redirected to results page when the record checks are complete
     Given A logged out user

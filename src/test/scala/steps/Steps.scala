@@ -147,13 +147,12 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  Then("^the user should see a user-specific general error (.*)") {
+  Then("^the user should see a general service error (.*)") {
     errorMessage: String =>
-      val errorElement = webDriver.findElement(By.cssSelector("#general-error"))
+      val errorElement = webDriver.findElement(By.cssSelector(".govuk-heading-l"))
       Assert.assertNotNull(errorElement)
-      val specificError = errorMessage.replace("{userId}", s"Some($userId)")
 
-      Assert.assertTrue(errorElement.getText.contains(specificError))
+      Assert.assertTrue(errorElement.getText.contains(errorMessage))
   }
 
   And("^the user will see the error message (.*)") {

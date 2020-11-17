@@ -28,3 +28,8 @@ Feature: Login
     And the user clicks the continue button
     Then the user will remain on the auth page
     And the user will see the error message Invalid username or password.
+
+  Scenario: Navigate to a page that does not exist as a logged in user
+    Given A logged in user
+    And the user navigates to a page that does not exist
+    Then the user should see a general service error "This page doesn't exist"

@@ -26,3 +26,18 @@ Feature: Transfer Agreement Page
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
     Then the user will see a form error message "All records must be confirmed as digital before proceeding"
+
+  Scenario: Consignment transfer agreement page is accessed by a logged out user
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the logged out user attempts to access the Transfer Agreement page
+    Then the logged out user should be on the auth page
+
+  Scenario: Consignment transfer agreement page is accessed by a user who did not create the consignment
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And a user who did not create the consignment
+    When the user who did not create the consignment is logged in on the Transfer Agreement page
+    Then the user who did not create the consignment will see the error message "You are not permitted to see this page"

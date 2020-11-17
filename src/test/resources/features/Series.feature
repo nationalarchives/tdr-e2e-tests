@@ -33,7 +33,7 @@ Feature: Series Page
   Scenario: User with no transferring body set sees an error message
     Given A logged in user who is not a member of a transferring body
     When the logged in user navigates to the series page
-    Then the user should see a general service error Sorry, there is a problem with the service
+    Then the user should see a general service error "Sorry, there is a problem with the service"
 
   Scenario: User from MOCK4 should see an empty series list
     Given A logged in user who is a member of MOCK4 transferring body

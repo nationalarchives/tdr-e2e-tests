@@ -32,7 +32,7 @@ Feature: Transfer Agreement Page
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the logged out user attempts to access the Transfer Agreement page
-    Then the logged out user should be on the auth page
+    Then the logged out user should be on the login page
 
   Scenario: Consignment transfer agreement page is accessed by a user who did not create the consignment
     Given A logged out user

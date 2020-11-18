@@ -4,7 +4,7 @@ Feature: Login
     Given A logged out user
     When the user navigates to TDR Home Page
     And the user clicks on the Start now button
-    Then the logged out user should be on the auth page
+    Then the logged out user should be on the login page
 
   Scenario: Navigate to the TDR home page as a logged in user
     Given A logged in user

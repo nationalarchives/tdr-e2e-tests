@@ -64,13 +64,4 @@ Feature: File Checks Page
     And an existing transfer agreement
     And an existing upload of 5 files
     And the logged out user attempts to access the records page
-    Then the logged out user should be on the auth page
-
-  Scenario: Consignment records page is accessed by a user who did not create the consignment
-    Given A logged out user
-    And an existing consignment for transferring body MOCK1
-    And an existing transfer agreement
-    And an existing upload of 5 files
-    And a user who did not create the consignment
-    When the user who did not create the consignment is logged in on the records page
-    Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
+    Then the logged out user should be on the login page page

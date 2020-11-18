@@ -64,4 +64,4 @@ Feature: File Checks Page
     And an existing transfer agreement
     And an existing upload of 5 files
     And the logged out user attempts to access the records page
-    Then the logged out user should be on the login page page
+    Then the logged out user should be on the login page

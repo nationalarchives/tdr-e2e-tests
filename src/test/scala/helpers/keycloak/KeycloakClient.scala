@@ -53,7 +53,7 @@ object KeycloakClient {
   }
 
   def deleteUser(userId: String): Unit = {
-    userResource.get(userId).remove
+    userResource.delete(userId)
   }
 }
 

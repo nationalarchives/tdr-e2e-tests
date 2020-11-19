@@ -38,3 +38,10 @@ Feature: Upload
     And the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user should see the upload error message "Upload already occurred for consignment: {consignmentId}"
+
+  Scenario: Consignment upload page is accessed by a logged out user
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the logged out user attempts to access the upload page
+    Then the logged out user should be on the login page

@@ -19,6 +19,7 @@ import scala.jdk.CollectionConverters._
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
   var userId: String = ""
+  var differentUserId: String = ""
   var consignmentId: UUID = _
   var createdFiles: List[UUID] = _
   var filesWithoutAVMetadata: List[UUID] = _
@@ -29,8 +30,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   val baseUrl: String = configuration.getString("tdr.base.url")
   val authUrl: String = configuration.getString("tdr.auth.url")
   val userName: String = RandomUtility.randomString()
+  val differentUserName: String = RandomUtility.randomString()
   val password: String = RandomUtility.randomString(10)
+  val differentPassword: String = RandomUtility.randomString(10)
   val userCredentials: UserCredentials = UserCredentials(userName, password)
+  val differentUserCredentials: UserCredentials = UserCredentials(differentUserName, differentPassword)
 
   Before() { scenario =>
     webDriver = initDriver
@@ -38,10 +42,10 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   After() { scenario =>
     webDriver.quit()
-    KeycloakClient.deleteUser(userId)
+    userCleanUp
   }
 
-  private def login(): Unit = {
+  private def login(userCredentials: UserCredentials): Unit = {
     webDriver.get(s"$baseUrl")
     val startElement = webDriver.findElement(By.cssSelector(".govuk-button--start"))
     startElement.click()
@@ -50,10 +54,19 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   private def loadPage(page: String): Unit = {
     val pageWithConsignment = page match {
-      case "series" => s"$baseUrl/$page"
+      case "dashboard" | "series" | "some-page" => s"$baseUrl/$page"
       case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)
+  }
+
+  private def userCleanUp(): Unit = {
+    KeycloakClient.deleteUser(userId)
+
+    //Not all scenarios create the different user
+    if(!differentUserId.isEmpty) {
+      KeycloakClient.deleteUser(differentUserId)
+    }
   }
 
   Given("^A logged out user") {
@@ -63,17 +76,17 @@ class Steps extends ScalaDsl with EN with Matchers {
   Given("^A logged in user who is a member of (.*) transferring body") {
     body: String =>
       userId = KeycloakClient.createUser(userCredentials, Some(body))
-      login()
+      login(userCredentials)
   }
 
   Given("^A logged in user who is not a member of a transferring body") {
     userId = KeycloakClient.createUser(userCredentials, Option.empty)
-    login()
+    login(userCredentials)
   }
 
   Given("^A logged in user") {
     userId = KeycloakClient.createUser(userCredentials)
-    login()
+    login(userCredentials)
   }
 
   And("^the user is logged in on the (.*) page") {
@@ -114,7 +127,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   }
 
-  Then("^the logged out user should be on the auth page") {
+  Then("^the logged out user should be on the login page") {
       val currentUrl: String = webDriver.getCurrentUrl
       Assert.assertTrue(currentUrl.startsWith(s"$authUrl/auth"))
   }
@@ -147,7 +160,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  Then("^the user should see a general service error (.*)") {
+  Then("^the user should see a general service error \"(.*)\"") {
     errorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector(".govuk-heading-l"))
       Assert.assertNotNull(errorElement)
@@ -344,4 +357,30 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(errorElement.getText.contains(specificError))
   }
 
+  And("^a user who did not create the consignment") {
+    differentUserId = KeycloakClient.createUser(differentUserCredentials)
+  }
+
+  And("^the user who did not create the consignment is logged in on the (.*) page") {
+    page: String =>
+      loadPage(page)
+      StepsUtility.userLogin(webDriver, differentUserCredentials)
+  }
+
+  Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
+    errorMessage: String =>
+      val errorElement = webDriver.findElement(By.cssSelector(".govuk-heading-l"))
+      Assert.assertNotNull(errorElement)
+
+      Assert.assertTrue(errorElement.getText.contains(errorMessage))
+  }
+
+  And("^the logged out user attempts to access the (.*) page") {
+    page: String =>
+      loadPage(page)
+  }
+
+  And("^the user navigates to a page that does not exist") {
+    loadPage("some-page")
+  }
 }

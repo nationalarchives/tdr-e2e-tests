@@ -4,7 +4,7 @@ Feature: Login
     Given A logged out user
     When the user navigates to TDR Home Page
     And the user clicks on the Start now button
-    Then the logged out user should be on the auth page
+    Then the logged out user should be on the login page
 
   Scenario: Navigate to the TDR home page as a logged in user
     Given A logged in user
@@ -28,3 +28,8 @@ Feature: Login
     And the user clicks the continue button
     Then the user will remain on the auth page
     And the user will see the error message Invalid username or password.
+
+  Scenario: Navigate to a page that does not exist as a logged in user
+    Given A logged in user
+    And the user navigates to a page that does not exist
+    Then the user should see a general service error "This page doesn't exist"

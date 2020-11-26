@@ -244,7 +244,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val openRecords = webDriver.findElement(By.id("openRecords"))
     val transferLegalOwnershit = webDriver.findElement(By.id("transferLegalOwnership"))
     openRecords.click()
-    transferLegalOwnershit.click()
+    transferLegalOwnership.click()
   }
 
   And("^the user confirms that DRO has signed off on the records") {

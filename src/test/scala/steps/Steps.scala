@@ -1,16 +1,18 @@
 package steps
 
+import java.time.Duration
 import java.util.UUID
 
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
+import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
 import helpers.keycloak.{KeycloakClient, UserCredentials}
 import helpers.steps.StepsUtility
 import helpers.users.RandomUtility
 import org.junit.Assert
-import org.openqa.selenium.support.ui.{Select, WebDriverWait}
+import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver, WebElement}
 import org.scalatest.Matchers
 
@@ -146,6 +148,16 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
+  And("^the transfer export will be complete") {
+    val fluentWait = new FluentWait[WebDriver](webDriver)
+      .withTimeout(Duration.ofSeconds(600))
+      .pollingEvery(Duration.ofSeconds(10))
+    val foundExport: Boolean = fluentWait.until(_ => {
+      AWSUtility().isFileInS3("tdr-consignment-export", s"$consignmentId.tar.gz")
+    })
+    Assert.assertTrue(foundExport)
+  }
+
   Then("^the user will be on a page with the title \"(.*)\"") {
     page: String =>
       new WebDriverWait(webDriver, 120)
@@ -226,6 +238,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllCrownCopyright.click()
     recordsAllEnglish.click()
     recordsAllDigital.click()
+  }
+
+  When("^the user selects yes to all transfer summary checks") {
+    val openRecords = webDriver.findElement(By.id("openRecords"))
+    val transferLegalOwnershit = webDriver.findElement(By.id("transferLegalOwnership"))
+    openRecords.click()
+    transferLegalOwnershit.click()
   }
 
   And("^the user confirms that DRO has signed off on the records") {

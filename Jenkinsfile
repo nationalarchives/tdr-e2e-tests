@@ -37,6 +37,7 @@ pipeline {
       agent {
         ecs {
           inheritFrom "transfer-frontend"
+          taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeS3ExportRole${params.STAGE.capitalize()}"
         }
       }
       environment {

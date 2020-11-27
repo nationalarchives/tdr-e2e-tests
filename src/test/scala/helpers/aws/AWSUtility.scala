@@ -9,6 +9,8 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.{GetObjectRequest, ListObjectsRequest}
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 
+import scala.util.Try
+
 class AWSUtility {
 
   def isFileInS3(bucket: String, key: String): Boolean = {

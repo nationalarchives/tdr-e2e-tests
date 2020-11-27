@@ -153,7 +153,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       .withTimeout(Duration.ofSeconds(600))
       .pollingEvery(Duration.ofSeconds(10))
     val foundExport: Boolean = fluentWait.until(_ => {
-      AWSUtility().isFileInS3("tdr-consignment-export", s"$consignmentId.tar.gz")
+      AWSUtility().isFileInS3(configuration.getString("s3.bucket"), s"$consignmentId.tar.gz")
     })
     Assert.assertTrue(foundExport)
   }

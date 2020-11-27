@@ -13,8 +13,8 @@ libraryDependencies += "io.circe" %% "circe-core" % "0.13.0"
 libraryDependencies += "io.circe" %% "circe-generic" % "0.13.0"
 libraryDependencies += "com.softwaremill.sttp.client" %% "core" % "2.1.1"
 libraryDependencies += "com.softwaremill.sttp.client" %% "circe" % "2.1.1"
-libraryDependencies += "software.amazon.awssdk" % "s3" % "2.15.35"
-libraryDependencies += "software.amazon.awssdk" % "sts" % "2.15.35"
+libraryDependencies += "software.amazon.awssdk" % "s3" % "2.15.34"
+libraryDependencies += "software.amazon.awssdk" % "sts" % "2.15.34"
 
 libraryDependencies ++= Seq(
   "io.cucumber" % "cucumber-core" % "4.7.1" % "test",

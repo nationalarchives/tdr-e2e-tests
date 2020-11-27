@@ -160,6 +160,13 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
+  Then("^the user will be on a page with the panel title \"(.*)\"") {
+    panelTitle: String =>
+      val panel = webDriver.findElement(By.className("govuk-panel__title")).getText
+
+      Assert.assertEquals(panelTitle, panel)
+  }
+
   Then("^the user should see a general service error \"(.*)\"") {
     errorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector(".govuk-heading-l"))
@@ -253,7 +260,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the records checks are complete") {
     val client = GraphqlUtility(userCredentials)
-    val createdFiles: List[UUID] = client.createFiles(consignmentId, 1)
+    val createdFiles: List[UUID] = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER")
     createdFiles.foreach({
       id => client.createClientsideMetadata(userCredentials, id, "checksumValue")
         client.createAVMetadata(id)
@@ -265,7 +272,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
-      createdFiles = client.createFiles(consignmentId, numberOfFiles)
+      createdFiles = client.createFiles(consignmentId, numberOfFiles, "E2E TEST UPLOAD FOLDER")
       //  checksumValue will be replaced with actual checksum soon
       createdFiles.foreach(id => client.createClientsideMetadata(userCredentials, id, "checksumValue"))
     }
@@ -383,4 +390,5 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user navigates to a page that does not exist") {
     loadPage("some-page")
   }
+
 }

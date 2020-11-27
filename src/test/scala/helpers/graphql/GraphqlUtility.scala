@@ -33,11 +33,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(ata.document, ata.Variables(input))
   }
 
-  def createFiles(consignmentId: UUID, numberOfFiles: Int): List[UUID] = {
+  def createFiles(consignmentId: UUID, numberOfFiles: Int, parentFolderName: String): List[UUID] = {
     val client = new UserApiClient[af.Data, af.Variables](userCredentials)
-    // I need the new graphql client in here because the API has been updated but this includes changes to the AddFilesInput class
-    // The ticket which changed this is still open so I'll put a placeholder in here until it's time to fix it properly.
-    val input = AddFilesInput(consignmentId, numberOfFiles, Option.empty)
+//    parentFolderName is an option for now, but the API will be changed to take a string rather than Option
+//    Once this happens, this function will be changed to reflect this.
+    val input = AddFilesInput(consignmentId, numberOfFiles, Option(parentFolderName))
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
 

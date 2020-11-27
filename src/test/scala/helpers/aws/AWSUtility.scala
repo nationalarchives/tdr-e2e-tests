@@ -1,4 +1,6 @@
 package helpers.aws
+import java.time.LocalDateTime
+
 import com.typesafe.config.ConfigFactory
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.http.apache.ApacheHttpClient
@@ -27,6 +29,7 @@ class AWSUtility {
         .refreshRequest(
           AssumeRoleRequest.builder()
             .roleArn(config.getString("s3.role"))
+            .roleSessionName(s"$key-${LocalDateTime.now.toString}")
             .build())
         .build()
     } else {

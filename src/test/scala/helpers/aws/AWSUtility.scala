@@ -9,14 +9,6 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.{GetObjectRequest, ListObjectsRequest}
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 
-import scala.jdk.CollectionConverters._
-import scala.util.Try
-
-object Main extends App {
-  val a = AWSUtility().isFileInS3("tdr-consignment-export-intg", "2d052fd5-f6d2-4dac-9097-b17516cc6539.tar.gz")
-  print(a)
-}
-
 class AWSUtility {
 
   def isFileInS3(bucket: String, key: String): Boolean = {

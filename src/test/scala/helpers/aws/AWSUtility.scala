@@ -29,7 +29,7 @@ class AWSUtility {
         .refreshRequest(
           AssumeRoleRequest.builder()
             .roleArn(config.getString("s3.role"))
-            .roleSessionName(s"$key-${LocalDateTime.now.toString}")
+            .roleSessionName(s"e2e-tests-session")
             .build())
         .build()
     } else {

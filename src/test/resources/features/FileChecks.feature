@@ -44,7 +44,7 @@ Feature: File Checks Page
     When the user is logged in on the records page
     Then the user will be on a page with the title "Checking your records"
     And the user waits for the checks to complete
-    Then the user will be on a page with the panel title "Checks Completed!"
+    Then the user will be on a page with a panel titled "Checks Completed!"
 
   Scenario: User is redirected to the results page if the checks are complete and they visit the record checks page
     Given A logged out user
@@ -52,7 +52,7 @@ Feature: File Checks Page
     And an existing transfer agreement
     And the records checks are complete
     When the user is logged in on the records page
-    Then the user will be on a page with the panel title "Checks Completed!"
+    Then the user will be on a page with a panel titled "Checks Completed!"
 
   Scenario: Consignment records page is accessed by a logged out user
     Given A logged out user

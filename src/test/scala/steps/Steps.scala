@@ -160,7 +160,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  Then("^the user will be on a page with the panel title \"(.*)\"") {
+  Then("^the user will be on a page with a panel titled \"(.*)\"") {
     panelTitle: String =>
       val panel = webDriver.findElement(By.className("govuk-panel__title")).getText
 
@@ -390,5 +390,4 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user navigates to a page that does not exist") {
     loadPage("some-page")
   }
-
 }

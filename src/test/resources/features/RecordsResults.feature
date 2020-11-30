@@ -1,4 +1,4 @@
-Feature: File Checks Results Page
+Feature: Record results Page
 
   Scenario: The user logs in to the file checks results page once file checks are complete
     Given A logged out user
@@ -6,7 +6,7 @@ Feature: File Checks Results Page
     And an existing transfer agreement
     And the records checks are complete
     When the user is logged in on the records results page
-    Then the user will be on a page with the panel title "Checks Completed!"
+    Then the user will be on a page with a panel titled "Checks Completed!"
 
   Scenario: The user will see an error when trying to access file check results for a consignment they don't own
     Given A logged out user

@@ -1,16 +1,19 @@
 package steps
 
+import java.nio.file.Paths
+import java.time.Duration
 import java.util.UUID
 
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
+import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
 import helpers.keycloak.{KeycloakClient, UserCredentials}
 import helpers.steps.StepsUtility
 import helpers.users.RandomUtility
 import org.junit.Assert
-import org.openqa.selenium.support.ui.{Select, WebDriverWait}
+import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver, WebElement}
 import org.scalatest.Matchers
 
@@ -64,7 +67,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     KeycloakClient.deleteUser(userId)
 
     //Not all scenarios create the different user
-    if(!differentUserId.isEmpty) {
+    if (!differentUserId.isEmpty) {
       KeycloakClient.deleteUser(differentUserId)
     }
   }
@@ -128,15 +131,15 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Then("^the logged out user should be on the login page") {
-      val currentUrl: String = webDriver.getCurrentUrl
-      Assert.assertTrue(currentUrl.startsWith(s"$authUrl/auth"))
+    val currentUrl: String = webDriver.getCurrentUrl
+    Assert.assertTrue(currentUrl.startsWith(s"$authUrl/auth"))
   }
 
   Then("^the user will remain on the (.*) page") {
     page: String =>
-    val currentUrl: String = webDriver.getCurrentUrl
-    val url = if (page == "auth") authUrl else baseUrl
-    Assert.assertTrue(currentUrl.startsWith(s"$url/$page"))
+      val currentUrl: String = webDriver.getCurrentUrl
+      val url = if (page == "auth") authUrl else baseUrl
+      Assert.assertTrue(currentUrl.startsWith(s"$url/$page"))
   }
 
   Then("^the user should be on the (.*) page") {
@@ -144,6 +147,16 @@ class Steps extends ScalaDsl with EN with Matchers {
       val currentUrl: String = webDriver.getCurrentUrl
 
       Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+  }
+
+  And("^the transfer export will be complete") {
+    val fluentWait = new FluentWait[WebDriver](webDriver)
+      .withTimeout(Duration.ofSeconds(600))
+      .pollingEvery(Duration.ofSeconds(10))
+    val foundExport: Boolean = fluentWait.until(_ => {
+      AWSUtility().isFileInS3(configuration.getString("s3.bucket.export"), s"$consignmentId.tar.gz")
+    })
+    Assert.assertTrue(foundExport)
   }
 
   Then("^the user will be on a page with the title \"(.*)\"") {
@@ -155,9 +168,9 @@ class Steps extends ScalaDsl with EN with Matchers {
         such as from the upload page to the file checks page. In this case, we only want to check the element on the second page,
         so it doesn't matter if the same element on the first page has disappeared.*/
         .until((driver: WebDriver) => {
-        val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
-        page == pageTitle
-      })
+          val pageTitle: String = webDriver.findElement(By.className("govuk-heading-xl")).getText
+          page == pageTitle
+        })
   }
 
   Then("^the user should see a general service error \"(.*)\"") {
@@ -192,9 +205,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Then("^the user should see an empty series dropdown") {
-      val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
-      val seriesText: List[String] = seriesDropdown.getOptions.asScala.map(_.getText).toList.tail
-      Assert.assertTrue(seriesText.isEmpty)
+    val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
+    val seriesText: List[String] = seriesDropdown.getOptions.asScala.map(_.getText).toList.tail
+    Assert.assertTrue(seriesText.isEmpty)
   }
 
   And("^the user selects the series (.*)") {
@@ -228,6 +241,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllDigital.click()
   }
 
+  When("^the user selects yes to all transfer summary checks") {
+    val openRecords = webDriver.findElement(By.id("openRecords"))
+    val transferLegalOwnership = webDriver.findElement(By.id("transferLegalOwnership"))
+    openRecords.click()
+    transferLegalOwnership.click()
+  }
+
   And("^the user confirms that DRO has signed off on the records") {
     val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
     val droSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
@@ -255,7 +275,8 @@ class Steps extends ScalaDsl with EN with Matchers {
     val client = GraphqlUtility(userCredentials)
     val createdFiles: List[UUID] = client.createFiles(consignmentId, 1)
     createdFiles.foreach({
-      id => client.createClientsideMetadata(userCredentials, id, "checksumValue")
+      id =>
+        client.createClientsideMetadata(userCredentials, id, "checksumValue", 0)
         client.createAVMetadata(id)
         client.createBackendChecksumMetadata(id)
         client.createFfidMetadata(id)
@@ -267,7 +288,14 @@ class Steps extends ScalaDsl with EN with Matchers {
     numberOfFiles: Int => {
       createdFiles = client.createFiles(consignmentId, numberOfFiles)
       //  checksumValue will be replaced with actual checksum soon
-      createdFiles.foreach(id => client.createClientsideMetadata(userCredentials, id, "checksumValue"))
+      val files = List("largefile", "testfile1", "testfile2")
+
+      createdFiles.zipWithIndex.foreach {
+        case (id, idx) =>
+          client.createClientsideMetadata(userCredentials, id, "checksumValue", idx)
+          val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 3)}")
+          AWSUtility().uploadFileToS3(configuration.getString("s3.bucket.upload"), s"$consignmentId/$id", path)
+      }
     }
   }
 

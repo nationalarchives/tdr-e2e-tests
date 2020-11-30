@@ -41,12 +41,12 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
 
-  def createClientsideMetadata(userCredentials: UserCredentials, fileId: UUID, checksumValue: String): Unit = {
+  def createClientsideMetadata(userCredentials: UserCredentials, fileId: UUID, checksumValue: String, idx: Int): Unit = {
     val client = new UserApiClient[acf.Data, acf.Variables](userCredentials)
     val dummyInstant = Instant.now()
     val input = List(AddClientFileMetadataInput(
       fileId,
-      Some("E2E_tests/original/path"),
+      Some(s"E2E_tests/original/path$idx"),
       Some(checksumValue),
       Some("E2E tests checksumType"),
       dummyInstant.toEpochMilli,

@@ -1,7 +1,8 @@
 package helpers.aws
 import java.nio.file.Path
+
 import com.typesafe.config.{Config, ConfigFactory}
-import software.amazon.awssdk.auth.credentials.{AwsCredentialsProvider, DefaultCredentialsProvider}
+import software.amazon.awssdk.auth.credentials.{AwsCredentialsProvider, ContainerCredentialsProvider, DefaultCredentialsProvider}
 import software.amazon.awssdk.http.SdkHttpClient
 import software.amazon.awssdk.http.apache.ApacheHttpClient
 import software.amazon.awssdk.regions.Region
@@ -23,6 +24,7 @@ class AWSUtility {
     //Assume role if running on Jenkins
     val sts = StsClient.builder()
       .region(Region.EU_WEST_2)
+      .credentialsProvider(ContainerCredentialsProvider.builder().build())
       .httpClient(httpClient).build()
 
     StsAssumeRoleCredentialsProvider.builder().stsClient(sts)

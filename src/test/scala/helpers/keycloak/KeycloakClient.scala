@@ -19,7 +19,7 @@ object KeycloakClient {
   private val userAdminClient: String = configuration.getString("keycloak.user.admin.client")
   private val userAdminSecret: String = configuration.getString("keycloak.user.admin.secret")
 
-  private val keyCloakAdminClient: Keycloak = KeycloakBuilder.builder()
+  lazy private val keyCloakAdminClient: Keycloak = KeycloakBuilder.builder()
     .serverUrl(s"$authUrl/auth")
     .realm("tdr")
     .clientId(userAdminClient)
@@ -27,8 +27,8 @@ object KeycloakClient {
     .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
     .build()
 
-  private val realm: RealmResource = keyCloakAdminClient.realm("tdr")
-  private val userResource: UsersResource = realm.users()
+  lazy private val realm: RealmResource = keyCloakAdminClient.realm("tdr")
+  lazy private val userResource: UsersResource = realm.users()
 
   def createUser(userCredentials: UserCredentials, body: Option[String] = Some("MOCK1")): String = {
 

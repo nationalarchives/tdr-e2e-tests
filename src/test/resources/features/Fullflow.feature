@@ -22,5 +22,3 @@ Feature: Full user journey
     And the av metadata progress bar should be visible
     And the checksum progress bar should be visible
     And the ffid progress bar should be visible
-# The stage to check that the redirect to next page has been removed temporarily while errors are investigated.
-

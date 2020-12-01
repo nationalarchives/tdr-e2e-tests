@@ -33,9 +33,6 @@ Feature: File Checks Page
     And the ffid progress bar should be visible
     And the ffid progress bar should have 25% progress
 
-#    @wip temporarily added to stop these tests from running as the upload process being used means the tests fail when trying to go to results page.
-#    The tag will be removed once the uploading process has been changed and tests run successfully again.
-  @wip
   Scenario: User is redirected to results page when the record checks are complete
     Given A logged out user
     And an existing consignment for transferring body MOCK1
@@ -47,16 +44,15 @@ Feature: File Checks Page
     When the user is logged in on the records page
     Then the user will be on a page with the title "Checking your records"
     And the user waits for the checks to complete
-    Then the user will be on a page with the title "Record check results"
+    Then the user will be on a page with a panel titled "Checks Completed!"
 
-  @wip
   Scenario: User is redirected to the results page if the checks are complete and they visit the record checks page
     Given A logged out user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the records checks are complete
     When the user is logged in on the records page
-    Then the user will be on a page with the title "Record check results"
+    Then the user will be on a page with a panel titled "Checks Completed!"
 
   Scenario: Consignment records page is accessed by a logged out user
     Given A logged out user

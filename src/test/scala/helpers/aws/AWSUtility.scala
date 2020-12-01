@@ -17,10 +17,10 @@ import scala.util.Try
 
 class AWSUtility {
 
-  val config: Config = ConfigFactory.load
-  val httpClient: SdkHttpClient = ApacheHttpClient.builder.build
+  lazy val config: Config = ConfigFactory.load
+  lazy val httpClient: SdkHttpClient = ApacheHttpClient.builder.build
 
-  val provider: AwsCredentialsProvider with SdkAutoCloseable = if(config.hasPath("s3.role")) {
+  lazy val provider: AwsCredentialsProvider with SdkAutoCloseable = if(config.hasPath("s3.role")) {
     //Assume role if running on Jenkins
     val sts = StsClient.builder()
       .region(Region.EU_WEST_2)

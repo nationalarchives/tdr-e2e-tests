@@ -296,12 +296,12 @@ class Steps extends ScalaDsl with EN with Matchers {
     numberOfFiles: Int => {
       createdFiles = client.createFiles(consignmentId, numberOfFiles, "E2E TEST UPLOAD FOLDER")
       //  checksumValue will be replaced with actual checksum soon
-      val files = List("largefile", "testfile1", "testfile2")
+      val files = List("testfile1", "testfile2")
 
       createdFiles.zipWithIndex.foreach {
         case (id, idx) =>
           client.createClientsideMetadata(userCredentials, id, "checksumValue", idx)
-          val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 3)}")
+          val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")
           val awsUtility = AWSUtility()
           awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), s"$consignmentId/$id", path)
       }

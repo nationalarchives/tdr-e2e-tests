@@ -20,7 +20,7 @@ class AWSUtility {
   lazy val config: Config = ConfigFactory.load
   lazy val httpClient: SdkHttpClient = ApacheHttpClient.builder.build
 
-  lazy val provider: AwsCredentialsProvider with SdkAutoCloseable = if(config.hasPath("s3.role")) {
+  val provider: AwsCredentialsProvider with SdkAutoCloseable = if(config.hasPath("s3.role")) {
     //Assume role if running on Jenkins
     val sts = StsClient.builder()
       .region(Region.EU_WEST_2)
@@ -36,7 +36,7 @@ class AWSUtility {
       .build()
   } else {
     //Otherwise, use local credentials
-    DefaultCredentialsProvider.builder().reuseLastProviderEnabled(false).build()
+    DefaultCredentialsProvider.builder().build()
   }
 
   val s3: S3Client = S3Client.builder()

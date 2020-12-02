@@ -19,7 +19,7 @@ object KeycloakClient {
   private val userAdminClient: String = configuration.getString("keycloak.user.admin.client")
   private val userAdminSecret: String = configuration.getString("keycloak.user.admin.secret")
 
-  private val keyCloakAdminClient: Keycloak = KeycloakBuilder.builder()
+  private def keyCloakAdminClient(): Keycloak = KeycloakBuilder.builder()
     .serverUrl(s"$authUrl/auth")
     .realm("tdr")
     .clientId(userAdminClient)
@@ -27,10 +27,13 @@ object KeycloakClient {
     .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
     .build()
 
-  private val realm: RealmResource = keyCloakAdminClient.realm("tdr")
-  private val userResource: UsersResource = realm.users()
+  private def realmResource(client: Keycloak): RealmResource = client.realm("tdr")
+  private def userResource(realm: RealmResource): UsersResource = realm.users()
 
   def createUser(userCredentials: UserCredentials, body: Option[String] = Some("MOCK1")): String = {
+    val client = keyCloakAdminClient()
+    val realm = realmResource(client)
+    val user = userResource(realm)
 
     val userRepresentation: UserRepresentation = new UserRepresentation
 
@@ -47,13 +50,20 @@ object KeycloakClient {
     body.foreach(b => userRepresentation.setAttributes(Map("body" -> List(b).asJava).asJava))
     userRepresentation.setRealmRoles(List("tdr_user").asJava)
 
-    val response: Response = userResource.create(userRepresentation)
+    val response: Response = user.create(userRepresentation)
 
-    response.getLocation.getPath.replaceAll(".*/([^/]+)$", "$1")
+    val path = response.getLocation.getPath.replaceAll(".*/([^/]+)$", "$1")
+    client.close()
+    path
   }
 
   def deleteUser(userId: String): Unit = {
-    userResource.delete(userId)
+    val client = keyCloakAdminClient()
+    val realm = realmResource(client)
+    val user = userResource(realm)
+
+    user.delete(userId)
+    client.close()
   }
 }
 

@@ -176,9 +176,16 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with a panel titled \"(.*)\"") {
     panelTitle: String =>
-      val panel = webDriver.findElement(By.className("govuk-panel__title")).getText
-
-      Assert.assertEquals(panelTitle, panel)
+      new WebDriverWait(webDriver, 120)
+        .ignoring(classOf[StaleElementReferenceException])
+        /*Ignore stale references exceptions.
+        These seem to happen when Selenium selects an element which then disappears when the user is redirected to the next page,
+        such as from the upload page to the file checks page. In this case, we only want to check the element on the second page,
+        so it doesn't matter if the same element on the first page has disappeared.*/
+        .until((driver: WebDriver) => {
+          val panel = webDriver.findElement(By.className("govuk-panel__title")).getText
+          panel == panelTitle
+        })
   }
 
   Then("^the user should see a general service error \"(.*)\"") {

@@ -211,10 +211,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user will see a summary error message \"(.*)\"") {
-    formErrorMessage: String =>
+    summaryErrorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-summary__list a"))
       Assert.assertNotNull(errorElement)
-      Assert.assertEquals(formErrorMessage, errorElement.getText)
+      Assert.assertEquals(summaryErrorMessage, errorElement.getText)
   }
 
   Then("^the user should see the series dropdown values (.*)") {

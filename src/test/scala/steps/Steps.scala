@@ -210,6 +210,13 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertEquals(s"Error:\n" + formErrorMessage, errorElement.getText)
   }
 
+  And("^the user will see a summary error message \"(.*)\"") {
+    summaryErrorMessage: String =>
+      val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-summary__list a"))
+      Assert.assertNotNull(errorElement)
+      Assert.assertEquals(summaryErrorMessage, errorElement.getText)
+  }
+
   Then("^the user should see the series dropdown values (.*)") {
     expectedValues: String =>
       val seriesList: List[String] = expectedValues.split(",").toList

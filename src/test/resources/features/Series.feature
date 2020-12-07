@@ -5,7 +5,8 @@ Feature: Series Page
     When the logged in user navigates to the series page
     And the user clicks the continue button
     Then the user will remain on the series page
-    And the user will see a form error message "This field is required"
+    And the user will see a form error message "Select a series reference"
+    And the user will see a summary error message "Select a series reference"
 
   Scenario: Logged in user selects a series from the dropdown
     Given A logged in user

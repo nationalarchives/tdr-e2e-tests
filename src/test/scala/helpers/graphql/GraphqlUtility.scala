@@ -29,7 +29,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createTransferAgreement(consignmentId: UUID): Unit = {
     val client = new UserApiClient[ata.Data, ata.Variables](userCredentials)
-    val input = AddTransferAgreementInput(consignmentId, Some(true), Some(true), Some(true), None, Some(true), Some(true))
+    val input = AddTransferAgreementInput(consignmentId, Some(true), Some(true), Some(true), Some(true), Some(true))
     client.result(ata.document, ata.Variables(input))
   }
 
@@ -37,7 +37,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val client = new UserApiClient[af.Data, af.Variables](userCredentials)
 //    parentFolderName is an option for now, but the API will be changed to take a string rather than Option
 //    Once this happens, this function will be changed to reflect this.
-    val input = AddFilesInput(consignmentId, numberOfFiles, Option(parentFolderName))
+    val input = AddFilesInput(consignmentId, numberOfFiles, parentFolderName)
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
 

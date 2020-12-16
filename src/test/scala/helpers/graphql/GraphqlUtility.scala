@@ -29,7 +29,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createTransferAgreement(consignmentId: UUID): Unit = {
     val client = new UserApiClient[ata.Data, ata.Variables](userCredentials)
-    val input = AddTransferAgreementInput(consignmentId, Some(true), Some(true), Some(true), Some(true), Some(true), Some(true))
+    val input = AddTransferAgreementInput(consignmentId, Some(true), Some(true), Some(true), None, Some(true), Some(true))
     client.result(ata.document, ata.Variables(input))
   }
 

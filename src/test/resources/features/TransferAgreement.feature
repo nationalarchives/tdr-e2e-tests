@@ -22,7 +22,7 @@ Feature: Transfer Agreement Page
     Given A logged out user
     And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
-    When the user selects yes for all checks except "The records are all Digital"
+    When the user selects yes for all checks except "The records are all English"
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
     Then the user will see a form error message "All records must be confirmed as digital before proceeding"

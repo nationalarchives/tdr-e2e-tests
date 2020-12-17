@@ -25,7 +25,7 @@ Feature: Transfer Agreement Page
     When the user selects yes for all checks except "The records are all English"
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
-    Then the user will see a form error message "All records must be confirmed as digital before proceeding"
+    Then the user will see a form error message "All records must be confirmed as English language before proceeding"
 
   Scenario: Consignment transfer agreement page is accessed by a logged out user
     Given A logged out user

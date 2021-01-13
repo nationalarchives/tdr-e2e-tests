@@ -22,10 +22,9 @@ This repository provides end to end test for the TDR application.
     * Scala Cucumber: https://plugins.jetbrains.com/plugin/7460-cucumber-for-scala
     * Java Cucumber: https://plugins.jetbrains.com/plugin/7212-cucumber-for-java
 
-6. Set environment variable:
-   ```
-   $ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]
-   ```
+6. Set environment variables:
+  * `$ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]`
+  * `$ export INTG_AWS_ACCOUNT_NUMBER=[aws account number of environment where tests are being run]`
 
 7. Run the tests
    ```

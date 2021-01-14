@@ -266,19 +266,21 @@ class Steps extends ScalaDsl with EN with Matchers {
     transferLegalOwnership.click()
   }
 
-  And("^the user confirms that DRO has signed off on the records") {
-    val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
-    val droSensitivity = webDriver.findElement(By.id("droSensitivity"))
+  And("^the user confirms all the records are open") {
     val openRecords = webDriver.findElement(By.id("openRecords"))
-    droAppraisalAndSelection.click()
-    droSensitivity.click()
     openRecords.click()
   }
 
+  And("^the user confirms that DRO has signed off on the records") {
+    val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
+    val droSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    droAppraisalAndSelection.click()
+    droSensitivity.click()
+  }
+
   And("^the user does not confirm DRO sign off for the records") {
-    val droSensitivityAndOpen = webDriver.findElement(By.id("droSensitivity"))
-    val openRecords = webDriver.findElement(By.id("openRecords"))
-    droSensitivityAndOpen.click()
+    val droSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    droSensitivity.click()
   }
 
   And("^an existing consignment for transferring body (.*)") {

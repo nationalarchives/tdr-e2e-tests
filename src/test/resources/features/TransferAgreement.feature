@@ -5,6 +5,7 @@ Feature: Transfer Agreement Page
     And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes to all transfer agreement checks
+    And the user confirms all the records are open
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
     Then the user will be on a page with the title "Upload Records"
@@ -14,6 +15,7 @@ Feature: Transfer Agreement Page
     And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes to all transfer agreement checks
+    And the user confirms all the records are open
     And the user does not confirm DRO sign off for the records
     And the user clicks the continue button
     Then the user will see a form error message "DRO must have signed off the appraisal and selection decision for records"
@@ -23,6 +25,7 @@ Feature: Transfer Agreement Page
     And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes for all checks except "The records are all English"
+    And the user confirms all the records are open
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
     Then the user will see a form error message "All records must be confirmed as English language before proceeding"

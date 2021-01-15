@@ -35,8 +35,6 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createFiles(consignmentId: UUID, numberOfFiles: Int, parentFolderName: String): List[UUID] = {
     val client = new UserApiClient[af.Data, af.Variables](userCredentials)
-//    parentFolderName is an option for now, but the API will be changed to take a string rather than Option
-//    Once this happens, this function will be changed to reflect this.
     val input = AddFilesInput(consignmentId, numberOfFiles, parentFolderName)
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
@@ -51,7 +49,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
       Some("E2E tests checksumType"),
       dummyInstant.toEpochMilli,
       Some(1024),
-      dummyInstant.toEpochMilli))
+      Some(dummyInstant.toEpochMilli)))
     client.result(acf.document, acf.Variables(input))
   }
 

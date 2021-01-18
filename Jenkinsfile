@@ -72,7 +72,7 @@ pipeline {
               //Hide the output of the test command to stop keycloak credentials appearing in console output
               sh """
                 set +x
-                sbt test -Dconfig.file=./src/main/resources/application.${params.STAGE}.conf -Dkeycloak.user.admin.secret=${tdr_user_admin_secret} -Dkeycloak.backendchecks.secret=${tdr_backend_checks_secret} -Dbrowser=${params.BROWSER}
+                sbt test -Dconfig.file=./src/test/resources/application.${params.STAGE}.conf -Dkeycloak.user.admin.secret=${tdr_user_admin_secret} -Dkeycloak.backendchecks.secret=${tdr_backend_checks_secret} -Dbrowser=${params.BROWSER}
               """
             }
           }

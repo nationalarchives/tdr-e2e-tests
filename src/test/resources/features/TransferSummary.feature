@@ -1,4 +1,5 @@
 Feature: Transfer Summary Page
+  @tk
   Scenario: Submitting the completed transfer summary page creates a completed export
     Given A logged out user
     And an existing consignment for transferring body MOCK1

@@ -378,7 +378,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
-        val isNotVisible = StepsUtility.elementHasClassHide(id, webDriver)
+        val isNotVisible = StepsUtility.elementHasAttributeHidden(id, webDriver)
         isNotVisible
       })
     }

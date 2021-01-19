@@ -23,4 +23,9 @@ object StepsUtility {
     val element = webDriver.findElement(By.cssSelector(s"#$id"))
     element.getAttribute("class").contains("hide")
   }
+
+  def elementHasAttributeHidden(id: String, webDriver: WebDriver): Boolean = {
+    val element = webDriver.findElement(By.cssSelector(s"#$id"))
+    Option(element.getAttribute("hidden")).isDefined
+  }
 }

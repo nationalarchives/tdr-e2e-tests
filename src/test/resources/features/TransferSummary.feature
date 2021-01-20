@@ -10,5 +10,5 @@ Feature: Transfer Summary Page
     Then the user will be on a page with the title "Transfer Summary"
     When the user selects yes to all transfer summary checks
     And the user clicks the continue button
-    Then the user will be on a page with the title "Transfer Complete"
+    Then the user will be on a page with a panel titled "Transfer Complete"
     And the transfer export will be complete

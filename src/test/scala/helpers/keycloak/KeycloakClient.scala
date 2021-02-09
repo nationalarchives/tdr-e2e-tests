@@ -45,6 +45,8 @@ object KeycloakClient {
     val creds = List(credentials).asJava
 
     userRepresentation.setUsername(userCredentials.userName)
+    userRepresentation.setFirstName(userCredentials.firstName)
+    userRepresentation.setLastName(userCredentials.lastName)
     userRepresentation.setEnabled(true)
     userRepresentation.setCredentials(creds)
     body.foreach(b => userRepresentation.setAttributes(Map("body" -> List(b).asJava).asJava))
@@ -67,4 +69,7 @@ object KeycloakClient {
   }
 }
 
-case class UserCredentials(userName: String, password: String)
+case class UserCredentials(userName: String,
+                           password: String,
+                           firstName: String = "Test First Name",
+                           lastName: String = "Test Last Name")

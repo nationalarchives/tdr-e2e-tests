@@ -392,11 +392,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^the user clicks the (.*) link") {
-    linkToClick: String =>
-      webDriver.findElement(By.linkText(linkToClick)).click()
-  }
-
   When("^the user clicks their browser's back button") {
     webDriver.navigate().back()
   }

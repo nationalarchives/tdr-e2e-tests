@@ -2,6 +2,7 @@ package steps
 
 import java.nio.file.Paths
 import java.time.Duration
+import java.util
 import java.util.UUID
 
 import com.typesafe.config.{Config, ConfigFactory}
@@ -45,7 +46,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   After() { scenario =>
     webDriver.quit()
-    userCleanUp
+    userCleanUp()
   }
 
   private def login(userCredentials: UserCredentials): Unit = {
@@ -69,6 +70,20 @@ class Steps extends ScalaDsl with EN with Matchers {
     //Not all scenarios create the different user
     if (!differentUserId.isEmpty) {
       KeycloakClient.deleteUser(differentUserId)
+    }
+  }
+
+  private def findErrorMessageOnPage(formType: String, genericErrorMessage: String = "", errorClassName: String): Unit = {
+    val formErrorMessages: Seq[String] = formType match {
+      case "Final Transfer Confirmation" =>
+        Seq("All records must be confirmed as open before proceeding",
+          "Transferral of legal ownership of all records must be confirmed before proceeding")
+    }
+    val errorElements: util.List[WebElement] = webDriver.findElements(By.cssSelector(errorClassName))
+    Assert.assertNotNull(errorElements)
+
+    for (i <- formErrorMessages.indices) {
+      Assert.assertEquals(genericErrorMessage + formErrorMessages(i), errorElements.get(i).getText)
     }
   }
 
@@ -210,11 +225,21 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertEquals(s"Error:\n" + formErrorMessage, errorElement.getText)
   }
 
+  And("^the user will see all of the (.*) form's error messages") {
+    formType: String =>
+      findErrorMessageOnPage(formType, genericErrorMessage = "Error:\n", errorClassName = ".govuk-error-message")
+  }
+
   And("^the user will see a summary error message \"(.*)\"") {
     summaryErrorMessage: String =>
       val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-summary__list a"))
       Assert.assertNotNull(errorElement)
       Assert.assertEquals(summaryErrorMessage, errorElement.getText)
+  }
+
+  And("^the user will see all of the (.*) summary error messages") {
+    formType: String =>
+      findErrorMessageOnPage(formType, errorClassName = ".govuk-error-summary__list a")
   }
 
   Then("^the user should see the series dropdown values (.*)") {
@@ -257,13 +282,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllPublicRecords.click()
     recordsAllCrownCopyright.click()
     recordsAllEnglish.click()
-  }
-
-  When("^the user selects yes to all transfer summary checks") {
-    val openRecords = webDriver.findElement(By.id("openRecords"))
-    val transferLegalOwnership = webDriver.findElement(By.id("transferLegalOwnership"))
-    openRecords.click()
-    transferLegalOwnership.click()
   }
 
   And("^the user confirms all the records are open") {
@@ -429,5 +447,18 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user navigates to a page that does not exist") {
     loadPage("some-page")
+  }
+
+  And("^the user confirms that they are transferring legal ownership of the records to TNA") {
+    val transferLegalOwnership = webDriver.findElement(By.id("transferLegalOwnership"))
+    transferLegalOwnership.click()
+  }
+
+  And("^the transfer summary shows the user that (.*) files have been uploaded") {
+    numberOfFilesUploaded: String => {
+      val summary = webDriver.findElement(By.cssSelector(".govuk-summary-list"))
+      Assert.assertNotNull(summary)
+      Assert.assertTrue(summary.getText.contains(s"$numberOfFilesUploaded files uploaded"))
+    }
   }
 }

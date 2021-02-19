@@ -73,7 +73,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  private def findErrorMessageOnPage(formType: String, genericErrorMessage: String = "", errorClassName: String): Unit = {
+  private def findFormErrorMessageOnPage(formType: String, genericErrorMessage: String = "", errorClassName: String): Unit = {
     val formErrorMessages: Seq[String] = formType match {
       case "Final Transfer Confirmation" =>
         Seq("All records must be confirmed as open before proceeding",
@@ -227,7 +227,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user will see all of the (.*) form's error messages") {
     formType: String =>
-      findErrorMessageOnPage(formType, genericErrorMessage = "Error:\n", errorClassName = ".govuk-error-message")
+      findFormErrorMessageOnPage(formType, genericErrorMessage = "Error:\n", errorClassName = ".govuk-error-message")
   }
 
   And("^the user will see a summary error message \"(.*)\"") {
@@ -239,7 +239,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user will see all of the (.*) summary error messages") {
     formType: String =>
-      findErrorMessageOnPage(formType, errorClassName = ".govuk-error-summary__list a")
+      findFormErrorMessageOnPage(formType, errorClassName = ".govuk-error-summary__list a")
   }
 
   Then("^the user should see the series dropdown values (.*)") {
@@ -454,7 +454,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     transferLegalOwnership.click()
   }
 
-  And("^the transfer summary shows the user that (.*) files have been uploaded") {
+  Then("^the transfer summary page shows the user that (.*) files have been uploaded") {
     numberOfFilesUploaded: String => {
       val summary = webDriver.findElement(By.cssSelector(".govuk-summary-list"))
       Assert.assertNotNull(summary)

@@ -15,22 +15,22 @@ Feature: Transfer Summary Page
     When the user who did not create the consignment is logged in on the Transfer Summary page
     Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
 
-  Scenario: Submitting the final transfer confirmation form creates a completed export
+  Scenario: Consignment transfer summary page shows the same number of files as were uploaded
     Given A logged out user
     And an existing consignment for transferring body MOCK1
     And an existing upload of 3 files
     And the user is logged in on the Transfer Summary page
     When the user will be on a page with the title "Transfer Summary"
-    Then the transfer summary shows the user that 3 files have been uploaded
+    Then the transfer summary page shows the user that 3 files have been uploaded
 
-  Scenario: A logged in user submits Final Transfer Confirmation without confirming anything
+  Scenario: A logged in user submits Final Transfer Confirmation form without confirming anything
     Given A logged out user
     And an existing consignment for transferring body MOCK1
     And the user is logged in on the Transfer Summary page
     When the user clicks the continue button
     Then the user will see all of the Final Transfer Confirmation form's error messages
 
-  Scenario: Submitting the final transfer confirmation form creates a completed export
+  Scenario: Submitting the Final Transfer Confirmation form creates a completed export
     Given A logged out user
     And an existing consignment for transferring body MOCK1
     And an existing upload of 3 files

@@ -21,17 +21,36 @@ This repository provides end to end test for the TDR application.
     * Gherkin: https://plugins.jetbrains.com/plugin/9164-gherkin    
     * Scala Cucumber: https://plugins.jetbrains.com/plugin/7460-cucumber-for-scala
     * Java Cucumber: https://plugins.jetbrains.com/plugin/7212-cucumber-for-java
+    
+6. Ensure that:
+  * Using AWS credentials that allow access to the TDR environment that tests are being run against
+  * can access the TDR environment that tests are being run against via IP address
 
-6. Set environment variables:
+### Run the tests from the command line
+
+1. Set environment variables:
   * `$ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]`
   * `$ export INTG_AWS_ACCOUNT_NUMBER=[aws account number of environment where tests are being run]`
 
-7. Run the tests
+2. Run the tests
    ```
    $ sbt test -Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]
    ```
 
    * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
+
+### Run the tests from Intellij
+
+1. Go to the Feature or Scenario to run
+2. Click on the double green arrows in the margin next to the Feature/Scenario
+3. Select the "Create Run Configuration" option from the menu
+4. In the dialog box fill in the following information:
+  * **Glue**: `"classpath:steps/"` (note include the double quotes)
+  * **VM options**: `-Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]`
+  * **Environment Variables**: `DRIVER_LOCATION=[location of driver];INTG_AWS_ACCOUNT_NUMBER=[account number for the integration environment]`
+  * Leave the default variables for the other options
+
+5. Run the Feature or Scenario created.
    
 ### "Headless" Chromedriver option
 

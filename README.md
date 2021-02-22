@@ -57,6 +57,7 @@ If running the e2e tests on a Mac using Firefox set the additional the following
   * **Glue**: `"classpath:steps/"` (note include the double quotes)
   * **VM options**: `-Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]`
   * **Environment Variables**: `DRIVER_LOCATION=[location of driver];INTG_AWS_ACCOUNT_NUMBER=[account number for the integration environment]`
+    * Note: For running on Mac OS additional enviornment variable needs to be set: `FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`
   * Leave the default variables for the other options
 
 5. Run the Feature or Scenario created.

@@ -25,6 +25,15 @@ This repository provides end to end test for the TDR application.
 6. Ensure that:
   * Using AWS credentials that allow access to the TDR environment that tests are being run against
   * can access the TDR environment that tests are being run against via IP address
+  
+### Running tests on MAC OS
+
+Mac OS has the Firefox binary in a different location to Linux.
+
+Test configuration default is set to the Linux OS location.
+
+If running the e2e tests on a Mac using Firefox set the additional the following environment variable:
+  * `$ export FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`
 
 ### Run the tests from the command line
 

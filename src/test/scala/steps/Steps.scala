@@ -244,16 +244,16 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   When("^the user selects yes for all checks except \"The records are all English\"") {
-    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
-    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
+    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
+    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
     recordsAllPublicRecords.click()
     recordsAllCrownCopyright.click()
   }
 
   When("^the user selects yes to all transfer agreement checks") {
-    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecordtrue"))
-    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyrighttrue"))
-    val recordsAllEnglish = webDriver.findElement(By.id("englishtrue"))
+    val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
+    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
+    val recordsAllEnglish = webDriver.findElement(By.id("english"))
     recordsAllPublicRecords.click()
     recordsAllCrownCopyright.click()
     recordsAllEnglish.click()

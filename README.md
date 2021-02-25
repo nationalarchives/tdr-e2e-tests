@@ -23,16 +23,24 @@ This repository provides end to end test for the TDR application.
     * Java Cucumber: https://plugins.jetbrains.com/plugin/7212-cucumber-for-java
 
 6. Set environment variables:
-  * `$ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]`
-  * `$ export INTG_AWS_ACCOUNT_NUMBER=[aws account number of environment where tests are being run]`
+
+    via CLI:
+    * `$ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]`
+    * `$ export INTG_AWS_ACCOUNT_NUMBER=[aws account number of environment where tests are being run]`
+    
+    via Intellij:
+    * Navigate to Edit configurations > Under "Test Runner" > Environment Variables
+    * Enter the two variables (mentioned above) separated by a semicolon (no spaces)
+    
+      `DRIVER_LOCATION=[location of the driver executable downloaded in step 3];INTG_AWS_ACCOUNT_NUMBER=[aws account number of environment where tests are being run]`
 
 7. Run the tests
    ```
    $ sbt test -Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]
    ```
 
-   * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
-   
+    * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
+
 ### "Headless" Chromedriver option
 
 To view the tests running in the Chrome browser locally change the chromedriver option in the StepsUtility.scala to "false":
@@ -50,7 +58,7 @@ It is possible to debug in the "headless" mode:
 
 See here for more details: https://developers.google.com/web/updates/2017/04/headless-chrome#frontend.
 
-To retrieve and view the console logs from the headless browser it is possible to retreive them from the webDriver in the test code. For example in a step add the following code:
+To retrieve and view the console logs from the headless browser it is possible to retrieve them from the webDriver in the test code. For example in a step add the following code:
 
 ```
 val logEntries: LogEntries = webDriver.manage().logs().get("browser")

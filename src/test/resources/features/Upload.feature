@@ -24,7 +24,7 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title "Checking your records"
+    Then the user will be on a page with the title "Checking records"
 
   Scenario: A logged in user tries to upload multiple set of files to a consignment
     Given A logged out user
@@ -33,7 +33,7 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title "Checking your records"
+    Then the user will be on a page with the title "Checking records"
     When the user clicks their browser's back button
     And the user selects directory containing: testfile1
     And the user clicks the continue button

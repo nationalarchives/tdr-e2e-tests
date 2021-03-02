@@ -16,10 +16,10 @@ Feature: Full user journey
     And the user confirms all the records are open
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button
-    Then the user will be on a page with the title "Upload Records"
+    Then the user will be on a page with the title "Upload your records"
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title "Checking your records"
+    Then the user will be on a page with the title "Checking records"
     And the av metadata progress bar should be visible
     And the checksum progress bar should be visible
     And the ffid progress bar should be visible

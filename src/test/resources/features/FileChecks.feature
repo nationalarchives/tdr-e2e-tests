@@ -7,7 +7,7 @@ Feature: File Checks Page
     And an existing upload of 5 files
     And 1 of the antivirus scans have finished
     When the user is logged in on the records page
-    Then the user will be on a page with the title "Checking your records"
+    Then the user will be on a page with the title "Checking records"
     And the av metadata progress bar should be visible
     And the av metadata progress bar should have 20% progress
 
@@ -18,7 +18,7 @@ Feature: File Checks Page
     And an existing upload of 4 files
     And 3 of the checksum scans have finished
     When the user is logged in on the records page
-    Then the user will be on a page with the title "Checking your records"
+    Then the user will be on a page with the title "Checking records"
     And the checksum progress bar should be visible
     And the checksum progress bar should have 75% progress
 
@@ -29,7 +29,7 @@ Feature: File Checks Page
     And an existing upload of 8 files
     And 2 of the FFID scans have finished
     When the user is logged in on the records page
-    Then the user will be on a page with the title "Checking your records"
+    Then the user will be on a page with the title "Checking records"
     And the ffid progress bar should be visible
     And the ffid progress bar should have 25% progress
 
@@ -42,9 +42,9 @@ Feature: File Checks Page
     And 5 of the checksum scans have finished
     And 8 of the antivirus scans have finished
     When the user is logged in on the records page
-    Then the user will be on a page with the title "Checking your records"
+    Then the user will be on a page with the title "Checking records"
     And the user waits for the checks to complete
-    Then the user will be on a page with a panel titled "Checks Completed!"
+    Then the user will be on a page with a panel titled "Checks Complete"
 
   Scenario: User is redirected to the results page if the checks are complete and they visit the record checks page
     Given A logged out user
@@ -52,7 +52,7 @@ Feature: File Checks Page
     And an existing transfer agreement
     And the records checks are complete
     When the user is logged in on the records page
-    Then the user will be on a page with a panel titled "Checks Completed!"
+    Then the user will be on a page with a panel titled "Checks Complete"
 
   Scenario: Consignment records page is accessed by a logged out user
     Given A logged out user

@@ -102,8 +102,6 @@ pipeline {
         )
       }
     }
-
-
     success {
       script {
         if(getPreviousResultForStage(currentBuild.previousBuild) == "FAILURE") {
@@ -118,9 +116,9 @@ pipeline {
 }
 
 def getPreviousResultForStage(runWrapper) {
-    if(runWrapper.rawBuild.getEnvironment().get("STAGE") == params.STAGE) {
-        return runWrapper.getResult()
-    } else {
-        getPreviousResultForStage(runWrapper.previousBuild)
-    }
+  if(runWrapper.rawBuild.getEnvironment().get("STAGE") == params.STAGE) {
+    return runWrapper.getResult()
+  } else {
+    getPreviousResultForStage(runWrapper.previousBuild)
+  }
 }

@@ -46,7 +46,7 @@ If running the e2e tests on a Mac using Firefox set the additional the following
    $ sbt test -Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]
    ```
 
-   * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
+    * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
 
 ### Run the tests from Intellij
 
@@ -61,7 +61,8 @@ If running the e2e tests on a Mac using Firefox set the additional the following
   * Leave the default variables for the other options
 
 5. Run the Feature or Scenario created.
-   
+
+
 ### "Headless" Chromedriver option
 
 To view the tests running in the Chrome browser locally change the chromedriver option in the StepsUtility.scala to "false":
@@ -79,7 +80,7 @@ It is possible to debug in the "headless" mode:
 
 See here for more details: https://developers.google.com/web/updates/2017/04/headless-chrome#frontend.
 
-To retrieve and view the console logs from the headless browser it is possible to retreive them from the webDriver in the test code. For example in a step add the following code:
+To retrieve and view the console logs from the headless browser it is possible to retrieve them from the webDriver in the test code. For example in a step add the following code:
 
 ```
 val logEntries: LogEntries = webDriver.manage().logs().get("browser")

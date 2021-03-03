@@ -24,7 +24,7 @@ This repository provides end to end test for the TDR application.
     
 6. Ensure that:
   * Using AWS credentials that allow access to the TDR environment that tests are being run against
-  * can access the TDR environment that tests are being run against via IP address
+  * Can access the TDR environment that tests are being run against via IP address
   
 ### Running tests on MAC OS
 
@@ -37,11 +37,16 @@ If running the e2e tests on a Mac using Firefox set the additional the following
 
 ### Run the tests from the command line
 
+By default the tests will run against the TDR integration environment
+
 1. Set environment variables:
   * `$ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]`
   * `$ export INTG_AWS_ACCOUNT_NUMBER=[aws account number of environment where tests are being run]`
+  
+2. If you are running the test against your locally running TDR frontend project set the optional environment variable:
+  * `$ export TDR_BASE_URL=http://localhost:9000`
 
-2. Run the tests
+3. Run the tests
    ```
    $ sbt test -Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]
    ```
@@ -50,14 +55,18 @@ If running the e2e tests on a Mac using Firefox set the additional the following
 
 ### Run the tests from Intellij
 
+By default the tests will run against the TDR integration environment
+
 1. Go to the Feature or Scenario to run
 2. Click on the double green arrows in the margin next to the Feature/Scenario
 3. Select the "Create Run Configuration" option from the menu
+3. From the "Create Run Configuration" options select the first option which is the Cucumber Java run option.
 4. In the dialog box fill in the following information:
   * **Glue**: `"classpath:steps/"` (note include the double quotes)
   * **VM options**: `-Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]`
   * **Environment Variables**: `DRIVER_LOCATION=[location of driver];INTG_AWS_ACCOUNT_NUMBER=[account number for the integration environment]`
-    * Note: For running on Mac OS additional enviornment variable needs to be set: `FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`
+    * Running On Mac OS Note: For running on Mac OS additional environment variable needs to be set: `FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`
+    * Running Against Local Frontend Note: If you are running the tests against your locally running TDR frontend project set the optional environment variable: `TDR_BASE_URL=http://localhost:9000`
   * Leave the default variables for the other options
 
 5. Run the Feature or Scenario created.

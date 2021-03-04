@@ -76,7 +76,7 @@ By default the tests will run against the TDR integration environment
 Cucumber provides "tagging" configuration to control what features/scenarios are run. This is useful if you want to only run some tests locally.
 
 1. In the `TestRunner` class set the tags option as follows: `tags = Array("@testsIWantToRun")`
-2. Select the feature(s) and/or scenario(s) you to run and annotate with the tag. 
+2. Select the feature(s) and/or scenario(s) you want to run and annotate them with the tag. 
   * For example:
     ```
     @testIWantToRun

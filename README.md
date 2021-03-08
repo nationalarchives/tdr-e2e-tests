@@ -79,14 +79,14 @@ Cucumber provides "tagging" configuration to control what features/scenarios are
 2. Select the feature(s) and/or scenario(s) you want to run and annotate them with the tag. 
   * For example:
     ```
-    @testIWantToRun
+    @testsIWantToRun
     Feature: Some feature
     ...
     ```
   * Or:
     ```
     ...
-    @testIWantToRun
+    @testsIWantToRun
     Scenario: Some scenario
     ...
     ```

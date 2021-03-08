@@ -71,6 +71,28 @@ By default the tests will run against the TDR integration environment
 
 5. Run the Feature or Scenario created.
 
+### Using Tags
+
+Cucumber provides "tagging" configuration to control what features/scenarios are run. This is useful if you want to only run some tests locally.
+
+1. In the `TestRunner` class set the tags option as follows: `tags = Array("@testsIWantToRun")`
+2. Select the feature(s) and/or scenario(s) you want to run and annotate them with the tag. 
+  * For example:
+    ```
+    @testsIWantToRun
+    Feature: Some feature
+    ...
+    ```
+  * Or:
+    ```
+    ...
+    @testsIWantToRun
+    Scenario: Some scenario
+    ...
+    ```
+3. Only those features/scenarios with the tag will run, this will be case whether using the command line, or Intellij
+
+**Note:** If you annotate a feature, all the scenarios within that feature will be run.
 
 ### "Headless" Chromedriver option
 

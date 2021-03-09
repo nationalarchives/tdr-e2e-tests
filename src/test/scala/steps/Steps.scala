@@ -20,7 +20,6 @@ import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver, WebElement}
 import org.scalatest.Matchers
 
-import scala.collection.convert.ImplicitConversions.`list asScalaBuffer`
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
@@ -484,7 +483,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user should see (.*) rows of transfer summary data") {
     listNumber: Int => {
       val listRows: util.List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__key"))
-      Assert.assertEquals(listRows.length, listNumber)
+      Assert.assertEquals(listRows.size, listNumber)
     }
   }
 }

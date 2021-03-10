@@ -1,10 +1,5 @@
 package steps
 
-import java.nio.file.Paths
-import java.time.Duration
-import java.util
-import java.util.UUID
-
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.aws.AWSUtility
@@ -17,9 +12,13 @@ import helpers.steps.StepsUtility.calculateTestFileChecksum
 import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
-import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver, WebElement}
+import org.openqa.selenium._
 import org.scalatest.Matchers
 
+import java.nio.file.Paths
+import java.time.Duration
+import java.util
+import java.util.UUID
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
@@ -480,10 +479,14 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^the user should see (.*) rows of transfer summary data") {
-    listNumber: Int => {
-      val listRows: util.List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__key"))
-      Assert.assertEquals(listRows.size, listNumber)
-    }
+  And("^the user sees a transfer summary with related information") {
+    val transferSummary: WebElement = webDriver.findElement(By.cssSelector(".govuk-summary-list"))
+
+    Assert.assertNotNull(transferSummary)
+    Assert.assertTrue(transferSummary.getText.contains("MOCK1 123"))
+    Assert.assertTrue(transferSummary.getText.contains("TDR-2021-"))
+    Assert.assertTrue(transferSummary.getText.contains("MOCK1 Department"))
+    Assert.assertTrue(transferSummary.getText.contains("4 files uploaded"))
   }
+
 }

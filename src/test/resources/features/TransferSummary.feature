@@ -4,7 +4,7 @@ Feature: Transfer Summary Page
     Given A logged out user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
-    And the logged out user attempts to access the Transfer summary page
+    And the logged out user attempts to access the Transfer Summary page
     Then the logged out user should be on the login page
 
   Scenario: Consignment transfer summary page is accessed by a user who did not create the consignment

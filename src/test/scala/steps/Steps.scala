@@ -216,7 +216,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user will see the error message (.*)") {
     errorMessage: String =>
       val selector = ".govuk-error-summary__list"
-      val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-summary__list"))
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
       Assert.assertNotNull(elementMissingMessage(selector), errorElement)
       Assert.assertEquals(errorMessage, errorElement.getText)
   }

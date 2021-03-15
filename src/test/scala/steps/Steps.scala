@@ -19,6 +19,7 @@ import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
+import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
@@ -49,6 +50,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   After() { scenario =>
     webDriver.quit()
     userCleanUp()
+  }
+
+  implicit class JavaWebElementList(javaList: util.List[WebElement]) {
+    def toScalaList: List[WebElement] = javaList.asScala.toList
   }
 
   private def login(userCredentials: UserCredentials): Unit = {
@@ -480,13 +485,29 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user sees a transfer summary with related information") {
-    val transferSummary: WebElement = webDriver.findElement(By.cssSelector(".govuk-summary-list"))
+    val expectedKeys: List[String] = List(
+      "Series reference",
+      "Consignment reference",
+      "Transferring body",
+      "Files uploaded for transfer"
+    )
+    val transferSummary = webDriver.findElement(By.cssSelector(".govuk-summary-list"))
+    val transferSummaryKeys: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__key")).toScalaList
+    val transferSummaryValues: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__value")).toScalaList
 
     Assert.assertNotNull(transferSummary)
-    Assert.assertTrue(transferSummary.getText.contains("MOCK1 123"))
-    Assert.assertTrue(transferSummary.getText.contains("TDR-2021-"))
-    Assert.assertTrue(transferSummary.getText.contains("MOCK1 Department"))
-    Assert.assertTrue(transferSummary.getText.contains("4 files uploaded"))
+
+    Assert.assertTrue(transferSummaryKeys.size == 4)
+    transferSummaryKeys.forEach(key => {
+     val keyText = key.getText
+      Assert.assertTrue("Error: Transfer summary list key empty", !keyText.isEmpty)
+      Assert.assertTrue("Error: Transfer summary list key is incorrect",expectedKeys.contains(keyText))
+    })
+
+    Assert.assertTrue(transferSummaryValues.size == 4)
+    transferSummaryValues.foreach(value => {
+      Assert.assertTrue("Error: Transfer summary list value empty", !value.getText.isEmpty)
+    })
   }
 
 }

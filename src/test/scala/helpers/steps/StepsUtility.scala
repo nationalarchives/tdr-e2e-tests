@@ -1,10 +1,8 @@
 package helpers.steps
 
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Path}
 import java.security.MessageDigest
-import java.util.UUID
 
-import helpers.graphql.GraphqlUtility
 import helpers.keycloak.UserCredentials
 import org.openqa.selenium.{By, WebDriver}
 

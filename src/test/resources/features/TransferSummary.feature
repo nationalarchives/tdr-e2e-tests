@@ -30,6 +30,7 @@ Feature: Transfer Summary Page
     When the user clicks the continue button
     Then the user will see all of the Final Transfer Confirmation form's error messages
 
+  @wip
   Scenario: Submitting the Final Transfer Confirmation form creates a completed export
     Given A logged out user
     And an existing consignment for transferring body MOCK1

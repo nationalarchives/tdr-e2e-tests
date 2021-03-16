@@ -11,6 +11,7 @@ import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
 import helpers.keycloak.{KeycloakClient, UserCredentials}
+import helpers.logging.AssertionErrorMessages._
 import helpers.steps.StepsUtility
 import helpers.steps.StepsUtility.calculateTestFileChecksum
 import helpers.users.RandomUtility
@@ -82,10 +83,10 @@ class Steps extends ScalaDsl with EN with Matchers {
           "Transferral of legal ownership of all records must be confirmed before proceeding")
     }
     val errorElements: util.List[WebElement] = webDriver.findElements(By.cssSelector(errorClassName))
-    Assert.assertNotNull(errorElements)
+    Assert.assertNotNull(elementMissingMessage(errorClassName), errorElements)
 
     for (i <- formErrorMessages.indices) {
-      Assert.assertEquals(genericErrorMessage + formErrorMessages(i), errorElements.get(i).getText)
+      Assert.assertEquals("Incorrect error message", genericErrorMessage + formErrorMessages(i), errorElements.get(i).getText)
     }
   }
 
@@ -144,26 +145,25 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks on the (.*) button") {
     button: String =>
       webDriver.findElement(By.linkText(button)).click()
-
   }
 
   Then("^the logged out user should be on the login page") {
     val currentUrl: String = webDriver.getCurrentUrl
-    Assert.assertTrue(currentUrl.startsWith(s"$authUrl/auth"))
+    Assert.assertTrue(doesNotMatchExpected(currentUrl, "login"), currentUrl.startsWith(s"$authUrl/auth"))
   }
 
   Then("^the user will remain on the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
       val url = if (page == "auth") authUrl else baseUrl
-      Assert.assertTrue(currentUrl.startsWith(s"$url/$page"))
+      Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$url/$page"))
   }
 
   Then("^the user should be on the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
 
-      Assert.assertTrue(s"actual: $currentUrl, expected: $page", currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+      Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
   And("^the transfer export will be complete") {
@@ -174,7 +174,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       val awsUtility = AWSUtility()
       awsUtility.isFileInS3(configuration.getString("s3.bucket.export"), s"$consignmentId.tar.gz")
     })
-    Assert.assertTrue(foundExport)
+    Assert.assertTrue("No export found", foundExport)
   }
 
   Then("^the user will be on a page with the title \"(.*)\"") {
@@ -207,23 +207,27 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user should see a general service error \"(.*)\"") {
     errorMessage: String =>
-      val errorElement = webDriver.findElement(By.cssSelector(".govuk-heading-l"))
-      Assert.assertNotNull(errorElement)
+      val selector = ".govuk-heading-l"
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
 
-      Assert.assertTrue(errorElement.getText.contains(errorMessage))
+      val actualErrorText = errorElement.getText
+      Assert.assertTrue(doesNotContain(actualErrorText, errorMessage), actualErrorText.contains(errorMessage))
   }
 
   And("^the user will see the error message (.*)") {
     errorMessage: String =>
-      val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-summary__list"))
-      Assert.assertNotNull(errorElement)
+      val selector = ".govuk-error-summary__list"
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
       Assert.assertEquals(errorMessage, errorElement.getText)
   }
 
   And("^the user will see a form error message \"(.*)\"") {
     formErrorMessage: String =>
-      val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-message"))
-      Assert.assertNotNull(errorElement)
+      val selector = ".govuk-error-message"
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
       Assert.assertEquals(s"Error:\n" + formErrorMessage, errorElement.getText)
   }
 
@@ -234,8 +238,9 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user will see a summary error message \"(.*)\"") {
     summaryErrorMessage: String =>
-      val errorElement = webDriver.findElement(By.cssSelector(".govuk-error-summary__list a"))
-      Assert.assertNotNull(errorElement)
+      val selector = ".govuk-error-summary__list a"
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
       Assert.assertEquals(summaryErrorMessage, errorElement.getText)
   }
 
@@ -421,10 +426,12 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user should see the upload error message \"(.*)\"") {
     errorMessage: String =>
-      val errorElement = webDriver.findElement(By.cssSelector(".upload-error__message"))
-      Assert.assertNotNull(errorElement)
+      val selector = ".upload-error__message"
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
+      val errorElementText = errorElement.getText
       val specificError = errorMessage.replace("{consignmentId}", s"$consignmentId")
-      Assert.assertTrue(errorElement.getText.contains(specificError))
+      Assert.assertTrue(doesNotContain(errorElementText, specificError), errorElementText.contains(specificError))
   }
 
   And("^a user who did not create the consignment") {
@@ -439,10 +446,12 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
     errorMessage: String =>
-      val errorElement = webDriver.findElement(By.cssSelector(".govuk-heading-l"))
-      Assert.assertNotNull(errorElement)
+      val selector = ".govuk-heading-l"
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
 
-      Assert.assertTrue(errorElement.getText.contains(errorMessage))
+      val errorElementText = errorElement.getText
+      Assert.assertTrue(doesNotContain(errorElementText, errorMessage), errorElementText.contains(errorMessage))
   }
 
   And("^the logged out user attempts to access the (.*) page") {
@@ -461,9 +470,13 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the transfer summary page shows the user that (.*) files have been uploaded") {
     numberOfFilesUploaded: String => {
-      val summary = webDriver.findElement(By.cssSelector(".govuk-summary-list"))
-      Assert.assertNotNull(summary)
-      Assert.assertTrue(summary.getText.contains(s"$numberOfFilesUploaded files uploaded"))
+      val selector = ".govuk-summary-list"
+      val summary = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), summary)
+
+      val summaryText = summary.getText
+      val expectedText = s"$numberOfFilesUploaded files uploaded"
+      Assert.assertTrue(doesNotContain(summaryText, expectedText), summaryText.contains(expectedText))
     }
   }
 }

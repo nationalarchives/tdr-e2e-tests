@@ -30,9 +30,6 @@ Feature: Transfer Summary Page
     When the user clicks the continue button
     Then the user will see all of the Final Transfer Confirmation form's error messages
 
-  @wip
-  #Scenario temporarily disabled as checksums are not matching as a hardcoded value is used in the tests
-  #Export process now validates checksum values match for uploaded files and the test is failing because of this
   Scenario: Submitting the Final Transfer Confirmation form creates a completed export
     Given A logged out user
     And an existing consignment for transferring body MOCK1

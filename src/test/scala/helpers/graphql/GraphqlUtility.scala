@@ -39,13 +39,13 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
   }
 
-  def createClientsideMetadata(userCredentials: UserCredentials, fileId: UUID, checksumValue: String, idx: Int): Unit = {
+  def createClientsideMetadata(userCredentials: UserCredentials, fileId: UUID, checksumValue: Option[String], idx: Int): Unit = {
     val client = new UserApiClient[acf.Data, acf.Variables](userCredentials)
     val dummyInstant = Instant.now()
     val input = List(AddClientFileMetadataInput(
       fileId,
       Some(s"E2E_tests/original/path$idx"),
-      Some(checksumValue),
+      checksumValue,
       Some("E2E tests checksumType"),
       dummyInstant.toEpochMilli,
       Some(1024),
@@ -59,9 +59,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.sendRequest(aav.document, aav.Variables(input))
   }
 
-  def createBackendChecksumMetadata(fileId: UUID): Unit = {
+  def createBackendChecksumMetadata(fileId: UUID, checksumValue: Option[String]): Unit = {
     val client = new BackendApiClient[afm.Data, afm.Variables]
-    val input = AddFileMetadataInput("SHA256ServerSideChecksum", fileId, "checksumValue")
+    val input = AddFileMetadataInput("SHA256ServerSideChecksum", fileId, checksumValue.getOrElse("checksumValue"))
     client.sendRequest(afm.document, afm.Variables(input))
   }
 

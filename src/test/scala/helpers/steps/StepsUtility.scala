@@ -1,5 +1,8 @@
 package helpers.steps
 
+import java.nio.file.{Files, Path}
+import java.security.MessageDigest
+
 import helpers.keycloak.UserCredentials
 import org.openqa.selenium.{By, WebDriver}
 
@@ -27,5 +30,13 @@ object StepsUtility {
   def elementHasAttributeHidden(id: String, webDriver: WebDriver): Boolean = {
     val element = webDriver.findElement(By.cssSelector(s"#$id"))
     Option(element.getAttribute("hidden")).isDefined
+  }
+
+  def calculateTestFileChecksum(filePath: Path): String = {
+    val messageDigester: MessageDigest = MessageDigest.getInstance("SHA-256")
+
+    val arr = Files readAllBytes filePath
+    val checksum = messageDigester digest arr
+    checksum.map("%02x" format _).mkString
   }
 }

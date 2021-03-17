@@ -13,6 +13,7 @@ import helpers.graphql.GraphqlUtility
 import helpers.keycloak.{KeycloakClient, UserCredentials}
 import helpers.logging.AssertionErrorMessages._
 import helpers.steps.StepsUtility
+import helpers.steps.StepsUtility.calculateTestFileChecksum
 import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
@@ -27,6 +28,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   var differentUserId: String = ""
   var consignmentId: UUID = _
   var createdFiles: List[UUID] = _
+  var createdFilesIdToChecksum: Map[UUID, String] = Map()
   var filesWithoutAVMetadata: List[UUID] = _
   var filesWithoutFFIDMetadata: List[UUID] = _
   var filesWithoutChecksumMetadata: List[UUID] = _
@@ -322,9 +324,10 @@ class Steps extends ScalaDsl with EN with Matchers {
     val createdFiles: List[UUID] = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER")
     createdFiles.foreach({
       id =>
-        client.createClientsideMetadata(userCredentials, id, "checksumValue", 0)
+        val checksumValue = createdFilesIdToChecksum.get(id)
+        client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
         client.createAVMetadata(id)
-        client.createBackendChecksumMetadata(id)
+        client.createBackendChecksumMetadata(id, checksumValue)
         client.createFfidMetadata(id)
     })
   }
@@ -333,13 +336,15 @@ class Steps extends ScalaDsl with EN with Matchers {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
       createdFiles = client.createFiles(consignmentId, numberOfFiles, "E2E TEST UPLOAD FOLDER")
-      //  checksumValue will be replaced with actual checksum soon
       val files = List("testfile1", "testfile2")
 
       createdFiles.zipWithIndex.foreach {
         case (id, idx) =>
-          client.createClientsideMetadata(userCredentials, id, "checksumValue", idx)
           val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")
+          val checksumValue = calculateTestFileChecksum(path)
+          client.createClientsideMetadata(userCredentials, id, Some(checksumValue), idx)
+          createdFilesIdToChecksum += (id -> checksumValue)
+
           val awsUtility = AWSUtility()
           awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), s"$consignmentId/$id", path)
       }
@@ -358,7 +363,7 @@ class Steps extends ScalaDsl with EN with Matchers {
           fileRangeToProcess.foreach(id => client.createFfidMetadata(id))
           filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
         case "checksum" =>
-          fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id))
+          fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id)))
           filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
       }
     }
@@ -369,7 +374,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
       id =>
         client.createAVMetadata(id)
-        client.createBackendChecksumMetadata(id)
+        client.createBackendChecksumMetadata(id, None)
         client.createFfidMetadata(id)
     }
   }

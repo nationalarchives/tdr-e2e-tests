@@ -491,22 +491,23 @@ class Steps extends ScalaDsl with EN with Matchers {
       "Transferring body",
       "Files uploaded for transfer"
     )
-    val transferSummary = webDriver.findElement(By.cssSelector(".govuk-summary-list"))
+    val cssSelector = ".govuk-summary-list"
+    val transferSummaryElement = webDriver.findElement(By.cssSelector(cssSelector))
     val transferSummaryKeys: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__key")).toScalaList
     val transferSummaryValues: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__value")).toScalaList
 
-    Assert.assertNotNull(transferSummary)
+    Assert.assertNotNull(elementMissingMessage(cssSelector), transferSummaryElement)
 
     Assert.assertTrue(transferSummaryKeys.size == 4)
     transferSummaryKeys.forEach(key => {
      val keyText = key.getText
-      Assert.assertTrue("Error: Transfer summary list key empty", !keyText.isEmpty)
-      Assert.assertTrue("Error: Transfer summary list key is incorrect",expectedKeys.contains(keyText))
+      Assert.assertTrue("Transfer summary list key empty", !keyText.isEmpty)
+      Assert.assertTrue("Transfer summary list key is incorrect",expectedKeys.contains(keyText))
     })
 
     Assert.assertTrue(transferSummaryValues.size == 4)
     transferSummaryValues.foreach(value => {
-      Assert.assertTrue("Error: Transfer summary list value empty", !value.getText.isEmpty)
+      Assert.assertTrue("Transfer summary list value empty", !value.getText.isEmpty)
     })
   }
 

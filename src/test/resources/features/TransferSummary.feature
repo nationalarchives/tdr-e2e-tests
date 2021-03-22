@@ -28,7 +28,7 @@ Feature: Transfer Summary Page
     And an existing consignment for transferring body MOCK1
     And an existing upload of 4 files
     And the user is logged in on the Transfer Summary page
-    When the user will be on a page with the title "Transfer Summary"
+    When the user will be on a page with the title "Transfer summary"
     Then the transfer summary page shows the user that 4 files have been uploaded
     And the user sees a transfer summary with related information
 

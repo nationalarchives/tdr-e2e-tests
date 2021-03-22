@@ -23,6 +23,15 @@ Feature: Transfer Summary Page
     When the user will be on a page with the title "Transfer summary"
     Then the transfer summary page shows the user that 3 files have been uploaded
 
+  Scenario: Transfer summary will show all summary information
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing upload of 4 files
+    And the user is logged in on the Transfer Summary page
+    When the user will be on a page with the title "Transfer Summary"
+    Then the transfer summary page shows the user that 4 files have been uploaded
+    And the user sees a transfer summary with related information
+
   Scenario: A logged in user submits Final Transfer Confirmation form without confirming anything
     Given A logged out user
     And an existing consignment for transferring body MOCK1

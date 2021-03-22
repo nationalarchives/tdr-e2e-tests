@@ -1,10 +1,5 @@
 package steps
 
-import java.nio.file.Paths
-import java.time.Duration
-import java.util
-import java.util.UUID
-
 import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.aws.AWSUtility
@@ -17,9 +12,14 @@ import helpers.steps.StepsUtility.calculateTestFileChecksum
 import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
-import org.openqa.selenium.{By, JavascriptExecutor, StaleElementReferenceException, WebDriver, WebElement}
+import org.openqa.selenium._
 import org.scalatest.Matchers
 
+import java.nio.file.Paths
+import java.time.Duration
+import java.util
+import java.util.UUID
+import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
@@ -50,6 +50,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   After() { scenario =>
     webDriver.quit()
     userCleanUp()
+  }
+
+  implicit class JavaWebElementList(javaList: util.List[WebElement]) {
+    def toScalaList: List[WebElement] = javaList.asScala.toList
   }
 
   private def login(userCredentials: UserCredentials): Unit = {
@@ -479,4 +483,32 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(doesNotContain(summaryText, expectedText), summaryText.contains(expectedText))
     }
   }
+
+  And("^the user sees a transfer summary with related information") {
+    val expectedKeys: List[String] = List(
+      "Series reference",
+      "Consignment reference",
+      "Transferring body",
+      "Files uploaded for transfer"
+    )
+    val cssSelector = ".govuk-summary-list"
+    val transferSummaryElement = webDriver.findElement(By.cssSelector(cssSelector))
+    val transferSummaryKeys: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__key")).toScalaList
+    val transferSummaryValues: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__value")).toScalaList
+
+    Assert.assertNotNull(elementMissingMessage(cssSelector), transferSummaryElement)
+
+    Assert.assertTrue(transferSummaryKeys.size == 4)
+    transferSummaryKeys.forEach(key => {
+     val keyText = key.getText
+      Assert.assertTrue("Transfer summary list key empty", !keyText.isEmpty)
+      Assert.assertTrue("Transfer summary list key is incorrect",expectedKeys.contains(keyText))
+    })
+
+    Assert.assertTrue(transferSummaryValues.size == 4)
+    transferSummaryValues.foreach(value => {
+      Assert.assertTrue("Transfer summary list value empty", !value.getText.isEmpty)
+    })
+  }
+
 }

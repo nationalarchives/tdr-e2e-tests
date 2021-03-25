@@ -32,4 +32,4 @@ Feature: Login
   Scenario: Navigate to a page that does not exist as a logged in user
     Given A logged in user
     And the user navigates to a page that does not exist
-    Then the user should see a general service error "This page doesn't exist"
+    Then the user should see a general service error "Page not found"

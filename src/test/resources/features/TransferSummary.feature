@@ -51,5 +51,5 @@ Feature: Transfer Summary Page
     When the user confirms all the records are open
     And the user confirms that they are transferring legal ownership of the records to TNA
     And the user clicks the continue button
-    Then the user will be on a page with a panel titled "Transfer Complete"
+    Then the user will be on a page with a panel titled "Transfer complete"
     And the transfer export will be complete

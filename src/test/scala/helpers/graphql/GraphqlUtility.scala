@@ -68,13 +68,15 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   def createFfidMetadata(fileId: UUID): Unit = {
 
     val client = new BackendApiClient[affm.Data, affm.Variables]
-    val ffidInputMatches = FFIDMetadataInputMatches(Some("txt"), "Some basis", Some("x-fmt/111"))
+    val ffidInputMatches = FFIDMetadataInputMatches(Some("txt"), "e2e-test-basis", Some("x-fmt/111"))
     val input = FFIDMetadataInput(
       fileId,
-      "pronom",
-      "1.8.0",
-      "DROID_SignatureFile_V96.xml",
-      "container-signature-20200121.xml", "pronom", List(ffidInputMatches))
+      "e2e-test-software",
+      "e2e-test-software-version",
+      "e2e-test-binary-signature-file",
+      "e2e-test-container-signature.xml",
+      "e2e-test-method",
+      List(ffidInputMatches))
     client.sendRequest(affm.document, affm.Variables(input))
   }
 }

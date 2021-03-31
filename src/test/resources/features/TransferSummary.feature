@@ -20,7 +20,7 @@ Feature: Transfer Summary Page
     And an existing consignment for transferring body MOCK1
     And an existing upload of 3 files
     And the user is logged in on the Transfer summary page
-    When the user will be on a page with the title "Transfer summary"
+    When the user will be on a page with the title "Confirm transfer"
     Then the transfer summary page shows the user that 3 files have been uploaded
 
   Scenario: Transfer summary will show all summary information
@@ -28,7 +28,7 @@ Feature: Transfer Summary Page
     And an existing consignment for transferring body MOCK1
     And an existing upload of 4 files
     And the user is logged in on the Transfer Summary page
-    When the user will be on a page with the title "Transfer summary"
+    When the user will be on a page with the title "Confirm transfer"
     Then the transfer summary page shows the user that 4 files have been uploaded
     And the user sees a transfer summary with related information
 
@@ -47,7 +47,7 @@ Feature: Transfer Summary Page
     And 3 of the FFID scans have finished
     And 3 of the checksum scans have finished
     And the user is logged in on the Transfer Summary page
-    Then the user will be on a page with the title "Transfer summary"
+    Then the user will be on a page with the title "Confirm transfer"
     When the user confirms all the records are open
     And the user confirms that they are transferring legal ownership of the records to TNA
     And the user clicks the continue button

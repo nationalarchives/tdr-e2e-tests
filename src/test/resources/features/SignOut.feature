@@ -3,7 +3,7 @@ Feature: Sign Out
   Scenario: A logged in user signs out and is redirected to the sign out page
     Given A logged in user
     When the user clicks on the Sign out button
-    Then the user should be on the sign-out page
+    Then the user should be on the signed-out page
 
   Scenario: A logged in user signs out and is redirected to the sign in page if they try to access the dashboard
     Given A logged in user

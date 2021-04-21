@@ -522,5 +522,4 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(doesNotContain(summaryText, expectedText), summaryText.contains(expectedText))
     }
   }
-
 }

@@ -35,7 +35,7 @@ Feature: Upload
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking records"
     When the user clicks their browser's back button
-    Then the user should be on the upload-in-progress page
+    Then the user should see the error Your upload was interrupted and could not be completed.
 
   Scenario: Consignment upload page is accessed by a logged out user
     Given A logged out user

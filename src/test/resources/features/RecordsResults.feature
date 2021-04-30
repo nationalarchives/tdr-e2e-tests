@@ -23,3 +23,10 @@ Feature: Record results Page
     When the user is logged in on the records results page
     Then the user should see a general service error "Sorry, there is a problem with the service"
 
+  Scenario: The user will see an error when trying to access file check results when there is a checksum mismatch
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the checksum check has failed
+    When the user is logged in on the records results page
+    Then the user will see the error summary One or more files you uploaded have failed our checks

@@ -61,3 +61,11 @@ Feature: File Checks Page
     And an existing upload of 5 files
     And the logged out user attempts to access the records page
     Then the logged out user should be on the login page
+
+  Scenario: The user will see an error when there is a checksum mismatch
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the checksum check has failed
+    When the user is logged in on the records page
+    Then the user will see the error summary One or more files you uploaded have failed our checks

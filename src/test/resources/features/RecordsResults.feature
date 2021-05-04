@@ -29,4 +29,4 @@ Feature: Record results Page
     And an existing transfer agreement
     And the checksum check has failed
     When the user is logged in on the records results page
-    Then the user will see the error summary One or more files you uploaded have failed our checks
+    Then the user will see the error summary "One or more files you uploaded have failed our checks"

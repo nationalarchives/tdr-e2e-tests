@@ -53,9 +53,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(acf.document, acf.Variables(input))
   }
 
-  def createAVMetadata(fileId: UUID): Unit = {
+  def createAVMetadata(fileId: UUID, result: String = ""): Unit = {
     val client = new BackendApiClient[aav.Data, aav.Variables]
-    val input = AddAntivirusMetadataInput(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", "", System.currentTimeMillis)
+    val input = AddAntivirusMetadataInput(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", result, System.currentTimeMillis)
     client.sendRequest(aav.document, aav.Variables(input))
   }
 

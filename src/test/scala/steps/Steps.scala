@@ -232,6 +232,14 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertEquals(errorMessage, errorElement.getText)
   }
 
+  And("^the user will see the error summary \"(.*)\"") {
+    errorMessage: String =>
+      val selector = ".govuk-error-summary__body"
+      val errorElement = webDriver.findElement(By.cssSelector(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
+      Assert.assertTrue(errorElement.getText.contains(errorMessage))
+  }
+
   And("^the user will see a form error message \"(.*)\"") {
     formErrorMessage: String =>
       val selector = ".govuk-error-message"
@@ -339,6 +347,16 @@ class Steps extends ScalaDsl with EN with Matchers {
         client.createBackendChecksumMetadata(id, checksumValue)
         client.createFfidMetadata(id)
     })
+  }
+
+  And("^the checksum check has failed") {
+    val client = GraphqlUtility(userCredentials)
+    val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
+    val checksumValue = createdFilesIdToChecksum.get(id)
+    client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+    client.createAVMetadata(id)
+    client.createBackendChecksumMetadata(id, Option("mismatchedchecksumvalue"))
+    client.createFfidMetadata(id)
   }
 
   And("^an existing upload of (\\d+) files") {

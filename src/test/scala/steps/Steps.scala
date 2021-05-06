@@ -359,6 +359,16 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createFfidMetadata(id)
   }
 
+  And("^the antivirus check has failed") {
+    val client = GraphqlUtility(userCredentials)
+    val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
+    val checksumValue = createdFilesIdToChecksum.get(id)
+    client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+    client.createAVMetadata(id, "antivirus failed")
+    client.createBackendChecksumMetadata(id, checksumValue)
+    client.createFfidMetadata(id)
+  }
+
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {

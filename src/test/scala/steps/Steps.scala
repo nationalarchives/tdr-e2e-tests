@@ -339,12 +339,14 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the records checks are complete") {
     val client = GraphqlUtility(userCredentials)
     val createdFiles: List[UUID] = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER")
-    createdFiles.foreach({
-      id =>
-        val checksumValue = createdFilesIdToChecksum.get(id)
-        client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+    val files = List("testfile1", "testfile2")
+    createdFiles.zipWithIndex.foreach({
+      case (id, idx) =>
+        val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")
+        val checksumValue = calculateTestFileChecksum(path)
+        client.createClientsideMetadata(userCredentials, id, Option(checksumValue), 0)
         client.createAVMetadata(id)
-        client.createBackendChecksumMetadata(id, checksumValue)
+        client.createBackendChecksumMetadata(id, Option(checksumValue))
         client.createFfidMetadata(id)
     })
   }
@@ -411,7 +413,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
       id =>
         client.createAVMetadata(id)
-        client.createBackendChecksumMetadata(id, None)
+        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
         client.createFfidMetadata(id)
     }
   }

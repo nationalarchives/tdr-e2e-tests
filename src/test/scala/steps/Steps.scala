@@ -371,6 +371,17 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createFfidMetadata(id)
   }
 
+  And("^the file format check has failed") {
+    val passwordProtectedPuid = "fmt/494"
+    val client = GraphqlUtility(userCredentials)
+    val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
+    val checksumValue = createdFilesIdToChecksum.get(id)
+    client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+    client.createAVMetadata(id)
+    client.createBackendChecksumMetadata(id, checksumValue)
+    client.createFfidMetadata(id, passwordProtectedPuid)
+  }
+
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {

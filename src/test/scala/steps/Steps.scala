@@ -371,7 +371,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createFfidMetadata(id)
   }
 
-  And("^the file format check has failed") {
+  And("^the FFID check has failed") {
     val passwordProtectedPuid = "fmt/494"
     val client = GraphqlUtility(userCredentials)
     val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head

@@ -78,10 +78,10 @@ Feature: File Checks Page
     When the user is logged in on the records page
     Then the user will see the error summary "One or more files you uploaded have failed our checks"
 
-  Scenario: The user will see an error when there is a file format failure
+  Scenario: The user will see an error when there is a FFID failure
     Given A logged out user
     And an existing consignment for transferring body Mock1
     And an existing transfer agreement
-    And the file format check has failed
+    And the FFID check has failed
     When the user is logged in on the records page
     Then the user will see the error summary "One or more files you uploaded have failed our checks"

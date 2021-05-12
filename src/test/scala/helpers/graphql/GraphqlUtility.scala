@@ -65,10 +65,10 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.sendRequest(afm.document, afm.Variables(input))
   }
 
-  def createFfidMetadata(fileId: UUID): Unit = {
+  def createFfidMetadata(fileId: UUID, puid: String = "x-fmt/111"): Unit = {
 
     val client = new BackendApiClient[affm.Data, affm.Variables]
-    val ffidInputMatches = FFIDMetadataInputMatches(Some("txt"), "e2e-test-basis", Some("x-fmt/111"))
+    val ffidInputMatches = FFIDMetadataInputMatches(Some("txt"), "e2e-test-basis", Some(puid))
     val input = FFIDMetadataInput(
       fileId,
       "e2e-test-software",

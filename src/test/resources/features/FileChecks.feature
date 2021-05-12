@@ -80,7 +80,7 @@ Feature: File Checks Page
 
   Scenario: The user will see an error when there is a FFID failure
     Given A logged out user
-    And an existing consignment for transferring body Mock1
+    And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the FFID check has failed
     When the user is logged in on the records page

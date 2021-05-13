@@ -78,10 +78,18 @@ Feature: File Checks Page
     When the user is logged in on the records page
     Then the user will see the error summary "One or more files you uploaded have failed our checks"
 
-  Scenario: The user will see an error when there is a FFID failure
+  Scenario: The user will see an error when there is a FFID password protected failure
     Given A logged out user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
-    And the FFID check has failed
+    And the FFID "password protected" check has failed
+    When the user is logged in on the records page
+    Then the user will see the error summary "One or more files you uploaded have failed our checks"
+
+  Scenario: The user will see an error when there is a FFID zip file failure
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the FFID "zip file" check has failed
     When the user is logged in on the records page
     Then the user will see the error summary "One or more files you uploaded have failed our checks"

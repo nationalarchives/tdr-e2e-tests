@@ -372,19 +372,20 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the FFID \"(.*)\" check has failed") {
-    val passwordProtectedPuid = "fmt/494"
-    val zipFilePuid = "fmt/289"
-    val client = GraphqlUtility(userCredentials)
-    val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
-    val checksumValue = createdFilesIdToChecksum.get(id)
-    client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
-    client.createAVMetadata(id)
-    client.createBackendChecksumMetadata(id, checksumValue)
-    (checkName: String) => checkName match {
-      case "password protected" => client.createFfidMetadata(id, passwordProtectedPuid)
-      case "zip file" => client.createFfidMetadata(id, zipFilePuid)
+    (checkName: String) => {
+      val passwordProtectedPuid = "fmt/494"
+      val zipFilePuid = "fmt/289"
+      val client = GraphqlUtility(userCredentials)
+      val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
+      val checksumValue = createdFilesIdToChecksum.get(id)
+      client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+      client.createAVMetadata(id)
+      client.createBackendChecksumMetadata(id, checksumValue)
+      checkName match {
+        case "password protected" => client.createFfidMetadata(id, passwordProtectedPuid)
+        case "zip file" => client.createFfidMetadata(id, zipFilePuid)
+      }
     }
-    //client.createFfidMetadata(id, passwordProtectedPuid)
   }
 
   And("^an existing upload of (\\d+) files") {

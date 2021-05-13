@@ -11,6 +11,7 @@ import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddFiles.{addFiles => af}
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
 import graphql.codegen.GetSeries.{getSeries => gs}
+import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
 import graphql.codegen.types._
 import helpers.keycloak.UserCredentials
 
@@ -78,6 +79,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
       "e2e-test-method",
       List(ffidInputMatches))
     client.sendRequest(affm.document, affm.Variables(input))
+  }
+
+  def getConsignmentExport(consignmentId: UUID): Option[gcfe.Data] = {
+    val client = new UserApiClient[gcfe.Data, gcfe.Variables](userCredentials)
+    client.result(gcfe.document, gcfe.Variables(consignmentId)).data
   }
 }
 

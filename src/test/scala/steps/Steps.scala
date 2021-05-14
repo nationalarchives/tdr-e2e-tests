@@ -176,12 +176,16 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the transfer export will be complete") {
+    val client = GraphqlUtility(userCredentials)
+    val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
+
     val fluentWait = new FluentWait[WebDriver](webDriver)
       .withTimeout(Duration.ofSeconds(600))
       .pollingEvery(Duration.ofSeconds(10))
+
     val foundExport: Boolean = fluentWait.until(_ => {
       val awsUtility = AWSUtility()
-      awsUtility.isFileInS3(configuration.getString("s3.bucket.export"), s"$consignmentId.tar.gz")
+      awsUtility.isFileInS3(configuration.getString("s3.bucket.export"), s"$consignmentRef.tar.gz")
     })
     Assert.assertTrue("No export found", foundExport)
   }

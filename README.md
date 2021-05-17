@@ -23,9 +23,9 @@ This repository provides end-to-end tests for the TDR application.
     * Java Cucumber: https://plugins.jetbrains.com/plugin/7212-cucumber-for-java
     
 6. Ensure that you:
-      * Are Using AWS credentials that allow access to the TDR environment that tests are being run against
-      * Can access the TDR environment that tests are being run against via IP address
-
+      * have access to Keycloak admin site `auth.tdr-{environment name}.nationalarchives.gov.uk/auth`
+      * have access the TDR environment application site `tdr-{environment name}.nationalarchives.gov.uk` that tests are being run against via IP address
+      * are using AWS credentials that allow access to the TDR environment that tests are being run against
 
 ### Run the tests from the command line
 
@@ -34,7 +34,7 @@ By default, the tests will run against the TDR integration environment
 1. Set environment variables:
     * `$ export DRIVER_LOCATION=[location of the driver executable downloaded in step 3]`
     * `$ export INTG_AWS_ACCOUNT_NUMBER=[aws account number of environment where tests are being run]`
-    * If running tests on macOS - Test configuration default is set to the Linux OS location; macOS has the Firefox binary in a different location to Linux. If running the e2e tests on a Mac using Firefox, set the additional the following environment variable:
+    * If running tests on macOS - Test configuration's default Firefox binary location is set to the Linux OS location; macOS' Firefox binary is in a different location to Linux. If running the e2e tests on a Mac using Firefox, set the additional the following environment variable:
         * `$ export FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`
   
 2. If you are running the test against your locally running TDR frontend project, set the optional environment variable:

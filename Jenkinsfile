@@ -37,6 +37,7 @@ pipeline {
       agent {
         ecs {
           inheritFrom "transfer-frontend"
+          taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/seleniumgrid"
           taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeS3ExportRole${params.STAGE.capitalize()}"
         }
       }

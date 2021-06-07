@@ -6,6 +6,8 @@ import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
 import org.openqa.selenium.html5.WebStorage
 import org.openqa.selenium.remote.RemoteWebDriver
 
+import java.net.URL
+
 object DriverUtility {
   val driverLocation: String = System.getenv("DRIVER_LOCATION")
 
@@ -26,6 +28,7 @@ object DriverUtility {
 
   val firefoxOptions: FirefoxOptions = {
     val firefoxOptions = new FirefoxOptions
+
     firefoxOptions.setHeadless(true)
     firefoxOptions.setBinary(firefoxBinaryLocation)
     firefoxOptions.addArguments("--no-sandbox")
@@ -36,10 +39,10 @@ object DriverUtility {
     firefoxOptions
   }
 
-  def initDriver: RemoteWebDriver with WebStorage = {
+  def initDriver: RemoteWebDriver = {
     ConfigFactory.load.getString("browser") match {
       case "chrome" => new ChromeDriver(chromeOptions)
-      case "firefox" => new FirefoxDriver(firefoxOptions)
+      case "firefox" => new RemoteWebDriver(new URL("http://localhost:4444"), firefoxOptions)
     }
   }
 }

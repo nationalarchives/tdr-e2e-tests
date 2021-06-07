@@ -1,3 +1,4 @@
+@quick
 Feature: Dashboard Page
 
   Scenario: Dashboard page is accessed by a logged out user

@@ -6,9 +6,9 @@ import org.junit.runner.RunWith
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
   features = Array("classpath:features"),
-  tags = Array("@slow"),
+  tags = Array("@quick"),
   glue = Array("classpath:steps/"),
   plugin = Array("pretty", "html:target/cucumber/html", "json:target/cucumber.json"))
-class TestRunner {
+class TestRunnerFast {
 
 }

@@ -1,3 +1,4 @@
+@medium
 Feature: Transfer Agreement Page
 
   Scenario: A logged in user completes the Transfer Agreement form correctly

@@ -1,3 +1,4 @@
+@slow
 Feature: File Checks Page
 
   Scenario: A user will see antivirus metadata progress bar on the file checks page

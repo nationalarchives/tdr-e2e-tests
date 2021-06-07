@@ -1,3 +1,4 @@
+@slow
 Feature: Transfer Summary Page
 
   Scenario: Consignment transfer summary page is accessed by a logged out user

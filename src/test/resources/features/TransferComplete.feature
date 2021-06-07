@@ -1,3 +1,4 @@
+@quick
 Feature: Transfer Complete Page
 
   Scenario: Transfer complete page is accessed by a logged out user

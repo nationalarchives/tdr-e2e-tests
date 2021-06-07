@@ -1,3 +1,4 @@
+@slow
 Feature: Record results Page
 
   Scenario: The user logs in to the file checks results page once file checks are complete

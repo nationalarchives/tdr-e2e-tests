@@ -1,3 +1,4 @@
+@medium
 Feature: Sign Out
 
   Scenario: A logged in user signs out and is redirected to the sign out page

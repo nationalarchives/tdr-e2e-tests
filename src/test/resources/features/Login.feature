@@ -1,3 +1,4 @@
+@quick
 Feature: Login
 
   Scenario: Navigate to the TDR home page as a logged out user

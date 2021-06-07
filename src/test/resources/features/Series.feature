@@ -1,3 +1,4 @@
+@medium
 Feature: Series Page
 
   Scenario: Logged in user selects nothing from dropdown

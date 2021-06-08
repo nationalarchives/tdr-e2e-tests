@@ -192,30 +192,17 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title \"(.*)\"") {
     page: String =>
-      new WebDriverWait(webDriver, 120)
-        .ignoring(classOf[StaleElementReferenceException])
-        /*Ignore stale references exceptions.
-        These seem to happen when Selenium selects an element which then disappears when the user is redirected to the next page,
-        such as from the upload page to the file checks page. In this case, we only want to check the element on the second page,
-        so it doesn't matter if the same element on the first page has disappeared.*/
-        .until((driver: WebDriver) => {
-          val pageTitle: String = webDriver.findElement(By.className("govuk-heading-l")).getText
-          page == pageTitle
-        })
+      StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
   }
 
   Then("^the user will be on a page with a panel titled \"(.*)\"") {
     panelTitle: String =>
-      new WebDriverWait(webDriver, 120)
-        .ignoring(classOf[StaleElementReferenceException])
-        /*Ignore stale references exceptions.
-        These seem to happen when Selenium selects an element which then disappears when the user is redirected to the next page,
-        such as from the upload page to the file checks page. In this case, we only want to check the element on the second page,
-        so it doesn't matter if the same element on the first page has disappeared.*/
-        .until((driver: WebDriver) => {
-          val panel = webDriver.findElement(By.className("govuk-panel__title")).getText
-          panel == panelTitle
-        })
+      StepsUtility.waitForElementTitle(webDriver, panelTitle, "govuk-panel__title")
+  }
+
+  Then("^the user will be on a page with a banner titled \"(.*)\"") {
+    panelTitle: String =>
+      StepsUtility.waitForElementTitle(webDriver, panelTitle, "govuk-notification-banner__title")
   }
 
   Then("^the user should see a general service error \"(.*)\"") {
@@ -469,6 +456,20 @@ class Steps extends ScalaDsl with EN with Matchers {
         val isNotVisible = StepsUtility.elementHasAttributeHidden(id, webDriver)
         isNotVisible
       })
+    }
+  }
+
+  And("^the (.*) button should be disabled") {
+    (targetIdName: String) => {
+      val id = targetIdName.replaceAll(" ", "-")
+      Assert.assertTrue(StepsUtility.elementHasClassDisabled(id, webDriver))
+    }
+  }
+
+  And("^the (.*) button should be enabled") {
+    (targetIdName: String) => {
+      val id = targetIdName.replaceAll(" ", "-")
+      Assert.assertFalse(StepsUtility.elementHasClassDisabled(id, webDriver))
     }
   }
 

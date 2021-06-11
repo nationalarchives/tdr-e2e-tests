@@ -20,6 +20,5 @@ Feature: Full user journey
     When the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking records"
-    And the av metadata progress bar should be visible
-    And the checksum progress bar should be visible
-    And the ffid progress bar should be visible
+    And the file checks completed banner should not be visible
+    And the file checks continue button should be disabled

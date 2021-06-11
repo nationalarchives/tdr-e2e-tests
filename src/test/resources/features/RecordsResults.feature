@@ -6,7 +6,7 @@ Feature: Record results Page
     And an existing transfer agreement
     And the records checks are complete
     When the user is logged in on the records results page
-    Then the user will be on a page with a panel titled "Checks Complete"
+    Then the user will be on a page with a banner titled "Checks successful"
 
   Scenario: The user will see an error when trying to access file check results for a consignment they don't own
     Given A logged out user
@@ -36,5 +36,21 @@ Feature: Record results Page
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the antivirus check has failed
+    When the user is logged in on the records results page
+    Then the user will see the error summary "One or more files you uploaded have failed our checks"
+
+  Scenario: The user will see an error when there is a FFID password protected failure
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the FFID "password protected" check has failed
+    When the user is logged in on the records results page
+    Then the user will see the error summary "One or more files you uploaded have failed our checks"
+
+  Scenario: The user will see an error when there is a FFID zip file failure
+    Given A logged out user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the FFID "zip file" check has failed
     When the user is logged in on the records results page
     Then the user will see the error summary "One or more files you uploaded have failed our checks"

@@ -19,6 +19,6 @@ Feature: Full user journey
     Then the user will be on a page with the title "Upload your records"
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title "Checking records"
+    Then the user will be on a page with the title "Checking your records"
     And the file checks completed banner should not be visible
     And the file checks continue button should be disabled

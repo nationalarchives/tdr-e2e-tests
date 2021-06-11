@@ -7,7 +7,7 @@ Feature: File Checks Page
     And an existing upload of 5 files
     And 1 of the antivirus scans have finished
     When the user is logged in on the records page
-    Then the user will be on a page with the title "Checking records"
+    Then the user will be on a page with the title "Checking your records"
     And the file checks completed banner should not be visible
     And the file checks continue button should be disabled
 
@@ -20,7 +20,7 @@ Feature: File Checks Page
     And 5 of the checksum scans have finished
     And 8 of the antivirus scans have finished
     When the user is logged in on the records page
-    Then the user will be on a page with the title "Checking records"
+    Then the user will be on a page with the title "Checking your records"
     And the user waits for the checks to complete
     Then the file checks completed banner should be visible
     And the file checks continue button should be enabled

@@ -6,7 +6,7 @@ Feature: Record results Page
     And an existing transfer agreement
     And the records checks are complete
     When the user is logged in on the records results page
-    Then the user will be on a page with a banner titled "Checks successful"
+    Then the user will be on a page with a banner titled "Success"
 
   Scenario: The user will see an error when trying to access file check results for a consignment they don't own
     Given A logged out user

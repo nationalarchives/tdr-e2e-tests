@@ -18,8 +18,8 @@ Feature: Transfer Agreement Page
     And the user confirms all the records are open
     And the user does not confirm DRO sign off for the records
     And the user clicks the continue button
-    Then the user will see a form error message "DRO must have signed off the appraisal and selection decision for records"
-    Then the user will see a summary error message "DRO must have signed off the appraisal and selection decision for records"
+    Then the user will see a form error message "Departmental Records Officer (DRO) must have signed off the appraisal and selection decision for records"
+    Then the user will see a summary error message "Departmental Records Officer (DRO) must have signed off the appraisal and selection decision for records"
 
   Scenario: A logged in user submits Transfer Agreement without responding yes to all questions
     Given A logged out user

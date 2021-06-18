@@ -531,7 +531,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     transferLegalOwnership.click()
   }
 
-  Then("^the transfer summary page shows the user that (.*) files have been uploaded") {
+  Then("^the confirm transfer page shows the user that (.*) files have been uploaded") {
     numberOfFilesUploaded: String => {
       val selector = ".govuk-summary-list"
       val summary = webDriver.findElement(By.cssSelector(selector))
@@ -543,7 +543,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^the user sees a transfer summary with related information") {
+  And("^the user sees a transfer confirmation with related information") {
     val expectedKeys: List[String] = List(
       "Series reference",
       "Consignment reference",
@@ -551,22 +551,22 @@ class Steps extends ScalaDsl with EN with Matchers {
       "Files uploaded for transfer"
     )
     val cssSelector = ".govuk-summary-list"
-    val transferSummaryElement = webDriver.findElement(By.cssSelector(cssSelector))
-    val transferSummaryKeys: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__key")).toScalaList
-    val transferSummaryValues: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__value")).toScalaList
+    val confirmTransferElement = webDriver.findElement(By.cssSelector(cssSelector))
+    val confirmTransferKeys: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__key")).toScalaList
+    val confirmTransferValues: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__value")).toScalaList
 
-    Assert.assertNotNull(elementMissingMessage(cssSelector), transferSummaryElement)
+    Assert.assertNotNull(elementMissingMessage(cssSelector), confirmTransferElement)
 
-    Assert.assertTrue(transferSummaryKeys.size == 4)
-    transferSummaryKeys.forEach(key => {
+    Assert.assertTrue(confirmTransferKeys.size == 4)
+    confirmTransferKeys.forEach(key => {
      val keyText = key.getText
-      Assert.assertTrue("Transfer summary list key empty", !keyText.isEmpty)
-      Assert.assertTrue("Transfer summary list key is incorrect",expectedKeys.contains(keyText))
+      Assert.assertTrue("Confirm transfer list key empty", !keyText.isEmpty)
+      Assert.assertTrue("Confirm transfer list key is incorrect",expectedKeys.contains(keyText))
     })
 
-    Assert.assertTrue(transferSummaryValues.size == 4)
-    transferSummaryValues.foreach(value => {
-      Assert.assertTrue("Transfer summary list value empty", !value.getText.isEmpty)
+    Assert.assertTrue(confirmTransferValues.size == 4)
+    confirmTransferValues.foreach(value => {
+      Assert.assertTrue("Confirm transfer list value empty", !value.getText.isEmpty)
     })
   }
 

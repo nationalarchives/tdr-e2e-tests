@@ -510,11 +510,13 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"
-      val errorElement = webDriver.findElement(By.cssSelector(selector))
-      Assert.assertNotNull(elementMissingMessage(selector), errorElement)
+       new WebDriverWait(webDriver, 2).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+         val errorElement = webDriver.findElement(By.cssSelector(selector))
+         Assert.assertNotNull(elementMissingMessage(selector), errorElement)
 
-      val errorElementText = errorElement.getText
-      Assert.assertTrue(doesNotContain(errorElementText, errorMessage), errorElementText.contains(errorMessage))
+         val errorElementText = errorElement.getText
+         Assert.assertTrue(doesNotContain(errorElementText, errorMessage), errorElementText.contains(errorMessage))
+      })
   }
 
   And("^the logged out user attempts to access the (.*) page") {

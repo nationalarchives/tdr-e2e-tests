@@ -25,7 +25,7 @@ Feature: Upload
     When the user selects directory containing: testfile1
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking your records"
-
+@wip
   Scenario: A logged in user tries to upload multiple set of files to a consignment
     Given A logged out user
     And an existing consignment for transferring body MOCK1

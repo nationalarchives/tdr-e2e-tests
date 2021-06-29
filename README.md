@@ -46,6 +46,11 @@ By default, the tests will run against the TDR integration environment
     ```
 
     * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
+    * Optional parameters:
+      * If you would like to only run the Scenarios in a particular feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]`
+      * If you would like to run a particular Scenario in a feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]:[line number of Scenario]`
+      * If you would like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags @wip"`
+        * If you would _not_ like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags ~@wip"`
 
 ### Run the tests from Intellij
 
@@ -58,6 +63,11 @@ By default, the tests will run against the TDR integration environment
 5. In the dialog box fill in the following information:
       * **Glue**: `"classpath:steps/"` (**NOTE**: include the double quotes)
       * **VM options**: `-Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]`
+        * Optional VM parameters:
+           * If you would like to only run the Scenarios in a particular feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]`
+           * If you would like to run a particular Scenario in a feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]:[line number of Scenario]`
+           * If you would like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags @wip"`
+               * If you would _not_ like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags ~@wip"`
       * **Environment Variables**: `DRIVER_LOCATION=[location of driver executable downloaded in step 3];INTG_AWS_ACCOUNT_NUMBER=[account number for the integration environment]`
         * Running On macOS **NOTE**: For running on macOS, an additional environment variable needs to be set: `FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`
         * Running Against Local Frontend Note: If you are running the tests against your locally running TDR frontend project, set the optional environment variable: `TDR_BASE_URL=http://localhost:9000`

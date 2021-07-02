@@ -572,14 +572,14 @@ class Steps extends ScalaDsl with EN with Matchers {
     })
   }
 
-  Then("^the user should see the error (.*)") {
-    errorMessage: String => {
-      val selector = s"//p[contains(text(), '$errorMessage')]"
-      val error = webDriver.findElement(By.xpath(selector))
-      Assert.assertNotNull(elementMissingMessage(selector), error)
+  Then("^the user will see the message \"(.*)\"") {
+    pageMessage: String => {
+      val selector = s"//p[contains(text(), '$pageMessage')]"
+      val message = webDriver.findElement(By.xpath(selector))
+      Assert.assertNotNull(elementMissingMessage(selector), message)
 
-      val summaryText = error.getText
-      val expectedText = errorMessage
+      val summaryText = message.getText
+      val expectedText = pageMessage
       Assert.assertTrue(doesNotContain(summaryText, expectedText), summaryText.contains(expectedText))
     }
   }

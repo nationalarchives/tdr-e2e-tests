@@ -2,18 +2,21 @@ package helpers.graphql
 
 import java.time.Instant
 import java.util.UUID
-
 import graphql.codegen.AddAntivirusMetadata.{AddAntivirusMetadata => aav}
-import graphql.codegen.AddClientFileMetadata.{AddClientFileMetadata => acf}
+import graphql.codegen.AddFilesAndMetadata.{AddFilesAndMetadata => afam}
+import graphql.codegen.StartUpload.{StartUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
 import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
-import graphql.codegen.AddFiles.{addFiles => af}
+import graphql.codegen.AddFilesAndMetadata.AddFilesAndMetadata.AddFilesAndMetadata
 import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
 import graphql.codegen.types._
+import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.UserCredentials
+
+import java.nio.file.Path
 
 class GraphqlUtility(userCredentials: UserCredentials) {
 
@@ -34,24 +37,22 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(ata.document, ata.Variables(input))
   }
 
-  def createFiles(consignmentId: UUID, numberOfFiles: Int, parentFolderName: String): List[UUID] = {
-    val client = new UserApiClient[af.Data, af.Variables](userCredentials)
-    val input = AddFilesInput(consignmentId, numberOfFiles, parentFolderName)
-    client.result(af.document, af.Variables(input)).data.get.addFiles.fileIds
-  }
+  def addFilesAndMetadata(consignmentId: UUID, parentFolderName: String, matchIdInfo: List[MatchIdInfo]): List[afam.AddFilesAndMetadata] = {
+    val startUploadClient = new UserApiClient[su.Data, su.Variables](userCredentials)
+    startUploadClient.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolderName)))
+    val client = new UserApiClient[afam.Data, afam.Variables](userCredentials)
 
-  def createClientsideMetadata(userCredentials: UserCredentials, fileId: UUID, checksumValue: Option[String], idx: Int): Unit = {
-    val client = new UserApiClient[acf.Data, acf.Variables](userCredentials)
-    val dummyInstant = Instant.now()
-    val input = List(AddClientFileMetadataInput(
-      fileId,
-      Some(s"E2E_tests/original/path$idx"),
-      checksumValue,
-      Some("E2E tests checksumType"),
-      dummyInstant.toEpochMilli,
-      Some(1024),
-      Some(dummyInstant.toEpochMilli)))
-    client.result(acf.document, acf.Variables(input))
+    val metadataInput = matchIdInfo.map(info =>
+      ClientSideMetadataInput(
+        s"E2E_tests/original/path${info.matchId}",
+        info.checksum,
+        Instant.now().toEpochMilli,
+        1024,
+        info.matchId
+      )
+    )
+    val input = AddFileAndMetadataInput(consignmentId, metadataInput, isComplete = true)
+    client.result(afam.document, afam.Variables(input)).data.get.addFilesAndMetadata
   }
 
   def createAVMetadata(fileId: UUID, result: String = ""): Unit = {
@@ -88,5 +89,6 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 }
 
 object GraphqlUtility {
+  case class MatchIdInfo(checksum: String, path: Path, matchId: Int)
   def apply(userCredentials: UserCredentials): GraphqlUtility = new GraphqlUtility(userCredentials)
 }

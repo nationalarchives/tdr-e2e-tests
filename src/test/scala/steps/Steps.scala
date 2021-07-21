@@ -5,6 +5,7 @@ import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
+import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.{KeycloakClient, UserCredentials}
 import helpers.logging.AssertionErrorMessages._
 import helpers.steps.StepsUtility
@@ -42,6 +43,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   val differentPassword: String = RandomUtility.randomString(10)
   val userCredentials: UserCredentials = UserCredentials(userName, password)
   val differentUserCredentials: UserCredentials = UserCredentials(differentUserName, differentPassword)
+  val checksumValue = "checksum"
 
   Before() { scenario =>
     webDriver = initDriver
@@ -329,24 +331,27 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the records checks are complete") {
     val client = GraphqlUtility(userCredentials)
-    val createdFiles: List[UUID] = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER")
     val files = List("testfile1", "testfile2")
-    createdFiles.zipWithIndex.foreach({
-      case (id, idx) =>
-        val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")
+    val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({
+      case (fileName, idx) =>
+        val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
         val checksumValue = calculateTestFileChecksum(path)
-        client.createClientsideMetadata(userCredentials, id, Option(checksumValue), 0)
-        client.createAVMetadata(id)
-        client.createBackendChecksumMetadata(id, Option(checksumValue))
-        client.createFfidMetadata(id)
+        MatchIdInfo(checksumValue, path, idx)
+    })
+    val fileAndMatchIds = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", checksumWithIndex)
+    fileAndMatchIds.foreach(fm => {
+      val checksum = checksumWithIndex.find(_.matchId == fm.matchId).map(_.checksum)
+      client.createAVMetadata(fm.fileId)
+      client.createBackendChecksumMetadata(fm.fileId, checksum)
+      client.createFfidMetadata(fm.fileId)
     })
   }
 
   And("^the checksum check has failed") {
     val client = GraphqlUtility(userCredentials)
-    val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
-    val checksumValue = createdFilesIdToChecksum.get(id)
-    client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
+    val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
+
     client.createAVMetadata(id)
     client.createBackendChecksumMetadata(id, Option("mismatchedchecksumvalue"))
     client.createFfidMetadata(id)
@@ -354,11 +359,11 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the antivirus check has failed") {
     val client = GraphqlUtility(userCredentials)
-    val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
-    val checksumValue = createdFilesIdToChecksum.get(id)
-    client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+
+    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
+    val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
     client.createAVMetadata(id, "antivirus failed")
-    client.createBackendChecksumMetadata(id, checksumValue)
+    client.createBackendChecksumMetadata(id, Some(checksumValue))
     client.createFfidMetadata(id)
   }
 
@@ -367,11 +372,10 @@ class Steps extends ScalaDsl with EN with Matchers {
       val passwordProtectedPuid = "fmt/494"
       val zipFilePuid = "fmt/289"
       val client = GraphqlUtility(userCredentials)
-      val id: UUID = client.createFiles(consignmentId, 1, "E2E TEST UPLOAD FOLDER").head
-      val checksumValue = createdFilesIdToChecksum.get(id)
-      client.createClientsideMetadata(userCredentials, id, checksumValue, 0)
+      val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
+      val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
       client.createAVMetadata(id)
-      client.createBackendChecksumMetadata(id, checksumValue)
+      client.createBackendChecksumMetadata(id, Some(checksumValue))
       checkName match {
         case "password protected" => client.createFfidMetadata(id, passwordProtectedPuid)
         case "zip file" => client.createFfidMetadata(id, zipFilePuid)
@@ -382,19 +386,23 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
-      createdFiles = client.createFiles(consignmentId, numberOfFiles, "E2E TEST UPLOAD FOLDER")
       val files = List("testfile1", "testfile2")
 
-      createdFiles.zipWithIndex.foreach {
-        case (id, idx) =>
-          val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")
-          val checksumValue = calculateTestFileChecksum(path)
-          client.createClientsideMetadata(userCredentials, id, Some(checksumValue), idx)
-          createdFilesIdToChecksum += (id -> checksumValue)
+      val matchIdInfo: List[MatchIdInfo] = List.tabulate(numberOfFiles)(n => n).map(idx => {
+        val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")
+        val checksumValue = calculateTestFileChecksum(path)
+        MatchIdInfo(checksumValue, path, idx)
+      })
+      val addFilesAndMetadataResult = client.addFilesAndMetadata(consignmentId,  "E2E TEST UPLOAD FOLDER", matchIdInfo)
+      createdFiles = addFilesAndMetadataResult.map(_.fileId)
 
-          val awsUtility = AWSUtility()
-          awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), s"$consignmentId/$id", path)
-      }
+      val awsUtility = AWSUtility()
+
+      createdFilesIdToChecksum = addFilesAndMetadataResult.map(res => {
+        val info: MatchIdInfo = matchIdInfo.find(_.matchId == res.matchId).get
+        awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), s"$consignmentId/${res.fileId}", info.path)
+        res.fileId -> info.checksum
+      }).toMap
     }
   }
 

@@ -43,6 +43,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   val differentPassword: String = RandomUtility.randomString(10)
   val userCredentials: UserCredentials = UserCredentials(userName, password)
   val differentUserCredentials: UserCredentials = UserCredentials(differentUserName, differentPassword)
+  val checksumValue = "checksum"
 
   Before() { scenario =>
     webDriver = initDriver
@@ -348,7 +349,6 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the checksum check has failed") {
     val client = GraphqlUtility(userCredentials)
-    val checksumValue = ""
     val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
     val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
 
@@ -359,7 +359,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the antivirus check has failed") {
     val client = GraphqlUtility(userCredentials)
-    val checksumValue = ""
+
     val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
     val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
     client.createAVMetadata(id, "antivirus failed")
@@ -372,7 +372,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       val passwordProtectedPuid = "fmt/494"
       val zipFilePuid = "fmt/289"
       val client = GraphqlUtility(userCredentials)
-      val checksumValue = ""
       val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
       val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
       client.createAVMetadata(id)

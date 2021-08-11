@@ -477,7 +477,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) button should be enabled") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 2).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 25).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
         Assert.assertFalse(StepsUtility.elementHasClassDisabled(id, webDriver))
       })
     }

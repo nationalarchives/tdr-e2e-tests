@@ -6,7 +6,7 @@ Feature: Upload
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the user is logged in on the upload page
-    Then the progress bar should not be visible
+    Then the upload progress should not be visible
 
   Scenario: The progress bar is shown after file upload
     Given A logged out user
@@ -15,7 +15,7 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: largefile
     And the user clicks the continue button
-    Then the progress bar should be visible
+    Then the upload progress should be visible
 
   Scenario: The records page is shown when the upload is completed
     Given A logged out user

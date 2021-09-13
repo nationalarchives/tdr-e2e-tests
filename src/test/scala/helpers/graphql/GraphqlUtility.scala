@@ -51,7 +51,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
         info.matchId
       )
     )
-    val input = AddFileAndMetadataInput(consignmentId, metadataInput, isComplete = Option(true))
+    val input = AddFileAndMetadataInput(consignmentId, metadataInput)
     client.result(afam.document, afam.Variables(input)).data.get.addFilesAndMetadata
   }
 

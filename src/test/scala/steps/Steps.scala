@@ -436,7 +436,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   When("^the user selects directory containing: (.*)") {
     fileName: String => {
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
         val executor = driver.asInstanceOf[JavascriptExecutor]
         executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
       })

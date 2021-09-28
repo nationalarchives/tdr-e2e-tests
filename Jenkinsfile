@@ -3,7 +3,7 @@ def repo = "tdr-e2e-tests"
 
 pipeline {
   agent {
-    label "master"
+    label "built-in"
   }
   parameters {
     choice(name: "STAGE", choices: ["intg", "staging"], description: "TDR environment where end to end tests will run")

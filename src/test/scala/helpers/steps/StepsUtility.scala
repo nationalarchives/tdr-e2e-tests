@@ -8,7 +8,7 @@ import org.openqa.selenium.{By, StaleElementReferenceException, WebDriver}
 
 object StepsUtility {
   def waitForElementTitle(webDriver: WebDriver, title: String, elementClassName: String): Any = {
-    new WebDriverWait(webDriver, 120)
+    new WebDriverWait(webDriver, 180)
       .ignoring(classOf[StaleElementReferenceException])
       /*Ignore stale references exceptions.
       These seem to happen when Selenium selects an element which then disappears when the user is redirected to the next page,

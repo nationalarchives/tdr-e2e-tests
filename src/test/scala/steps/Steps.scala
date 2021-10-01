@@ -14,14 +14,17 @@ import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
+import org.openqa.selenium.firefox.FirefoxDriver
 import org.scalatest.Matchers
 
+import java.io.File
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -194,7 +197,18 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title \"(.*)\"") {
     page: String =>
-      StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
+      try  {
+        StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
+      } catch {
+        case e: Exception =>
+          val screenshot: File = webDriver.asInstanceOf[FirefoxDriver].getScreenshotAs[File](OutputType.FILE)
+          val awsUtility = new AWSUtility()
+          awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), screenshot.getName, screenshot.toPath)
+          throw e
+      }
+
+
+
   }
 
   Then("^the user will be on a page with a panel titled \"(.*)\"") {

@@ -201,7 +201,9 @@ class Steps extends ScalaDsl with EN with Matchers {
         StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
       } catch {
         case e: Exception =>
+          e.printStackTrace()
           val screenshot: File = webDriver.asInstanceOf[FirefoxDriver].getScreenshotAs[File](OutputType.FILE)
+          println(s"SCREENSHOT CREATED ${screenshot.getPath}")
           val awsUtility = new AWSUtility()
           awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), screenshot.getName, screenshot.toPath)
           throw e

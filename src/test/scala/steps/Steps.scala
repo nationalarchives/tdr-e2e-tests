@@ -15,6 +15,7 @@ import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
 import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.logging.{LogEntries, LogType}
 import org.scalatest.Matchers
 
 import java.io.File
@@ -202,10 +203,12 @@ class Steps extends ScalaDsl with EN with Matchers {
       } catch {
         case e: Exception =>
           e.printStackTrace()
+
           val screenshot: File = webDriver.asInstanceOf[FirefoxDriver].getScreenshotAs[File](OutputType.FILE)
           println(s"SCREENSHOT CREATED ${screenshot.getPath}")
           val awsUtility = new AWSUtility()
           awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), screenshot.getName, screenshot.toPath)
+          webDriver.manage().logs().get(LogType.BROWSER).asScala.foreach(l => println(l.toString))
           throw e
       }
 

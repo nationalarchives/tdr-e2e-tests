@@ -199,7 +199,6 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user will be on a page with the title \"(.*)\"") {
     page: String =>
       try  {
-        webDriver.manage().logs().get(LogType.BROWSER).asScala.foreach(l => println(l.toString))
         StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
       } catch {
         case e: Exception =>

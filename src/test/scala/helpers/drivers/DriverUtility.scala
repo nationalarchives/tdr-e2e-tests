@@ -2,7 +2,7 @@ package helpers.drivers
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
-import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
+import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxDriverLogLevel, FirefoxOptions}
 import org.openqa.selenium.html5.WebStorage
 import org.openqa.selenium.remote.RemoteWebDriver
 
@@ -29,6 +29,7 @@ object DriverUtility {
     firefoxOptions.setHeadless(true)
     firefoxOptions.setBinary(firefoxBinaryLocation)
     firefoxOptions.addArguments("--no-sandbox")
+    firefoxOptions.setLogLevel(FirefoxDriverLogLevel.TRACE)
     firefoxOptions.addArguments("--disable-dev-shm-usage")
     firefoxOptions.addArguments("--verbose")
     System.setProperty("webdriver.gecko.driver", driverLocation)

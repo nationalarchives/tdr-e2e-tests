@@ -4,9 +4,9 @@ import com.typesafe.config.{Config, ConfigFactory}
 import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
-import helpers.graphql.GraphqlUtility
+import helpers.graphql.{ApiClient, GraphqlUtility}
 import helpers.graphql.GraphqlUtility.MatchIdInfo
-import helpers.keycloak.{KeycloakClient, UserCredentials}
+import helpers.keycloak.{KeycloakClient, KeycloakUtility, UserCredentials}
 import helpers.logging.AssertionErrorMessages._
 import helpers.steps.StepsUtility
 import helpers.steps.StepsUtility.calculateTestFileChecksum
@@ -393,7 +393,7 @@ class Steps extends ScalaDsl with EN with Matchers {
         val checksumValue = calculateTestFileChecksum(path)
         MatchIdInfo(checksumValue, path, idx)
       })
-      val addFilesAndMetadataResult = client.addFilesAndMetadata(consignmentId,  "E2E TEST UPLOAD FOLDER", matchIdInfo)
+      val addFilesAndMetadataResult = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo)
       createdFiles = addFilesAndMetadataResult.map(_.fileId)
 
       val awsUtility = AWSUtility()
@@ -438,7 +438,22 @@ class Steps extends ScalaDsl with EN with Matchers {
     fileName: String => {
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
         val executor = driver.asInstanceOf[JavascriptExecutor]
-        executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
+        val body: Map[String, String] = Map(
+          "grant_type" -> "password",
+          "username" -> userCredentials.userName,
+          "password" -> userCredentials.password,
+          "client_id" -> "tdr-fe"
+        )
+        val token = KeycloakUtility.bearerAccessToken(body)
+        val uploadUrl = configuration.getString("tdr.upload.url")
+        val script =
+          s"""
+             |fetch("$uploadUrl/cookies", {
+             |      credentials: "include",
+             |      headers: { Authorization: 'Bearer $token' }
+             |    }).then(res => arguments[arguments.length - 1](res.ok))
+             |""".stripMargin
+        executor.executeAsyncScript(script)
       })
 
       val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
@@ -518,12 +533,12 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"
-       new WebDriverWait(webDriver, 10).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
-         val errorElement = webDriver.findElement(By.cssSelector(selector))
-         Assert.assertNotNull(elementMissingMessage(selector), errorElement)
+      new WebDriverWait(webDriver, 10).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+        val errorElement = webDriver.findElement(By.cssSelector(selector))
+        Assert.assertNotNull(elementMissingMessage(selector), errorElement)
 
-         val errorElementText = errorElement.getText
-         Assert.assertTrue(doesNotContain(errorElementText, errorMessage), errorElementText.contains(errorMessage))
+        val errorElementText = errorElement.getText
+        Assert.assertTrue(doesNotContain(errorElementText, errorMessage), errorElementText.contains(errorMessage))
       })
   }
 
@@ -569,9 +584,9 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     Assert.assertTrue(confirmTransferKeys.size == 4)
     confirmTransferKeys.forEach(key => {
-     val keyText = key.getText
+      val keyText = key.getText
       Assert.assertTrue("Confirm transfer list key empty", !keyText.isEmpty)
-      Assert.assertTrue("Confirm transfer list key is incorrect",expectedKeys.contains(keyText))
+      Assert.assertTrue("Confirm transfer list key is incorrect", expectedKeys.contains(keyText))
     })
 
     Assert.assertTrue(confirmTransferValues.size == 4)

@@ -2,9 +2,11 @@ package helpers.drivers
 
 import com.typesafe.config.{Config, ConfigFactory}
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
-import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
+import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions, FirefoxProfile}
 import org.openqa.selenium.html5.WebStorage
 import org.openqa.selenium.remote.RemoteWebDriver
+
+import java.io.File
 
 object DriverUtility {
   val driverLocation: String = System.getenv("DRIVER_LOCATION")
@@ -31,7 +33,7 @@ object DriverUtility {
     firefoxOptions.addArguments("--no-sandbox")
     firefoxOptions.addArguments("--disable-dev-shm-usage")
     firefoxOptions.addArguments("--verbose")
-    firefoxOptions.addArguments("--profile /opt/profile")
+    firefoxOptions.setProfile(new FirefoxProfile(new File("/opt/profile")))
     System.setProperty("webdriver.gecko.driver", driverLocation)
 
     firefoxOptions

@@ -21,6 +21,7 @@ libraryDependencies += "com.softwaremill.sttp.client" %% "core" % "2.1.1"
 libraryDependencies += "com.softwaremill.sttp.client" %% "circe" % "2.1.1"
 libraryDependencies += "software.amazon.awssdk" % "s3" % "2.15.35"
 libraryDependencies += "software.amazon.awssdk" % "sts" % "2.15.35"
+libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % Test
 
 libraryDependencies ++= Seq(
   "io.cucumber" % "cucumber-core" % cucumberVersion % Test,
@@ -29,3 +30,11 @@ libraryDependencies ++= Seq(
 )
 
 resolvers += "TDR Releases" at "s3://tdr-releases-mgmt"
+
+mainClass in assembly := Some("io.cucumber.core.cli.Main")
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("reference.conf") => MergeStrategy.concat
+  case _ => MergeStrategy.first
+}

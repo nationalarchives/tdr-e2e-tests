@@ -1,6 +1,5 @@
 package steps
 
-import scala.jdk.FunctionWrappers._
 import com.typesafe.config.{Config, ConfigFactory}
 import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
@@ -14,10 +13,11 @@ import helpers.users.RandomUtility
 import io.cucumber.scala.{EN, ScalaDsl}
 import org.junit.Assert
 import org.openqa.selenium._
-import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.devtools.HasDevTools
+import org.openqa.selenium.devtools.v85.inspector.Inspector
 import org.openqa.selenium.devtools.v85.network.Network
 import org.openqa.selenium.devtools.v85.network.model.{RequestWillBeSent, ResponseReceived}
+import org.openqa.selenium.devtools.v85.target.Target
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.scalatest.matchers.should.Matchers
@@ -26,7 +26,9 @@ import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
+import java.util.function.Consumer
 import scala.jdk.CollectionConverters._
+import scala.jdk.FunctionWrappers.AsJavaConsumer
 import scala.jdk.OptionConverters.RichOption
 
 class Steps extends ScalaDsl with EN with Matchers {
@@ -55,9 +57,19 @@ class Steps extends ScalaDsl with EN with Matchers {
   Before {
     webDriver = initDriver
 
-    val devTools = webDriver.asInstanceOf[HasDevTools].getDevTools
-    devTools.createSession()
+    val devTools = webDriver.asInstanceOf[FirefoxDriver].getDevTools
+    devTools.createSessionIfThereIsNotOne()
+    val targets = devTools.send(Target.getTargets)
+    devTools.send(Target.attachToTarget(targets.get(0).getTargetId, None.toJava))
     devTools.send(Network.enable(None.toJava, None.toJava, None.toJava))
+    val b: Consumer[RequestWillBeSent] = AsJavaConsumer[RequestWillBeSent](entry => {
+      println(s"Response (Req id) URL : (${entry.getRequestId}) ${entry.getRequest.getUrl} (${entry.getRequest.getMethod})")
+    })
+//    devTools.addListener(Network.requestWillBeSent(), b)
+//
+//    devTools.addListener(Network.responseReceived(), AsJavaConsumer[ResponseReceived](entry => {
+//      s"Response (Req id) URL : (${entry.getRequestId}) ${entry.getResponse.getUrl} (${entry.getResponse.getStatus})"
+//    }))
     ()
   }
 

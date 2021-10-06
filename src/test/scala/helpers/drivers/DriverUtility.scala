@@ -33,7 +33,9 @@ object DriverUtility {
     firefoxOptions.addArguments("--no-sandbox")
     firefoxOptions.addArguments("--disable-dev-shm-usage")
     firefoxOptions.addArguments("--verbose")
-    firefoxOptions.setProfile(new FirefoxProfile(new File("/opt/profile")))
+    val firefoxProfile = new FirefoxProfile()
+    firefoxProfile.setPreference("network.http.network-changed.timeout", 100)
+    firefoxOptions.setProfile(firefoxProfile)
     System.setProperty("webdriver.gecko.driver", driverLocation)
 
     firefoxOptions

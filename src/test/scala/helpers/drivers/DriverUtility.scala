@@ -31,6 +31,7 @@ object DriverUtility {
     firefoxOptions.addArguments("--no-sandbox")
     firefoxOptions.addArguments("--disable-dev-shm-usage")
     firefoxOptions.addArguments("--verbose")
+    firefoxOptions.addArguments("--profile /opt/profile")
     System.setProperty("webdriver.gecko.driver", driverLocation)
 
     firefoxOptions

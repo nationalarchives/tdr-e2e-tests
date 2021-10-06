@@ -6,8 +6,6 @@ import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions, FirefoxProfil
 import org.openqa.selenium.html5.WebStorage
 import org.openqa.selenium.remote.RemoteWebDriver
 
-import java.io.File
-
 object DriverUtility {
   val driverLocation: String = System.getenv("DRIVER_LOCATION")
 
@@ -33,10 +31,12 @@ object DriverUtility {
     firefoxOptions.addArguments("--no-sandbox")
     firefoxOptions.addArguments("--disable-dev-shm-usage")
     firefoxOptions.addArguments("--verbose")
+    firefoxOptions.addArguments("--marionette-port=2828")
     val firefoxProfile = new FirefoxProfile()
     firefoxProfile.setPreference("network.http.network-changed.timeout", 100)
     firefoxOptions.setProfile(firefoxProfile)
     System.setProperty("webdriver.gecko.driver", driverLocation)
+
 
     firefoxOptions
   }

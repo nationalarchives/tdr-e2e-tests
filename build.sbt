@@ -4,7 +4,13 @@ version := "0.1"
 
 scalaVersion := "2.13.1"
 
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3" % Test
+lazy val cucumberVersion = "6.11.0"
+
+libraryDependencies += "com.typesafe" % "config" % "1.4.1"
+libraryDependencies += "org.seleniumhq.selenium" % "selenium-firefox-driver" % "4.0.0-rc-2"
+libraryDependencies += "org.seleniumhq.selenium" % "selenium-chrome-driver" % "4.0.0-rc-2"
+libraryDependencies += "org.seleniumhq.selenium" % "selenium-support" % "4.0.0-rc-2"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % Test
 libraryDependencies += "org.keycloak" % "keycloak-core" % "11.0.3" % Test
 libraryDependencies += "org.keycloak" % "keycloak-admin-client" % "11.0.3" % Test
 libraryDependencies += "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.15"
@@ -17,9 +23,9 @@ libraryDependencies += "software.amazon.awssdk" % "s3" % "2.15.35"
 libraryDependencies += "software.amazon.awssdk" % "sts" % "2.15.35"
 
 libraryDependencies ++= Seq(
-  "io.cucumber" % "cucumber-core" % "4.7.1" % "test",
-  "io.cucumber" %% "cucumber-scala" % "4.7.1" % "test",
-  "io.cucumber" % "cucumber-junit" % "4.7.1" % "test"
+  "io.cucumber" % "cucumber-core" % cucumberVersion % Test,
+  "io.cucumber" %% "cucumber-scala" % "7.1.0" % Test,
+  "io.cucumber" % "cucumber-junit" % cucumberVersion % Test
 )
 
 resolvers += "TDR Releases" at "s3://tdr-releases-mgmt"

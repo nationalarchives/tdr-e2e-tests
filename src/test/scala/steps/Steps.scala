@@ -1,7 +1,7 @@
 package steps
 
+import scala.jdk.FunctionWrappers._
 import com.typesafe.config.{Config, ConfigFactory}
-import cucumber.api.scala.{EN, ScalaDsl}
 import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
@@ -11,19 +11,26 @@ import helpers.logging.AssertionErrorMessages._
 import helpers.steps.StepsUtility
 import helpers.steps.StepsUtility.calculateTestFileChecksum
 import helpers.users.RandomUtility
+import io.cucumber.scala.{EN, ScalaDsl}
 import org.junit.Assert
-import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
-import org.scalatest.Matchers
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.devtools.HasDevTools
+import org.openqa.selenium.devtools.v85.network.Network
+import org.openqa.selenium.devtools.v85.network.model.{RequestWillBeSent, ResponseReceived}
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
+import org.scalatest.matchers.should.Matchers
 
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
-import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.jdk.CollectionConverters._
+import scala.jdk.OptionConverters.RichOption
 
 class Steps extends ScalaDsl with EN with Matchers {
+
   var webDriver: WebDriver = _
   var userId: String = ""
   var differentUserId: String = ""
@@ -45,11 +52,16 @@ class Steps extends ScalaDsl with EN with Matchers {
   val differentUserCredentials: UserCredentials = UserCredentials(differentUserName, differentPassword)
   val checksumValue = "checksum"
 
-  Before() { scenario =>
+  Before {
     webDriver = initDriver
+
+    val devTools = webDriver.asInstanceOf[HasDevTools].getDevTools
+    devTools.createSession()
+    devTools.send(Network.enable(None.toJava, None.toJava, None.toJava))
+    ()
   }
 
-  After() { scenario =>
+  After {
     webDriver.quit()
     userCleanUp()
   }
@@ -77,7 +89,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     KeycloakClient.deleteUser(userId)
 
     //Not all scenarios create the different user
-    if (!differentUserId.isEmpty) {
+    if (differentUserId.nonEmpty) {
       KeycloakClient.deleteUser(differentUserId)
     }
   }
@@ -440,7 +452,6 @@ class Steps extends ScalaDsl with EN with Matchers {
         val executor = driver.asInstanceOf[JavascriptExecutor]
         executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
       })
-
       val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
       input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
       webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
@@ -450,7 +461,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the (.*) should be visible") {
     targetIdName: String => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(10)).until((driver: WebDriver) => {
         val isVisible = !StepsUtility.elementHasClassHide(id, driver)
         isVisible
       })
@@ -460,7 +471,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the (.*) should not be visible") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(10)).until((driver: WebDriver) => {
         val isNotVisible = StepsUtility.elementHasAttributeHidden(id, webDriver)
         isNotVisible
       })
@@ -477,7 +488,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) button should be enabled") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 25).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(25)).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
         Assert.assertFalse(StepsUtility.elementHasClassDisabled(id, webDriver))
       })
     }
@@ -518,7 +529,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"
-       new WebDriverWait(webDriver, 10).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+       new WebDriverWait(webDriver, Duration.ofSeconds(10)).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
          val errorElement = webDriver.findElement(By.cssSelector(selector))
          Assert.assertNotNull(elementMissingMessage(selector), errorElement)
 
@@ -566,17 +577,16 @@ class Steps extends ScalaDsl with EN with Matchers {
     val confirmTransferValues: List[WebElement] = webDriver.findElements(By.cssSelector(".govuk-summary-list__value")).toScalaList
 
     Assert.assertNotNull(elementMissingMessage(cssSelector), confirmTransferElement)
-
     Assert.assertTrue(confirmTransferKeys.size == 4)
-    confirmTransferKeys.forEach(key => {
+    confirmTransferKeys.foreach(key => {
      val keyText = key.getText
-      Assert.assertTrue("Confirm transfer list key empty", !keyText.isEmpty)
+      Assert.assertTrue("Confirm transfer list key empty", keyText.nonEmpty)
       Assert.assertTrue("Confirm transfer list key is incorrect",expectedKeys.contains(keyText))
     })
 
     Assert.assertTrue(confirmTransferValues.size == 4)
     confirmTransferValues.foreach(value => {
-      Assert.assertTrue("Confirm transfer list value empty", !value.getText.isEmpty)
+      Assert.assertTrue("Confirm transfer list value empty", value.getText.nonEmpty)
     })
   }
 

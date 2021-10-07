@@ -25,7 +25,8 @@ libraryDependencies += "software.amazon.awssdk" % "sts" % "2.15.35"
 libraryDependencies ++= Seq(
   "io.cucumber" % "cucumber-core" % cucumberVersion % Test,
   "io.cucumber" %% "cucumber-scala" % "7.1.0" % Test,
-  "io.cucumber" % "cucumber-junit" % cucumberVersion % Test
+  "io.cucumber" % "cucumber-junit" % cucumberVersion % Test,
+  "com.novocode" % "junit-interface" % "0.11" % Test
 )
 
 resolvers += "TDR Releases" at "s3://tdr-releases-mgmt"

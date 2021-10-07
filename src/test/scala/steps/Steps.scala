@@ -54,10 +54,10 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Before {
     webDriver = initDriver
-
-    val devTools = webDriver.asInstanceOf[HasDevTools].getDevTools
-    devTools.createSession()
-    devTools.send(Network.enable(None.toJava, None.toJava, None.toJava))
+//
+//    val devTools = webDriver.asInstanceOf[HasDevTools].getDevTools
+//    devTools.createSession()
+//    devTools.send(Network.enable(None.toJava, None.toJava, None.toJava))
     ()
   }
 

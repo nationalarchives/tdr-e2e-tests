@@ -34,12 +34,6 @@ pipeline {
       }
     }
     stage("Configure and Run Tests") {
-      agent {
-        ecs {
-          inheritFrom "transfer-frontend"
-          taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeS3ExportRole${params.STAGE.capitalize()}"
-        }
-      }
       environment {
         DRIVER_LOCATION = "src/driver"
         CHROME_DRIVER_VERSION = "83.0.4103.39"

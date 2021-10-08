@@ -20,6 +20,19 @@ object StepsUtility {
       })
   }
 
+  def waitForElementNotEmpty(webDriver: WebDriver, id: String): Any = {
+    new WebDriverWait(webDriver, 180)
+      .ignoring(classOf[StaleElementReferenceException])
+      /*Ignore stale references exceptions.
+      These seem to happen when Selenium selects an element which then disappears when the user is redirected to the next page,
+      such as from the upload page to the file checks page. In this case, we only want to check the element on the second page,
+      so it doesn't matter if the same element on the first page has disappeared.*/
+      .until((driver: WebDriver) => {
+        val panel = webDriver.findElement(By.id(id)).getAttribute("value")
+        panel != ""
+      })
+  }
+
   def userLogin(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
     enterUserCredentials(webDriver, userCredentials)
     val clickableElement = webDriver.findElement(By.cssSelector("[name='login']"))

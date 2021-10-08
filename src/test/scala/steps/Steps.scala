@@ -14,6 +14,7 @@ import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
+import org.openqa.selenium.logging.Logs
 import org.scalatest.Matchers
 
 import java.nio.file.Paths
@@ -194,6 +195,18 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user will be on a page with the title \"(.*)\"") {
     page: String =>
+      if(page.contains("Checking your records")) {
+        val policyElements = webDriver.findElements(By.id("policy")).asScala
+        val signatureElements = webDriver.findElements(By.id("signature")).asScala
+
+        if(policyElements.nonEmpty && signatureElements.nonEmpty) {
+          StepsUtility.waitForElementNotEmpty(webDriver, "policy")
+          StepsUtility.waitForElementNotEmpty(webDriver, "signature")
+          println(s"POLICY ${policyElements.head.getAttribute("value")}")
+          println(s"SIGNATURE ${signatureElements.head.getAttribute("value")}")
+          throw new Exception("Error page is showing")
+        }
+      }
       StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
   }
 

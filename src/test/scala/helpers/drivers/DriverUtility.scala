@@ -26,7 +26,7 @@ object DriverUtility {
 
   val firefoxOptions: FirefoxOptions = {
     val firefoxOptions = new FirefoxOptions
-    firefoxOptions.setHeadless(true)
+    firefoxOptions.setHeadless(false)
     firefoxOptions.setBinary(firefoxBinaryLocation)
     firefoxOptions.addArguments("--no-sandbox")
     firefoxOptions.addArguments("--disable-dev-shm-usage")

@@ -17,7 +17,6 @@ Feature: Upload
     And the user clicks the continue button
     Then the upload progress should be visible
 
-  @wip
   Scenario: The records page is shown when the upload is completed
     Given A logged out user
     And an existing consignment for transferring body MOCK1
@@ -27,7 +26,6 @@ Feature: Upload
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking your records"
 
-  @wip
   Scenario: A logged in user tries to upload multiple set of files to a consignment
     Given A logged out user
     And an existing consignment for transferring body MOCK1

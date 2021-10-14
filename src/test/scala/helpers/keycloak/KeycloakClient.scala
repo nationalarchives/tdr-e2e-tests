@@ -30,7 +30,7 @@ object KeycloakClient {
   private def realmResource(client: Keycloak): RealmResource = client.realm("tdr")
   private def userResource(realm: RealmResource): UsersResource = realm.users()
 
-  def createUser(userCredentials: UserCredentials, body: Option[String] = Some("MOCK1")): String = {
+  def createUser(userCredentials: UserCredentials, body: Option[String] = Some("Mock 1 Department")): String = {
     val client = keyCloakAdminClient()
     val realm = realmResource(client)
     val user = userResource(realm)
@@ -49,14 +49,24 @@ object KeycloakClient {
     userRepresentation.setLastName(userCredentials.lastName)
     userRepresentation.setEnabled(true)
     userRepresentation.setCredentials(creds)
-    body.foreach(b => userRepresentation.setAttributes(Map("body" -> List(b).asJava).asJava))
-    userRepresentation.setRealmRoles(List("tdr_user").asJava)
+
+    body match {
+      case Some("Mock 4 Department") => userWithBodyAndNoSeries(userRepresentation)
+      case Some(value) =>
+        userRepresentation.setGroups(List(s"/transferring_body_user/$value").asJava)
+      case _ => //do nothing
+    }
 
     val response: Response = user.create(userRepresentation)
 
     val path = response.getLocation.getPath.replaceAll(".*/([^/]+)$", "$1")
     client.close()
     path
+  }
+
+  private def userWithBodyAndNoSeries(ur: UserRepresentation): Unit = {
+    ur.setRealmRoles(List("tdr_user").asJava)
+    ur.setAttributes(Map("body" -> List("MOCK4").asJava).asJava)
   }
 
   def deleteUser(userId: String): Unit = {

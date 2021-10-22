@@ -30,7 +30,10 @@ object KeycloakClient {
   private def realmResource(client: Keycloak): RealmResource = client.realm("tdr")
   private def userResource(realm: RealmResource): UsersResource = realm.users()
 
-  def createUser(userCredentials: UserCredentials, body: Option[String] = Some("Mock 1 Department")): String = {
+  def createUser(
+                  userCredentials: UserCredentials,
+                  body: Option[String] = Some("Mock 1 Department"),
+                  userType: Option[String] = None): String = {
     val client = keyCloakAdminClient()
     val realm = realmResource(client)
     val user = userResource(realm)
@@ -50,12 +53,21 @@ object KeycloakClient {
     userRepresentation.setEnabled(true)
     userRepresentation.setCredentials(creds)
 
-    body match {
-      case Some("Mock 4 Department") => userWithBodyAndNoSeries(userRepresentation)
+    val bodyUserGroups: List[String] = body match {
+      case Some("Mock 4 Department") =>
+        userWithBodyAndNoSeries(userRepresentation)
+        List()
       case Some(value) =>
-        userRepresentation.setGroups(List(s"/transferring_body_user/$value").asJava)
-      case _ => //do nothing
+        List(s"/transferring_body_user/$value")
+      case _ => List()
     }
+
+    val userTypeGroups: List[String] = userType match {
+      case Some(value) => List(s"/user_type/${value}_user")
+      case _ => List()
+    }
+
+    userRepresentation.setGroups((bodyUserGroups ::: userTypeGroups).asJava)
 
     val response: Response = user.create(userRepresentation)
 

@@ -18,9 +18,9 @@ libraryDependencies ++= Seq(
   softwareMillCirce,
   awsSdkS3,
   awsSdkSts,
-  cucumberCore % Test,
-  cucumberScala % Test,
-  cucumberScala % Test
+  cucumberCore,
+  cucumberScala,
+  cucumberJunit
 )
 
 resolvers += "TDR Releases" at "s3://tdr-releases-mgmt"

@@ -15,13 +15,13 @@ Feature: Series Page
     And the user clicks the continue button
     Then the user should be on the transfer-agreement page
 
-  Scenario: User from MOCK1 transferring body sees the correct series choices
-   Given A logged in user who is a member of MOCK1 transferring body
+  Scenario: User from Mock 1 Department transferring body sees the correct series choices
+   Given A logged in user who is a member of Mock 1 Department transferring body
    When the logged in user navigates to the series page
    Then the user should see the series dropdown values MOCK1 123
 
-  Scenario: User from MOCK2 transferring body sees the correct series choices
-    Given A logged in user who is a member of MOCK2 transferring body
+  Scenario: User from Mock 2 Department transferring body sees the correct series choices
+    Given A logged in user who is a member of Mock 2 Department transferring body
     When the logged in user navigates to the series page
     Then the user should see the series dropdown values MOCK2 234,MOCK2 345
 
@@ -30,7 +30,7 @@ Feature: Series Page
     When the logged in user navigates to the series page
     Then the user should see a general service error "Sorry, there is a problem with the service"
 
-  Scenario: User from MOCK4 should see an empty series list
-    Given A logged in user who is a member of MOCK4 transferring body
+  Scenario: User from Mock 4 Department should see an empty series list
+    Given A logged in user who is a member of Mock 4 Department transferring body
     When the logged in user navigates to the series page
     Then the user should see an empty series dropdown

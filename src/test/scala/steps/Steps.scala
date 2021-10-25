@@ -116,6 +116,12 @@ class Steps extends ScalaDsl with EN with Matchers {
     login(userCredentials)
   }
 
+  Given("^A logged in (.*) user") {
+    userType: String =>
+      userId = KeycloakClient.createUser(userCredentials, userType = Some(userType))
+      login(userCredentials)
+  }
+
   And("^the user is logged in on the (.*) page") {
     page: String =>
       loadPage(page)
@@ -200,6 +206,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user will be on a page with a panel titled \"(.*)\"") {
     panelTitle: String =>
       StepsUtility.waitForElementTitle(webDriver, panelTitle, "govuk-panel__title")
+  }
+
+  Then("^the user will be on a page with a heading \"(.*)\"") {
+    heading: String =>
+      StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-m")
   }
 
   Then("^the user will be on a page with a banner titled \"(.*)\"") {

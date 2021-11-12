@@ -19,11 +19,12 @@ import helpers.keycloak.UserCredentials
 import java.nio.file.Path
 
 class GraphqlUtility(userCredentials: UserCredentials) {
+  val standardConsignmentType = "standard"
 
   def createConsignment(body: String): Option[ac.Data] = {
     val client = new UserApiClient[ac.Data, ac.Variables](userCredentials)
     val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
-    client.result(ac.document, ac.Variables(AddConsignmentInput(seriesId))).data
+    client.result(ac.document, ac.Variables(AddConsignmentInput(Some(seriesId), Some(standardConsignmentType)))).data
   }
 
   def getSeries(body: String): Option[gs.Data] = {

@@ -13,7 +13,7 @@ Feature: Dashboard Page
   Scenario: Dashboard page is accessed by a judgment user
     Given A logged in judgment user
     And the logged in user navigates to the dashboard page
-    Then the user will be on a page with a heading "Upload your records to start a new transfer"
+    Then the user will be on a page with a heading "Upload your judgment to start a new transfer"
 
   Scenario: Dashboard page is submitted by a judgment user
     Given A logged in judgment user

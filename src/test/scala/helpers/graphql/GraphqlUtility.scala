@@ -24,7 +24,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   def createConsignment(body: String): Option[ac.Data] = {
     val client = new UserApiClient[ac.Data, ac.Variables](userCredentials)
     val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
-    client.result(ac.document, ac.Variables(AddConsignmentInput(Some(seriesId), Some(standardConsignmentType)))).data
+    client.result(ac.document, ac.Variables(AddConsignmentInput(Some(seriesId), standardConsignmentType))).data
   }
 
   def getSeries(body: String): Option[gs.Data] = {

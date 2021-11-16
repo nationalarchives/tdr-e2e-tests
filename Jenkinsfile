@@ -43,7 +43,7 @@ pipeline {
       environment {
         DRIVER_LOCATION = "src/driver"
         CHROME_DRIVER_VERSION = "83.0.4103.39"
-        FIREFOX_DRIVER_VERSION = "v0.26.0"
+        FIREFOX_DRIVER_VERSION = "v0.30.0"
       }
       stages {
         stage("Install Driver") {

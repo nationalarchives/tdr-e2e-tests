@@ -10,7 +10,7 @@ Feature: Login
     Given A logged in user
     When the user navigates to TDR Home Page
     And the user clicks on the Start now button
-    Then the user should be on the dashboard page
+    Then the user should be on the homepage page
 
   Scenario: Log in to TDR with correct credentials
     Given A logged out user
@@ -18,7 +18,7 @@ Feature: Login
     And the user clicks on the Start now button
     And the logged out user enters valid credentials
     And the user clicks the continue button
-    Then the user should be on the dashboard page
+    Then the user should be on the homepage page
 
   Scenario: Log in to TDR with incorrect credentials
     Given A logged out user

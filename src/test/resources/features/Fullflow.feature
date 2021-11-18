@@ -7,7 +7,7 @@ Feature: Full user journey
     And the user clicks on the Start now button
     And the logged out user enters valid credentials
     And the user clicks the continue button
-    Then the user should be on the dashboard page
+    Then the user should be on the homepage page
     When the logged in user navigates to the series page
     And the user selects the series MOCK1 123
     And the user clicks the continue button

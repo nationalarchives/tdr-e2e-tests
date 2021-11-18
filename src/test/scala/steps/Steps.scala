@@ -128,7 +128,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.userLogin(webDriver, userCredentials)
   }
 
-  When("^the user navigates to TDR Home Page") {
+  When("^the user navigates to TDR Start Page") {
     webDriver.get(s"$baseUrl")
   }
 

@@ -26,6 +26,7 @@ import scala.jdk.CollectionConverters._
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
   var userId: String = ""
+  var userType: String = ""
   var differentUserId: String = ""
   var consignmentId: UUID = _
   var createdFiles: List[UUID] = _
@@ -66,9 +67,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   private def loadPage(page: String): Unit = {
+    val path = if(userType == "judgment") "judgment" else "consignment"
     val pageWithConsignment = page match {
       case "dashboard" | "series" | "some-page" => s"$baseUrl/$page"
-      case _ => s"$baseUrl/consignment/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
+      case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)
   }
@@ -120,6 +122,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     userType: String =>
       userId = KeycloakClient.createUser(userCredentials, userType = Some(userType))
       login(userCredentials)
+      this.userType = userType
   }
 
   And("^the user is logged in on the (.*) page") {

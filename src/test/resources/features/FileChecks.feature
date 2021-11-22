@@ -41,3 +41,12 @@ Feature: File Checks Page
     And an existing upload of 5 files
     And the logged out user attempts to access the records page
     Then the logged out user should be on the login page
+
+  Scenario: A judgment user should see the judgments file checks progress page
+    Given A logged in judgment user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And an existing upload of 5 files
+    And 1 of the antivirus scans have finished
+    When the logged in user navigates to the records page
+    Then the user will be on a page with the title "Checking court judgment record"

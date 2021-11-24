@@ -451,10 +451,8 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   When("^the user selects directory containing: (.*)") {
     fileName: String => {
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
-        val executor = driver.asInstanceOf[JavascriptExecutor]
-        executor.executeScript("return AWS.config && AWS.config.credentials && AWS.config.credentials.accessKeyId") != null
-      })
+      //Wait for the cookies endpoint to respond. There is no visible change to the page when this happens so we just sleep.
+      Thread.sleep(15 * 1000)
 
       val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
       input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")

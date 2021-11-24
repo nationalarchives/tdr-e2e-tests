@@ -69,7 +69,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   private def loadPage(page: String): Unit = {
     val path = if(userType == "judgment") "judgment" else "consignment"
     val pageWithConsignment = page match {
-      case "dashboard" | "series" | "some-page" => s"$baseUrl/$page"
+      case "homepage" | "series" | "some-page" => s"$baseUrl/$page"
       case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)
@@ -132,7 +132,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.userLogin(webDriver, userCredentials)
   }
 
-  When("^the user navigates to TDR Home Page") {
+  When("^the user navigates to TDR Start Page") {
     webDriver.get(s"$baseUrl")
   }
 

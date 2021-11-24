@@ -1,28 +1,28 @@
 Feature: Login
 
-  Scenario: Navigate to the TDR home page as a logged out user
+  Scenario: Navigate to the TDR start page as a logged out user
     Given A logged out user
-    When the user navigates to TDR Home Page
+    When the user navigates to TDR Start Page
     And the user clicks on the Start now button
     Then the logged out user should be on the login page
 
-  Scenario: Navigate to the TDR home page as a logged in user
+  Scenario: Navigate to the TDR start page as a logged in user
     Given A logged in user
-    When the user navigates to TDR Home Page
+    When the user navigates to TDR Start Page
     And the user clicks on the Start now button
-    Then the user should be on the dashboard page
+    Then the user should be on the homepage page
 
   Scenario: Log in to TDR with correct credentials
     Given A logged out user
-    When the user navigates to TDR Home Page
+    When the user navigates to TDR Start Page
     And the user clicks on the Start now button
     And the logged out user enters valid credentials
     And the user clicks the continue button
-    Then the user should be on the dashboard page
+    Then the user should be on the homepage page
 
   Scenario: Log in to TDR with incorrect credentials
     Given A logged out user
-    When the user navigates to TDR Home Page
+    When the user navigates to TDR Start Page
     And the user clicks on the Start now button
     And the logged out user enters invalid credentials
     And the user clicks the continue button

@@ -13,11 +13,11 @@ Feature: Sign Out
 
   Scenario: A logged in user can sign out from the start page
     Given A logged in user
-    And the user navigates to TDR start Page
+    And the user navigates to TDR Start Page
     When the user clicks on the Sign out button
     Then the user should be on the signed-out page
 
   Scenario: A logged out user cannot see the sign out link from the start page
     Given A logged out user
-    When the user navigates to TDR start Page
+    When the user navigates to TDR Start Page
     Then the Sign out button is not displayed on the page

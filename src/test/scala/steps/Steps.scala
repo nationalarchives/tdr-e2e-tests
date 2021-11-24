@@ -76,6 +76,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   private def userCleanUp(): Unit = {
+    this.userType = ""
     KeycloakClient.deleteUser(userId)
 
     //Not all scenarios create the different user

@@ -43,3 +43,12 @@ Feature: Upload
     And an existing transfer agreement
     And the logged out user attempts to access the upload page
     Then the logged out user should be on the login page
+
+  Scenario: The judgment's records page is shown when the upload is completed
+    Given A logged out judgment user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the user is logged in on the upload page
+    When the user selects the file: testfile1
+    And the user clicks the continue button
+    Then the user will be on a page with the title "Checking court judgment record"

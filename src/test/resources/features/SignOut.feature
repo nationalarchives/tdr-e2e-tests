@@ -18,6 +18,6 @@ Feature: Sign Out
     Then the user should be on the signed-out page
 
   Scenario: A logged out user cannot see the sign out link from the start page
-    Given A logged out user
+    Given A logged out standard user
     When the user navigates to TDR Start Page
     Then the Sign out button is not displayed on the page

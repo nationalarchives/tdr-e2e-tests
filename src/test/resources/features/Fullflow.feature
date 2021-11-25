@@ -2,7 +2,7 @@
 
 Feature: Full user journey
   Scenario: Full transfer workflow
-    Given A logged out user
+    Given A logged out standard user
     When the user navigates to TDR Start Page
     And the user clicks on the Start now button
     And the logged out user enters valid credentials

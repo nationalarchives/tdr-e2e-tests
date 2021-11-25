@@ -108,10 +108,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
   }
 
-  Given("^A logged out user") {
-    userId = KeycloakClient.createUser(userCredentials)
-  }
-
   Given("^A logged out (.*) user") {
     userType: String =>
       userId = KeycloakClient.createUser(userCredentials, userType = Some(userType))

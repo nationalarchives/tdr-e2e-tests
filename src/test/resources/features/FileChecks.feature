@@ -1,7 +1,7 @@
 Feature: File Checks Page
 
   Scenario: A user will see the file checks in progress page if the checks are incomplete
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And an existing upload of 5 files
@@ -12,7 +12,7 @@ Feature: File Checks Page
     And the file checks continue button should be disabled
 
   Scenario: A user will see the file checks complete page if the checks are complete
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And an existing upload of 10 files
@@ -26,7 +26,7 @@ Feature: File Checks Page
     And the file checks continue button should be enabled
 
   Scenario: A user will see the file checks complete notification if the checks are complete and they visit the record checks page
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the records checks are complete
@@ -35,7 +35,7 @@ Feature: File Checks Page
     And the file checks continue button should be enabled
 
   Scenario: Consignment records page is accessed by a logged out user
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And an existing upload of 5 files

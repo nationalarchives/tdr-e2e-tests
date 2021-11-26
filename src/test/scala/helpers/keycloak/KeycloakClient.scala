@@ -50,6 +50,7 @@ object KeycloakClient {
     userRepresentation.setUsername(userCredentials.userName)
     userRepresentation.setFirstName(userCredentials.firstName)
     userRepresentation.setLastName(userCredentials.lastName)
+    userRepresentation.setEmail(userCredentials.email)
     userRepresentation.setEnabled(true)
     userRepresentation.setCredentials(creds)
 
@@ -94,4 +95,5 @@ object KeycloakClient {
 case class UserCredentials(userName: String,
                            password: String,
                            firstName: String = "Test First Name",
-                           lastName: String = "Test Last Name")
+                           lastName: String = "Test Last Name",
+                           email: String = "firstName.lastName@something.com")

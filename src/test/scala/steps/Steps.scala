@@ -223,11 +223,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, panelTitle, "govuk-panel__title")
   }
 
-  Then("^the user will be on a page with a panel body \"(.*)\"") {
-    panelTitle: String =>
-      StepsUtility.waitForElementTitle(webDriver, panelTitle, "govuk-panel__body")
-  }
-
   Then("^the user will be on a page with a heading \"(.*)\"") {
     heading: String =>
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-m")

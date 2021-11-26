@@ -5,3 +5,9 @@ Feature: Transfer Complete Page
     And an existing consignment for transferring body MOCK1
     And the logged out user attempts to access the transfer complete page
     Then the logged out user should be on the login page
+
+  Scenario: A judgment user should see the judgments transfer complete page
+    Given A logged in judgment user
+    And an existing consignment for transferring body MOCK1
+    When the logged in user navigates to the transfer complete page
+    Then the user will be on a page with a panel body "Your file have now been transferred to The National Archives."

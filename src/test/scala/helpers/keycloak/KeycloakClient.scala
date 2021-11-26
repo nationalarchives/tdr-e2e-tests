@@ -50,7 +50,8 @@ object KeycloakClient {
     userRepresentation.setUsername(userCredentials.userName)
     userRepresentation.setFirstName(userCredentials.firstName)
     userRepresentation.setLastName(userCredentials.lastName)
-    userRepresentation.setEmail(userCredentials.email)
+    //Need to ensure each email address is unique so use the generate user name
+    userRepresentation.setEmail(s"${userCredentials.userName}@testSomething.com")
     userRepresentation.setEnabled(true)
     userRepresentation.setCredentials(creds)
 
@@ -71,8 +72,10 @@ object KeycloakClient {
     userRepresentation.setGroups((bodyUserGroups ::: userTypeGroups).asJava)
 
     val response: Response = user.create(userRepresentation)
+    println(s"RESPONSE: ${response.getLocation}")
 
     val path = response.getLocation.getPath.replaceAll(".*/([^/]+)$", "$1")
+    println(s"PATH: $path")
     client.close()
     path
   }
@@ -95,5 +98,4 @@ object KeycloakClient {
 case class UserCredentials(userName: String,
                            password: String,
                            firstName: String = "Test First Name",
-                           lastName: String = "Test Last Name",
-                           email: String = "firstName.lastName@something.com")
+                           lastName: String = "Test Last Name")

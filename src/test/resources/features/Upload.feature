@@ -26,7 +26,7 @@ Feature: Upload
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking your records"
 
-  Scenario: A logged in user tries to upload multiple set of files to a consignment
+  Scenario: The upload is complete page is shown when the user navigates back from the records page after upload has completed
     Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement

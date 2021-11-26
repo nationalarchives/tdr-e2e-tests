@@ -99,8 +99,19 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  Given("^A logged out user") {
-    userId = KeycloakClient.createUser(userCredentials)
+  private def selectItem(fileName: String): Unit = {
+    //Wait for the cookies endpoint to respond. There is no visible change to the page when this happens so we just sleep.
+    Thread.sleep(15 * 1000)
+
+    val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
+    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
+    webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
+  }
+
+  Given("^A logged out (.*) user") {
+    userType: String =>
+      userId = KeycloakClient.createUser(userCredentials, userType = Some(userType))
+      this.userType = userType
   }
 
   Given("^A logged in user who is a member of (.*) transferring body") {
@@ -451,12 +462,13 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   When("^the user selects directory containing: (.*)") {
     fileName: String => {
-      //Wait for the cookies endpoint to respond. There is no visible change to the page when this happens so we just sleep.
-      Thread.sleep(15 * 1000)
+      selectItem(fileName)
+    }
+  }
 
-      val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
-      input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
-      webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
+  When("^the user selects the file: (.*)") {
+    fileName: String => {
+      selectItem(fileName)
     }
   }
 

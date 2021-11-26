@@ -1,7 +1,7 @@
 Feature: Login
 
   Scenario: Navigate to the TDR start page as a logged out user
-    Given A logged out user
+    Given A logged out standard user
     When the user navigates to TDR Start Page
     And the user clicks on the Start now button
     Then the logged out user should be on the login page
@@ -13,7 +13,7 @@ Feature: Login
     Then the user should be on the homepage page
 
   Scenario: Log in to TDR with correct credentials
-    Given A logged out user
+    Given A logged out standard user
     When the user navigates to TDR Start Page
     And the user clicks on the Start now button
     And the logged out user enters valid credentials
@@ -21,7 +21,7 @@ Feature: Login
     Then the user should be on the homepage page
 
   Scenario: Log in to TDR with incorrect credentials
-    Given A logged out user
+    Given A logged out standard user
     When the user navigates to TDR Start Page
     And the user clicks on the Start now button
     And the logged out user enters invalid credentials

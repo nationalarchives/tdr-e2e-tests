@@ -2,14 +2,14 @@
 
 Feature: Upload
   Scenario: The progress bar is hidden before file upload
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the user is logged in on the upload page
     Then the upload progress should not be visible
 
   Scenario: The progress bar is shown after file upload
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the user is logged in on the upload page
@@ -18,7 +18,7 @@ Feature: Upload
     Then the upload progress should be visible
 
   Scenario: The records page is shown when the upload is completed
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the user is logged in on the upload page
@@ -26,8 +26,8 @@ Feature: Upload
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking your records"
 
-  Scenario: A logged in user tries to upload multiple set of files to a consignment
-    Given A logged out user
+  Scenario: The upload is complete page is shown when the user navigates back from the records page after upload has completed
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the user is logged in on the upload page
@@ -38,8 +38,17 @@ Feature: Upload
     Then the user will see the message "Your upload is complete and has been saved. You cannot make amendments to your upload or add additional files."
 
   Scenario: Consignment upload page is accessed by a logged out user
-    Given A logged out user
+    Given A logged out standard user
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the logged out user attempts to access the upload page
     Then the logged out user should be on the login page
+
+  Scenario: The judgment's records page is shown when the upload is completed
+    Given A logged out judgment user
+    And an existing consignment for transferring body MOCK1
+    And an existing transfer agreement
+    And the user is logged in on the upload page
+    When the user selects the file: testfile1
+    And the user clicks the continue button
+    Then the user will be on a page with the title "Checking court judgment record"

@@ -61,7 +61,7 @@ Feature: Record results Page
     And the logged out user attempts to access the records results page
     Then the logged out user should be on the login page
 
-  Scenario: The user will see an error when trying to access file check results for a consignment they don't own
+  Scenario: The user will see an error when trying to access file check results for a judgment they don't own
     Given A logged out judgment user
     And an existing consignment for transferring body MOCK1
     And a user who did not create the consignment

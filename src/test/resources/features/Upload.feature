@@ -49,6 +49,6 @@ Feature: Upload
     And an existing consignment for transferring body MOCK1
     And an existing transfer agreement
     And the user is logged in on the upload page
-    When the user selects the file: testfile1
+    When the user selects the file: testdocxfile.docx
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking court judgment record"

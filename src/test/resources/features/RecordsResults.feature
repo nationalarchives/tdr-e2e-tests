@@ -55,13 +55,13 @@ Feature: Record results Page
     When the user is logged in on the records results page
     Then the user will see the error summary "One or more files you uploaded have failed our checks"
 
-  Scenario: Results page is accessed by a logged out user
+  Scenario: Results page is accessed by a logged out judgment user
     Given A logged out judgment user
     And an existing consignment for transferring body MOCK1
     And the logged out user attempts to access the records results page
     Then the logged out user should be on the login page
 
-  Scenario: The user will see an error when trying to access file check results for a judgment they don't own
+  Scenario: A judgment user will see an error when trying to access file check results for a judgment they don't own
     Given A logged out judgment user
     And an existing consignment for transferring body MOCK1
     And a user who did not create the consignment

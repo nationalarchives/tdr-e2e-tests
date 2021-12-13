@@ -68,7 +68,7 @@ Feature: Record results Page
     When the user who did not create the consignment is logged in on the records results page
     Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
 
-  Scenario: Submitting the Final Transfer Confirmation creates a completed export for a judgment user
+  Scenario: Submitting the Final Transfer Confirmation creates a completed export for a judgment transfer
     Given A logged out judgment user
     And an existing consignment for transferring body MOCK1
     And an existing upload of 1 files

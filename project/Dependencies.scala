@@ -4,7 +4,7 @@ object Dependencies {
   private val awsSdkVersion = "2.15.35"
   private val circeVersion = "0.13.0"
   private val cucumberVersion = "4.7.1"
-  private val keycloakVersion = "15.0.2"
+  private val keycloakVersion = "16.1.0"
   private val softwareMillVersion = "2.1.1"
 
   lazy val scalaTestPlusPlay   = "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3"

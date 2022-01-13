@@ -413,7 +413,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
-      val files = List("testdocxfile.docx")
+      val files = List("testfile1", "testfile2")
 
       val matchIdInfo: List[MatchIdInfo] = List.tabulate(numberOfFiles)(n => n).map(idx => {
         val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")

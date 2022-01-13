@@ -198,7 +198,8 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
-  And("^the transfer export will be complete") {
+  And("^the (.*) transfer export will be complete") {
+    exportType: String =>
     val client = GraphqlUtility(userCredentials)
     val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
 
@@ -208,7 +209,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     val foundExport: Boolean = fluentWait.until(_ => {
       val awsUtility = AWSUtility()
-      awsUtility.isFileInS3(configuration.getString("s3.bucket.export"), s"$consignmentRef.tar.gz")
+      awsUtility.isFileInS3(configuration.getString(s"s3.bucket.export.$exportType"), s"$consignmentRef.tar.gz")
     })
     Assert.assertTrue("No export found", foundExport)
   }
@@ -344,10 +345,10 @@ class Steps extends ScalaDsl with EN with Matchers {
     droSensitivity.click()
   }
 
-  And("^an existing consignment for transferring body (.*)") {
-    body: String =>
+  And("^an existing (.*) consignment for transferring body (.*)") {
+    (exportType:String, body: String) =>
       val client = GraphqlUtility(userCredentials)
-      consignmentId = client.createConsignment(body).get.addConsignment.consignmentid.get
+      consignmentId = client.createConsignment(exportType, body).get.addConsignment.consignmentid.get
   }
 
   And("^an existing transfer agreement") {
@@ -412,7 +413,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
-      val files = List("testfile1", "testfile2")
+      val files = List("testdocxfile.docx")
 
       val matchIdInfo: List[MatchIdInfo] = List.tabulate(numberOfFiles)(n => n).map(idx => {
         val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")

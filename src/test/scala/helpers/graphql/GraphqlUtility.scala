@@ -20,11 +20,16 @@ import java.nio.file.Path
 
 class GraphqlUtility(userCredentials: UserCredentials) {
   val standardConsignmentType = "standard"
+  val judgmentConsignmentType = "judgment"
 
-  def createConsignment(body: String): Option[ac.Data] = {
+  def createConsignment(exportType: String, body: String): Option[ac.Data] = {
     val client = new UserApiClient[ac.Data, ac.Variables](userCredentials)
-    val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
-    client.result(ac.document, ac.Variables(AddConsignmentInput(Some(seriesId), standardConsignmentType))).data
+    if(exportType.equals("judgment")) {
+      client.result(ac.document, ac.Variables(AddConsignmentInput(None, judgmentConsignmentType))).data
+    } else {
+      val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
+      client.result(ac.document, ac.Variables(AddConsignmentInput(Some(seriesId), standardConsignmentType))).data
+    }
   }
 
   def getSeries(body: String): Option[gs.Data] = {

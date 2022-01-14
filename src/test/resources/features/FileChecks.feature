@@ -5,7 +5,7 @@ Feature: File Checks Page
     And an existing standard consignment for transferring body MOCK1
     And an existing transfer agreement
     And an existing upload of 5 files
-    And 1 of the antivirus scans have finished
+    And 1 of the antivirus scans for the standard transfer have finished
     When the user is logged in on the records page
     Then the user will be on a page with the title "Checking your records"
     And the file checks completed banner should not be visible
@@ -16,9 +16,9 @@ Feature: File Checks Page
     And an existing standard consignment for transferring body MOCK1
     And an existing transfer agreement
     And an existing upload of 10 files
-    And 2 of the FFID scans have finished
-    And 5 of the checksum scans have finished
-    And 8 of the antivirus scans have finished
+    And 2 of the FFID scans for the standard transfer have finished
+    And 5 of the checksum scans for the standard transfer have finished
+    And 8 of the antivirus scans for the standard transfer have finished
     When the user is logged in on the records page
     Then the user will be on a page with the title "Checking your records"
     And the user waits for the checks to complete
@@ -46,7 +46,7 @@ Feature: File Checks Page
     Given A logged in judgment user
     And an existing judgment consignment for transferring body MOCK1
     And an existing transfer agreement
-    And an existing upload of 5 files
-    And 1 of the antivirus scans have finished
+    And an existing upload of 1 files
+    And 1 of the antivirus scans for the judgment transfer have finished
     When the logged in user navigates to the records page
     Then the user will be on a page with the title "Checking court judgment record"

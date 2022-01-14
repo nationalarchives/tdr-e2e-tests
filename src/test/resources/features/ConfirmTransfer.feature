@@ -43,9 +43,9 @@ Feature: Confirm Transfer Page
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 3 files
-    And 3 of the antivirus scans have finished
-    And 3 of the FFID scans have finished
-    And 3 of the checksum scans have finished
+    And 3 of the antivirus scans for the standard transfer have finished
+    And 3 of the FFID scans for the standard transfer have finished
+    And 3 of the checksum scans for the standard transfer have finished
     And the user is logged in on the Confirm Transfer page
     Then the user will be on a page with the title "Confirm transfer"
     When the user confirms all the records are open

@@ -199,7 +199,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the (.*) transfer export will be complete") {
-    exportType: String =>
+    consignmentType: String =>
     val client = GraphqlUtility(userCredentials)
     val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
 
@@ -209,7 +209,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     val foundExport: Boolean = fluentWait.until(_ => {
       val awsUtility = AWSUtility()
-      awsUtility.isFileInS3(configuration.getString(s"s3.bucket.export.$exportType"), s"$consignmentRef.tar.gz")
+      awsUtility.isFileInS3(configuration.getString(s"s3.bucket.export.$consignmentType"), s"$consignmentRef.tar.gz")
     })
     Assert.assertTrue("No export found", foundExport)
   }
@@ -346,9 +346,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^an existing (.*) consignment for transferring body (.*)") {
-    (exportType:String, body: String) =>
+    (consignmentType:String, body: String) =>
       val client = GraphqlUtility(userCredentials)
-      consignmentId = client.createConsignment(exportType, body).get.addConsignment.consignmentid.get
+      consignmentId = client.createConsignment(consignmentType, body).get.addConsignment.consignmentid.get
   }
 
   And("^an existing transfer agreement") {
@@ -433,16 +433,17 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^(\\d+) of the (.*) scans have finished") {
+  And("^(\\d+) of the (.*) scans for the (.*) transfer have finished") {
     val client = GraphqlUtility(userCredentials)
-    (filesToProcess: Int, metadataType: String) => {
+    (filesToProcess: Int, metadataType: String, consignmentType: String) => {
       val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
       metadataType match {
         case "antivirus" =>
           fileRangeToProcess.foreach(id => client.createAVMetadata(id))
           filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
         case "FFID" =>
-          fileRangeToProcess.foreach(id => client.createFfidMetadata(id))
+          val puid: String = if (consignmentType == "judgment") { "fmt/412" } else { "x-fmt/111" }
+          fileRangeToProcess.foreach(id => client.createFfidMetadata(id, puid))
           filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
         case "checksum" =>
           fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id)))

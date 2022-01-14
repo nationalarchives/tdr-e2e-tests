@@ -22,9 +22,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   val standardConsignmentType = "standard"
   val judgmentConsignmentType = "judgment"
 
-  def createConsignment(exportType: String, body: String): Option[ac.Data] = {
+  def createConsignment(consignmentType: String, body: String): Option[ac.Data] = {
     val client = new UserApiClient[ac.Data, ac.Variables](userCredentials)
-    if(exportType.equals("judgment")) {
+    if(consignmentType.equals("judgment")) {
       client.result(ac.document, ac.Variables(AddConsignmentInput(None, judgmentConsignmentType))).data
     } else {
       val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
@@ -73,8 +73,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.sendRequest(afm.document, afm.Variables(input))
   }
 
-  def createFfidMetadata(fileId: UUID, puid: String = "fmt/412"): Unit = {
-
+  def createFfidMetadata(fileId: UUID, puid: String = "x-fmt/111"): Unit = {
     val client = new BackendApiClient[affm.Data, affm.Variables]
     val ffidInputMatches = FFIDMetadataInputMatches(Some("txt"), "e2e-test-basis", Some(puid))
     val input = FFIDMetadataInput(

@@ -114,20 +114,16 @@ class Steps extends ScalaDsl with EN with Matchers {
       this.userType = userType
   }
 
-  Given("^A logged in user who is a member of (.*) transferring body") {
-    body: String =>
-      userId = KeycloakClient.createUser(userCredentials, Some(body))
+  Given("^A logged in (.*) user who is a member of (.*) transferring body") {
+    (userType: String, body: String) =>
+      userId = KeycloakClient.createUser(userCredentials, Some(body), Some(userType))
       login(userCredentials)
   }
 
-  Given("^A logged in user who is not a member of a transferring body") {
-    userId = KeycloakClient.createUser(userCredentials, Option.empty)
-    login(userCredentials)
-  }
-
-  Given("^A logged in user") {
-    userId = KeycloakClient.createUser(userCredentials)
-    login(userCredentials)
+  Given("^A logged in (.*) user who is not a member of a transferring body") {
+    userType: String =>
+      userId = KeycloakClient.createUser(userCredentials, Option.empty, Some(userType))
+      login(userCredentials)
   }
 
   Given("^A logged in (.*) user") {
@@ -198,7 +194,8 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
-  And("^the transfer export will be complete") {
+  And("^the (.*) transfer export will be complete") {
+    consignmentType: String =>
     val client = GraphqlUtility(userCredentials)
     val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
 
@@ -208,7 +205,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     val foundExport: Boolean = fluentWait.until(_ => {
       val awsUtility = AWSUtility()
-      awsUtility.isFileInS3(configuration.getString("s3.bucket.export"), s"$consignmentRef.tar.gz")
+      awsUtility.isFileInS3(configuration.getString(s"s3.bucket.export.$consignmentType"), s"$consignmentRef.tar.gz")
     })
     Assert.assertTrue("No export found", foundExport)
   }
@@ -344,10 +341,10 @@ class Steps extends ScalaDsl with EN with Matchers {
     droSensitivity.click()
   }
 
-  And("^an existing consignment for transferring body (.*)") {
-    body: String =>
+  And("^an existing (.*) consignment for transferring body (.*)") {
+    (consignmentType:String, body: String) =>
       val client = GraphqlUtility(userCredentials)
-      consignmentId = client.createConsignment(body).get.addConsignment.consignmentid.get
+      consignmentId = client.createConsignment(consignmentType, body).get.addConsignment.consignmentid.get
   }
 
   And("^an existing transfer agreement") {
@@ -432,16 +429,17 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^(\\d+) of the (.*) scans have finished") {
+  And("^(\\d+) of the (.*) scans for the (.*) transfer have finished") {
     val client = GraphqlUtility(userCredentials)
-    (filesToProcess: Int, metadataType: String) => {
+    (filesToProcess: Int, metadataType: String, consignmentType: String) => {
       val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
       metadataType match {
         case "antivirus" =>
           fileRangeToProcess.foreach(id => client.createAVMetadata(id))
           filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
         case "FFID" =>
-          fileRangeToProcess.foreach(id => client.createFfidMetadata(id))
+          val puid: String = if (consignmentType == "judgment") { "fmt/412" } else { "x-fmt/111" }
+          fileRangeToProcess.foreach(id => client.createFfidMetadata(id, puid))
           filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
         case "checksum" =>
           fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id)))

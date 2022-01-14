@@ -7,7 +7,7 @@ Feature: Transfer Complete Page
     Then the logged out user should be on the login page
 
   Scenario: A logged in user should see the Transfer complete page
-    Given A logged in user
+    Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     When the logged in user navigates to the transfer complete page
     Then the user will be on a page with a panel titled "Transfer complete"

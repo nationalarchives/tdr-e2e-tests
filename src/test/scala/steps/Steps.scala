@@ -114,20 +114,16 @@ class Steps extends ScalaDsl with EN with Matchers {
       this.userType = userType
   }
 
-  Given("^A logged in user who is a member of (.*) transferring body") {
-    body: String =>
-      userId = KeycloakClient.createUser(userCredentials, Some(body))
+  Given("^A logged in (.*) user who is a member of (.*) transferring body") {
+    (userType: String, body: String) =>
+      userId = KeycloakClient.createUser(userCredentials, Some(body), Some(userType))
       login(userCredentials)
   }
 
-  Given("^A logged in user who is not a member of a transferring body") {
-    userId = KeycloakClient.createUser(userCredentials, Option.empty)
-    login(userCredentials)
-  }
-
-  Given("^A logged in user") {
-    userId = KeycloakClient.createUser(userCredentials)
-    login(userCredentials)
+  Given("^A logged in (.*) user who is not a member of a transferring body") {
+    userType: String =>
+      userId = KeycloakClient.createUser(userCredentials, Option.empty, Some(userType))
+      login(userCredentials)
   }
 
   Given("^A logged in (.*) user") {

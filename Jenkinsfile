@@ -18,21 +18,6 @@ pipeline {
         }
       }
     }
-    stage ("Retrieve Keycloak credentials for environment") {
-      agent {
-        ecs {
-          inheritFrom "aws"
-          taskrole "arn:aws:iam::${env.MANAGEMENT_ACCOUNT}:role/TDRJenkinsNodeReadParamsRole${params.STAGE.capitalize()}"
-        }
-      }
-      steps {
-        script {
-          account_number = tdr.getAccountNumberFromStage(params.STAGE)
-          tdr_user_admin_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/user_admin_client/secret", returnStdout: true).trim()
-          tdr_backend_checks_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/backend_checks_client/secret", returnStdout: true).trim()
-        }
-      }
-    }
     stage("Configure and Run Tests") {
       agent {
         ecs {
@@ -70,6 +55,9 @@ pipeline {
           steps {
             script {
               //Hide the output of the test command to stop keycloak credentials appearing in console output
+              account_number = tdr.getAccountNumberFromStage(params.STAGE)
+              tdr_user_admin_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/user_admin_client/secret", returnStdout: true).trim()
+              tdr_backend_checks_secret = sh(script: "python3 /ssm_get_parameter.py ${account_number} ${params.STAGE} /${params.STAGE}/keycloak/backend_checks_client/secret", returnStdout: true).trim()
               sh """
                 set +x
                 sbt test -Dconfig.file=./src/test/resources/application.${params.STAGE}.conf -Dkeycloak.user.admin.secret=${tdr_user_admin_secret} -Dkeycloak.backendchecks.secret=${tdr_backend_checks_secret} -Dbrowser=${params.BROWSER}

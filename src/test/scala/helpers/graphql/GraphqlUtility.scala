@@ -2,14 +2,14 @@ package helpers.graphql
 
 import java.time.Instant
 import java.util.UUID
-import graphql.codegen.AddAntivirusMetadata.{AddAntivirusMetadata => aav}
-import graphql.codegen.AddFilesAndMetadata.{AddFilesAndMetadata => afam}
-import graphql.codegen.StartUpload.{StartUpload => su}
+import graphql.codegen.AddAntivirusMetadata.{addAntivirusMetadata => aav}
+import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
+import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
 import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
-import graphql.codegen.AddFilesAndMetadata.AddFilesAndMetadata.AddFilesAndMetadata
-import graphql.codegen.AddTransferAgreement.{AddTransferAgreement => ata}
+import graphql.codegen.AddFilesAndMetadata.addFilesAndMetadata.AddFilesAndMetadata
+import graphql.codegen.AddTransferAgreement.{addTransferAgreement => ata}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
 import graphql.codegen.types._

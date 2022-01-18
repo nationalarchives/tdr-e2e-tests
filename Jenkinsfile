@@ -248,6 +248,7 @@ pipeline {
     }
   }
 }
+
 def runTests(name) {
   if(params.BROWSER == "firefox") {
 

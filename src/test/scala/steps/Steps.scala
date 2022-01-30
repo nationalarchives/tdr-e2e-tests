@@ -1,7 +1,7 @@
 package steps
 
 import com.typesafe.config.{Config, ConfigFactory}
-import cucumber.api.scala.{EN, ScalaDsl}
+import io.cucumber.scala.{EN, ScalaDsl, Scenario}
 import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
@@ -46,11 +46,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   val differentUserCredentials: UserCredentials = UserCredentials(differentUserName, differentPassword)
   val checksumValue = "checksum"
 
-  Before() { scenario =>
+  Before { scenario : Scenario =>
     webDriver = initDriver
   }
 
-  After() { scenario =>
+  After { scenario : Scenario =>
     webDriver.quit()
     userCleanUp()
   }

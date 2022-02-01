@@ -5,9 +5,9 @@ import org.junit.runner.RunWith
 
 @RunWith(classOf[Cucumber])
 @CucumberOptions(
-  features = Array("classpath:features/"),
-  tags = Array("not @wip"),
-  glue = Array("classpath:steps/"),
+  features = Array("classpath:features"),
+  tags = "not @wip",
+  glue = Array("steps"),
   plugin = Array("pretty", "html:target/cucumber/html", "json:target/cucumber.json"))
 class TestRunner {
 

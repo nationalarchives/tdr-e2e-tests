@@ -1,0 +1,94 @@
+name: End to end tests
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'intg'
+env:
+  DRIVER_LOCATION: /usr/local/share/gecko_driver/geckodriver
+permissions:
+  id-token: write
+  contents: read
+concurrency: env.ENVIRONMENT
+jobs:
+  setup-e2e-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.generate-files.outputs.files }}
+      environment: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ secrets.TITLE_STAGE }}
+          aws-region: eu-west-2
+          role-session-name: UpdateWAF
+      - name: Allow country code
+        run: |
+          pip install boto3
+          python .github/scripts/update_waf_country.py ADD
+      - name: Set feature file names
+        id: generate-files
+        run: |
+          FILES=$(ls src/test/resources/features/ | jq -R -s -c 'split("\n")[:-1]')
+          echo ::set-output name=files::${FILES}
+  run-e2e-tests:
+    runs-on: ubuntu-latest
+    needs:
+      - setup-e2e-tests
+    strategy:
+      matrix:
+        file: ${{ fromJSON(needs.setup-e2e-tests.outputs.files) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: coursier/cache-action@v6
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ secrets.TITLE_STAGE }}
+          aws-region: eu-west-2
+          role-session-name: UpdateWAF
+      - name: Update security group
+        run: .github/scripts/update-security-group.sh INSERT ${{ secrets.ACCOUNT_NUMBER }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.MANAGEMENT_ACCOUNT }}:role/TDRGithubActionsE2ETestsMgmt
+          aws-region: eu-west-2
+          role-session-name: E2ETests
+      - name: Run Tests
+        run: CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }} sbt test -Daccount.number=${{ secrets.ACCOUNT_NUMBER }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ secrets.USER_ADMIN_SECRET }} -Dkeycloak.backendchecks.secret=${{ secrets.BACKEND_CHECKS_SECRET }} -Dbrowser=firefox -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
+      - name: Configure AWS credentials
+        if: ${{ always() }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ secrets.TITLE_STAGE }}
+          aws-region: eu-west-2
+          role-session-name: UpdateWAF
+      - name: Remove access
+        if: ${{ always() }}
+        run: .github/scripts/update-security-group.sh DELETE ${{ secrets.ACCOUNT_NUMBER }}
+  clean-up:
+    runs-on: ubuntu-latest
+    needs:
+      - run-e2e-tests
+    if: ${{ always() }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ secrets.TITLE_STAGE }}
+          aws-region: eu-west-2
+          role-session-name: UpdateWAF
+      - name: Remove US from WAF
+        run: |
+          pip install boto3
+          python .github/scripts/update_waf_country.py ADD

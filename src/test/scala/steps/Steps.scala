@@ -110,7 +110,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Given("^A logged out (.*) user") {
     userType: String =>
-      userId = KeycloakClient.createUser(userCredentials, userType = Some(userType))
+      userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
       this.userType = userType
   }
 
@@ -128,7 +128,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Given("^A logged in (.*) user") {
     userType: String =>
-      userId = KeycloakClient.createUser(userCredentials, userType = Some(userType))
+      userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
       login(userCredentials)
       this.userType = userType
   }
@@ -347,9 +347,14 @@ class Steps extends ScalaDsl with EN with Matchers {
       consignmentId = client.createConsignment(consignmentType, body).get.addConsignment.consignmentid.get
   }
 
-  And("^an existing transfer agreement") {
+  And("^an existing private beta transfer agreement") {
     val client = GraphqlUtility(userCredentials)
-    client.createTransferAgreement(consignmentId)
+    client.createTransferAgreementPrivateBeta(consignmentId)
+  }
+
+  And("^an existing compliance transfer agreement") {
+    val client = GraphqlUtility(userCredentials)
+    client.createTransferAgreementCompliance(consignmentId)
   }
 
   And("^the records checks are complete") {
@@ -529,7 +534,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^a user who did not create the consignment") {
-    differentUserId = KeycloakClient.createUser(differentUserCredentials)
+    differentUserId = KeycloakClient.createUser(differentUserCredentials, None, None)
   }
 
   And("^the user who did not create the consignment is logged in on the (.*) page") {

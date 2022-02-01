@@ -24,7 +24,7 @@ class AWSUtility {
     //Assume role if running on Jenkins
     val sts = StsClient.builder()
       .region(Region.EU_WEST_2)
-      .credentialsProvider(ContainerCredentialsProvider.builder().build())
+      .credentialsProvider(DefaultCredentialsProvider.builder().build())
       .httpClient(httpClient).build()
 
     StsAssumeRoleCredentialsProvider.builder().stsClient(sts)

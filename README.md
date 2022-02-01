@@ -61,13 +61,15 @@ By default, the tests will run against the TDR integration environment
 3. Select the "Create Run Configuration" option from the menu. If this option is not there, select "Modify Run Configuration"
 4. From the "Create Run Configuration" options select the first option which is the Cucumber Java run option.
 5. In the dialog box fill in the following information:
-      * **Glue**: `"classpath:steps/"` (**NOTE**: include the double quotes)
+      * **Glue**: `"steps"` (**NOTE**: optionally include the double quotes)
+      * **Feature or folder path:** `classpath:[relative path of features folder]/[feature file name]` for eg: `classpath:features/FileChecks.feature` to run a single feature file or `classpath:features` to run all features in the directory.
       * **VM options**: `-Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]`
         * Optional VM parameters:
            * If you would like to only run the Scenarios in a particular feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]`
            * If you would like to run a particular Scenario in a feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]:[line number of Scenario]`
            * If you would like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags @wip"`
                * If you would _not_ like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags ~@wip"`
+      * **Program arguments:** `--plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter` (**NOTE**: if you encounter exceptions or if the parameters are not getting picked up, then try using `--plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter`) 
       * **Environment Variables**: `DRIVER_LOCATION=[location of driver executable downloaded in step 3];INTG_AWS_ACCOUNT_NUMBER=[account number for the integration environment]`
         * Running On macOS **NOTE**: For running on macOS, an additional environment variable needs to be set: `FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`
         * Running Against Local Frontend Note: If you are running the tests against your locally running TDR frontend project, set the optional environment variable: `TDR_BASE_URL=http://localhost:9000`

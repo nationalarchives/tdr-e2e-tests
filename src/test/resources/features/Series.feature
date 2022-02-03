@@ -13,7 +13,7 @@ Feature: Series Page
     When the logged in user navigates to the series page
     And the user selects the series MOCK1 123
     And the user clicks the continue button
-    Then the user should be on the transfer-agreement page
+    Then the user should be on the transfer-agreement1 page
 
   Scenario: User from Mock 1 Department transferring body sees the correct series choices
    Given A logged in standard user who is a member of Mock 1 Department transferring body

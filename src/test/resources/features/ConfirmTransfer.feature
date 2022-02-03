@@ -3,14 +3,16 @@ Feature: Confirm Transfer Page
   Scenario: Consignment confirm transfer page is accessed by a logged out user
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing not-compliance transfer agreement
+    And an existing compliance transfer agreement
     And the logged out user attempts to access the Confirm Transfer page
     Then the logged out user should be on the login page
 
   Scenario: Consignment confirm transfer page is accessed by a user who did not create the consignment
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing not-compliance transfer agreement
+    And an existing compliance transfer agreement
     And a user who did not create the consignment
     When the user who did not create the consignment is logged in on the Confirm Transfer page
     Then the user who did not create the consignment will see the error message "You are not permitted to see this page"

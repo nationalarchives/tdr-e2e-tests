@@ -9,7 +9,8 @@ import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
 import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddFilesAndMetadata.addFilesAndMetadata.AddFilesAndMetadata
-import graphql.codegen.AddTransferAgreement.{addTransferAgreement => ata}
+import graphql.codegen.AddTransferAgreementNonCompliance.{addTransferAgreementNotCompliance => atanc}
+import graphql.codegen.AddTransferAgreementCompliance.{addTransferAgreementCompliance => atac}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
 import graphql.codegen.types._
@@ -37,10 +38,16 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(gs.document, gs.Variables(body)).data
   }
 
-  def createTransferAgreement(consignmentId: UUID): Unit = {
-    val client = new UserApiClient[ata.Data, ata.Variables](userCredentials)
-    val input = AddTransferAgreementInput(consignmentId, true, true, true, true, true, true)
-    client.result(ata.document, ata.Variables(input))
+  def createTransferAgreementNotCompliance(consignmentId: UUID): Unit = {
+    val client = new UserApiClient[atanc.Data, atanc.Variables](userCredentials)
+    val input = AddTransferAgreementNotComplianceInput(consignmentId, true, true, true)
+    client.result(atanc.document, atanc.Variables(input))
+  }
+
+  def createTransferAgreementCompliance(consignmentId: UUID): Unit = {
+    val client = new UserApiClient[atac.Data, atac.Variables](userCredentials)
+    val input = AddTransferAgreementComplianceInput(consignmentId, true, true, true)
+    client.result(atac.document, atac.Variables(input))
   }
 
   def addFilesAndMetadata(consignmentId: UUID, parentFolderName: String, matchIdInfo: List[MatchIdInfo]): List[afam.AddFilesAndMetadata] = {

@@ -13,7 +13,7 @@ Feature: Homepage Page
   Scenario: Homepage page is accessed by a judgment user
     Given A logged in judgment user
     And the logged in user navigates to the homepage page
-    Then the user will be on a page with a heading "Upload your judgment to start a new transfer"
+    Then the user will be on a page with a heading "Upload your court judgment to start a new transfer"
 
   Scenario: Homepage page is submitted by a judgment user
     Given A logged in judgment user

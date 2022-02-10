@@ -19,4 +19,4 @@ Feature: Homepage Page
     Given A logged in judgment user
     And the logged in user navigates to the homepage page
     And the user clicks the continue button
-    Then the user should be on the transfer-agreement page
+    Then the user should be on the before-uploading page

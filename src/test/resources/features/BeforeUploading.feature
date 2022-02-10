@@ -1,6 +1,6 @@
 Feature: Before you upload
 
-  Scenario: A logged in user completes the Transfer Agreement form correctly
+  Scenario: Before Uploading Page is accessed by a judgment user
     Given A logged out judgment user
     And an existing judgment consignment for transferring body MOCK1
     When the user is logged in on the Before Uploading page

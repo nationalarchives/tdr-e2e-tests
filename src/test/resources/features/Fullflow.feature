@@ -11,10 +11,10 @@ Feature: Full user journey
     When the logged in user navigates to the series page
     And the user selects the series MOCK1 123
     And the user clicks the continue button
-    Then the user should be on the transfer-agreement1 page
+    Then the user should be on the transfer-agreement page
     When the user selects yes to all transfer agreement checks
     And the user clicks the continue button
-    Then the user should be on the transfer-agreement2 page
+    Then the user should be on the transfer-agreement-continued page
     When the user confirms all the records are open
     And the user confirms that DRO has signed off on the records
     And the user clicks the continue button

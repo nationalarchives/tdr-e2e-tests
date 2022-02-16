@@ -3,7 +3,7 @@ Feature: Record results Page
   Scenario: The user logs in to the file checks results page once file checks are complete
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing not-compliance transfer agreement
+    And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And the records checks are complete
     When the user is logged in on the records results page
@@ -12,7 +12,7 @@ Feature: Record results Page
   Scenario: The user will see an error when trying to access file check results for a consignment they don't own
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing not-compliance transfer agreement
+    And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And a user who did not create the consignment
     When the user who did not create the consignment is logged in on the records results page
@@ -21,7 +21,7 @@ Feature: Record results Page
   Scenario: The user will see an error when trying to access file check results before upload has happened
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing not-compliance transfer agreement
+    And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     When the user is logged in on the records results page
     Then the user should see a general service error "Sorry, there is a problem with the service"
@@ -29,7 +29,7 @@ Feature: Record results Page
   Scenario: The user will see an error when trying to access file check results when there is a checksum mismatch
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing not-compliance transfer agreement
+    And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And the checksum check has failed
     When the user is logged in on the records results page
@@ -38,7 +38,7 @@ Feature: Record results Page
   Scenario: The user will see an error when trying to access file check results when there is an antivirus failure
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing not-compliance transfer agreement
+    And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And the antivirus check has failed
     When the user is logged in on the records results page
@@ -47,7 +47,7 @@ Feature: Record results Page
   Scenario: The user will see an error when there is a FFID password protected failure
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing not-compliance transfer agreement
+    And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And the FFID "password protected" check has failed
     When the user is logged in on the records results page
@@ -56,7 +56,7 @@ Feature: Record results Page
   Scenario: The user will see an error when there is a FFID zip file failure
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing not-compliance transfer agreement
+    And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And the FFID "zip file" check has failed
     When the user is logged in on the records results page

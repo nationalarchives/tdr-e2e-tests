@@ -49,4 +49,4 @@ Feature: File Checks Page
     And an existing upload of 1 files
     And 1 of the antivirus scans for the judgment transfer have finished
     When the logged in user navigates to the records page
-    Then the user will be on a page with the title "Checking court judgment record"
+    Then the user will be on a page with the title "Checking your upload"

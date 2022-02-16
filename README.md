@@ -47,10 +47,10 @@ By default, the tests will run against the TDR integration environment
 
     * `-Dkeycloak.user.admin.secret`: this should be the client secret for the tdr-user-admin client secret set for the local Keycloak server when setting up the TDR frontend application
     * Optional parameters:
-      * If you would like to only run the Scenarios in a particular feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]`
-      * If you would like to run a particular Scenario in a feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]:[line number of Scenario]`
-      * If you would like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags @wip"`
-        * If you would _not_ like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags ~@wip"`
+      * If you would like to run a particular Feature/Scenarios, add a tag (`@{name}`) directly above it e.g. `@upload`
+        * In order to run it `-Dcucumber.filter.tags="@{name}"` e.g. `-Dcucumber.filter.tags="@upload"`
+      * If you would like to ignore a particular Feature/Scenarios, add a tag (`@{name}`) directly above it e.g. `@upload`
+        * In order to run it `-Dcucumber.filter.tags="not @{name}"` e.g. `-Dcucumber.filter.tags="not @upload"`
 
 ### Run the tests from Intellij
 
@@ -65,10 +65,10 @@ By default, the tests will run against the TDR integration environment
       * **Feature or folder path:** `classpath:[relative path of features folder]/[feature file name]` for eg: `classpath:features/FileChecks.feature` to run a single feature file or `classpath:features` to run all features in the directory.
       * **VM options**: `-Dkeycloak.user.admin.secret=[local tdr user admin client secret] -Dkeycloak.backendchecks.secret=[backend checks for stage that tests are being run against]`
         * Optional VM parameters:
-           * If you would like to only run the Scenarios in a particular feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]`
-           * If you would like to run a particular Scenario in a feature file, you can add the parameter `-Dcucumber.options=src/test/resources/features/[feature name]:[line number of Scenario]`
-           * If you would like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags @wip"`
-               * If you would _not_ like to run a particular Scenario with a tag on it (e.g., @wip), you can add this parameter `-Dcucumber.options="--tags ~@wip"`
+          * If you would like to run a particular Feature/Scenarios, add a tag (`@{name}`) directly above it e.g. `@upload`
+            * In order to run it `-Dcucumber.filter.tags="@{name}"` e.g. `-Dcucumber.filter.tags="@upload"`
+          * If you would like to ignore a particular Feature/Scenarios, add a tag (`@{name}`) directly above it e.g. `@upload`
+            * In order to run it `-Dcucumber.filter.tags="not @{name}"` e.g. `-Dcucumber.filter.tags="not @upload"`
       * **Program arguments:** `--plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm5SMFormatter` (**NOTE**: if you encounter exceptions or if the parameters are not getting picked up, then try using `--plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm4SMFormatter`) 
       * **Environment Variables**: `DRIVER_LOCATION=[location of driver executable downloaded in step 3];INTG_AWS_ACCOUNT_NUMBER=[account number for the integration environment]`
         * Running On macOS **NOTE**: For running on macOS, an additional environment variable needs to be set: `FIREFOX_BINARY_LOCATION=/Applications/Firefox.app/Contents/MacOS/firefox-bin`

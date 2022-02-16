@@ -57,4 +57,4 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects the file: testdocxfile.docx
     And the user clicks the continue button
-    Then the user will be on a page with the title "Checking court judgment record"
+    Then the user will be on a page with the title "Checking your upload"

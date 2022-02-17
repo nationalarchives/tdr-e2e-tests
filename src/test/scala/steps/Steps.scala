@@ -347,9 +347,14 @@ class Steps extends ScalaDsl with EN with Matchers {
       consignmentId = client.createConsignment(consignmentType, body).get.addConsignment.consignmentid.get
   }
 
-  And("^an existing transfer agreement") {
+  And("^an existing private beta transfer agreement") {
     val client = GraphqlUtility(userCredentials)
-    client.createTransferAgreement(consignmentId)
+    client.createTransferAgreementPrivateBeta(consignmentId)
+  }
+
+  And("^an existing compliance transfer agreement") {
+    val client = GraphqlUtility(userCredentials)
+    client.createTransferAgreementCompliance(consignmentId)
   }
 
   And("^the records checks are complete") {

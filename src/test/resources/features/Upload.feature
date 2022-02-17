@@ -4,14 +4,16 @@ Feature: Upload
   Scenario: The progress bar is hidden before file upload
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing private beta transfer agreement
+    And an existing compliance transfer agreement
     And the user is logged in on the upload page
     Then the upload progress should not be visible
 
   Scenario: The progress bar is shown after file upload
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing private beta transfer agreement
+    And an existing compliance transfer agreement
     And the user is logged in on the upload page
     When the user selects directory containing: largefile
     And the user clicks the continue button
@@ -20,7 +22,8 @@ Feature: Upload
   Scenario: The records page is shown when the upload is completed
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing private beta transfer agreement
+    And an existing compliance transfer agreement
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
@@ -29,7 +32,8 @@ Feature: Upload
   Scenario: The upload is complete page is shown when the user navigates back from the records page after upload has completed
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing private beta transfer agreement
+    And an existing compliance transfer agreement
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
@@ -40,14 +44,16 @@ Feature: Upload
   Scenario: Consignment upload page is accessed by a logged out user
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing private beta transfer agreement
+    And an existing compliance transfer agreement
     And the logged out user attempts to access the upload page
     Then the logged out user should be on the login page
 
   Scenario: The judgment's records page is shown when the upload is completed
     Given A logged out judgment user
     And an existing judgment consignment for transferring body MOCK1
-    And an existing transfer agreement
+    And an existing private beta transfer agreement
+    And an existing compliance transfer agreement
     And the user is logged in on the upload page
     When the user selects the file: testdocxfile.docx
     And the user clicks the continue button

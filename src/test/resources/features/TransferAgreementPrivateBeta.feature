@@ -1,6 +1,6 @@
 Feature: Transfer Agreement Page
 
-  Scenario: A logged in user completes the Transfer Agreement form correctly
+  Scenario: A logged in user completes the Transfer Agreement private beta form correctly
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page
@@ -8,7 +8,7 @@ Feature: Transfer Agreement Page
     And the user clicks the continue button
     Then the user will be on a page with the title "Transfer agreement continued"
 
-  Scenario: A logged in user submits Transfer Agreement without responding yes to all questions
+  Scenario: A logged in user submits Transfer Agreement private beta form without responding yes to all questions
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And the user is logged in on the Transfer Agreement page

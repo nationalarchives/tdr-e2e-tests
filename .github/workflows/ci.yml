@@ -11,8 +11,6 @@ on:
         description: 'Environment'
         required: true
         default: 'intg'
-env:
-  DRIVER_LOCATION: /usr/local/share/gecko_driver/geckodriver
 permissions:
   id-token: write
   contents: read
@@ -23,10 +21,12 @@ jobs:
     outputs:
       files: ${{ steps.generate-files.outputs.files }}
       environment: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
-      driver: ${{ github.event.inputs.browser == 'Firefox' && '/usr/local/share/gecko_driver/geckodriver' || '/usr/local/share/chrome_driver' }}
+      driver: ${{ steps.get-driver.outputs.driver }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - id: get-driver
+        run: echo ::set-output name=driver::$(python .github/scripts/get_driver_location.py ${{ github.event.inputs.browser }})
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

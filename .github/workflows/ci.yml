@@ -3,6 +3,10 @@ on:
   pull_request:
   workflow_dispatch:
     inputs:
+      browser:
+        description: 'The browser used to run the tests'
+        required: false
+        default: 'Firefox'
       environment:
         description: 'Environment'
         required: true
@@ -19,6 +23,7 @@ jobs:
     outputs:
       files: ${{ steps.generate-files.outputs.files }}
       environment: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
+      driver: ${{ github.event.inputs.browser == 'Firefox' && '/usr/local/share/gecko_driver/geckodriver' || '/usr/local/share/chrome_driver' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -63,6 +68,8 @@ jobs:
           aws-region: eu-west-2
           role-session-name: E2ETests
       - name: Run Tests
+        env:
+          DRIVER_LOCATION: ${{ needs.setup-e2e-tests.outputs.driver }}
         run: CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }} sbt test -Daccount.number=${{ secrets.ACCOUNT_NUMBER }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ secrets.USER_ADMIN_SECRET }} -Dkeycloak.backendchecks.secret=${{ secrets.BACKEND_CHECKS_SECRET }} -Dbrowser=firefox -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
       - name: Configure AWS credentials
         if: ${{ always() }}

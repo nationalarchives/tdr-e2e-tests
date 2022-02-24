@@ -16,7 +16,7 @@ import scala.language.postfixOps
 class UserApiClient[Data, Variables](userCredentials: UserCredentials)(implicit val decoder: Decoder[Data], val encoder: Encoder[Variables]) {
   val body: Map[String, String] = Map(
     "grant_type" -> "password",
-    "username" -> userCredentials.userName,
+    "username" -> userCredentials.email,
     "password" -> userCredentials.password,
     "client_id" -> "tdr-fe"
   )

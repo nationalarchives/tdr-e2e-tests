@@ -1,5 +1,6 @@
 package helpers.keycloak
 
+import cats.implicits._
 import com.typesafe.config.ConfigFactory
 import io.circe.generic.auto._
 import sttp.client.circe._
@@ -42,8 +43,7 @@ object KeycloakClient {
                               firstName: String, lastName: String, body: Option[String] = None,
                               userType: Option[String] = None)
 
-    val requestBody = UserApiRequest(s"${userCredentials.userName}@testSomething.com",
-      Some(userCredentials.password), userCredentials.firstName, userCredentials.lastName, body, userType)
+    val requestBody = UserApiRequest(userCredentials.email, userCredentials.password.some, userCredentials.firstName, userCredentials.lastName, body, userType)
 
     val response: Identity[Response[Either[String, String]]] = basicRequest
       .body(requestBody)
@@ -69,7 +69,7 @@ object KeycloakClient {
   }
 }
 
-case class UserCredentials(userName: String,
+case class UserCredentials(email: String,
                            password: String,
                            firstName: String = "Test First Name",
                            lastName: String = "Test Last Name")

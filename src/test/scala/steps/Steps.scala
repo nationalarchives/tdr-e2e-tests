@@ -38,12 +38,12 @@ class Steps extends ScalaDsl with EN with Matchers {
   val configuration: Config = ConfigFactory.load()
   val baseUrl: String = configuration.getString("tdr.base.url")
   val authUrl: String = configuration.getString("tdr.auth.url")
-  val userName: String = RandomUtility.randomString()
-  val differentUserName: String = RandomUtility.randomString()
+  val email: String = s"${RandomUtility.randomString()}@testSomething.com"
+  val differentEmail: String = s"${RandomUtility.randomString()}@testSomething.com"
   val password: String = RandomUtility.randomString(10)
   val differentPassword: String = RandomUtility.randomString(10)
-  val userCredentials: UserCredentials = UserCredentials(userName, password)
-  val differentUserCredentials: UserCredentials = UserCredentials(differentUserName, differentPassword)
+  val userCredentials: UserCredentials = UserCredentials(email, password)
+  val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
   val checksumValue = "checksum"
 
   Before { scenario : Scenario =>

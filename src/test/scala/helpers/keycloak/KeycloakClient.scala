@@ -38,11 +38,11 @@ object KeycloakClient {
                   body: Option[String],
                   userType: Option[String] = None): String = {
 
-    case class UserApiRequest(userName: String, email: String, password: Option[String] = None,
+    case class UserApiRequest(email: String, password: Option[String] = None,
                               firstName: String, lastName: String, body: Option[String] = None,
                               userType: Option[String] = None)
 
-    val requestBody = UserApiRequest(userCredentials.userName, s"${userCredentials.userName}@testSomething.com",
+    val requestBody = UserApiRequest(s"${userCredentials.userName}@testSomething.com",
       Some(userCredentials.password), userCredentials.firstName, userCredentials.lastName, body, userType)
 
     val response: Identity[Response[Either[String, String]]] = basicRequest

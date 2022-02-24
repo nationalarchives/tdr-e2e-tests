@@ -18,6 +18,7 @@ concurrency: env.ENVIRONMENT
 jobs:
   setup-e2e-tests:
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
     outputs:
       files: ${{ steps.generate-files.outputs.files }}
       environment: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
@@ -44,6 +45,7 @@ jobs:
           echo ::set-output name=files::${FILES}
   run-e2e-tests:
     runs-on: ubuntu-latest
+    environment: ${{ needs.setup-e2e-tests.outputs.environment }}
     needs:
       - setup-e2e-tests
     strategy:
@@ -83,7 +85,9 @@ jobs:
         run: .github/scripts/update-security-group.sh DELETE ${{ secrets.ACCOUNT_NUMBER }}
   clean-up:
     runs-on: ubuntu-latest
+    environment: ${{ needs.setup-e2e-tests.outputs.environment }}
     needs:
+      - setup-e2e-tests
       - run-e2e-tests
     if: ${{ always() }}
     steps:

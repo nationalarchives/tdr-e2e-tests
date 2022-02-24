@@ -42,8 +42,6 @@ object KeycloakClient {
                               firstName: String, lastName: String, body: Option[String] = None,
                               userType: Option[String] = None)
 
-    println(s"Creating user ${userCredentials.userName}")
-
     val requestBody = UserApiRequest(s"${userCredentials.userName}@testSomething.com",
       Some(userCredentials.password), userCredentials.firstName, userCredentials.lastName, body, userType)
 
@@ -52,7 +50,7 @@ object KeycloakClient {
       .auth.bearer(getToken)
       .post(uri"$userApiUrl")
       .send()
-    println(s"User creation status ${response.statusText}")
+
     response.body match {
       case Left(err) => throw new Exception(err)
       case Right(id) => id

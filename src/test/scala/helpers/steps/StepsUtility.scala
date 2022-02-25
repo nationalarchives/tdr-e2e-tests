@@ -30,7 +30,7 @@ object StepsUtility {
     val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
     val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
 
-    userNameElement.sendKeys(userCredentials.userName)
+    userNameElement.sendKeys(userCredentials.email)
     passwordElement.sendKeys(userCredentials.password)
   }
 

@@ -51,7 +51,7 @@ Feature: Confirm Transfer Page
     And the user is logged in on the Confirm Transfer page
     Then the user will be on a page with the title "Confirm transfer"
     When the user confirms all the records are open
-    And the user confirms that they are transferring legal ownership of the records to TNA
+    And the user confirms that they are transferring legal custody of the records to TNA
     And the user clicks the continue button
     Then the user will be on a page with a panel titled "Transfer complete"
     And the standard transfer export will be complete

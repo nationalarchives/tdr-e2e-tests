@@ -73,23 +73,3 @@ jobs:
       - name: Remove access
         if: ${{ always() }}
         run: .github/scripts/update-security-group.sh DELETE ${{ secrets.ACCOUNT_NUMBER }}
-  clean-up:
-    runs-on: ubuntu-latest
-    environment: ${{ needs.setup-e2e-tests.outputs.environment }}
-    needs:
-      - setup-e2e-tests
-      - run-e2e-tests
-    if: ${{ always() }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ secrets.TITLE_STAGE }}
-          aws-region: eu-west-2
-          role-session-name: UpdateWAF
-      - name: Remove US from WAF
-        run: |
-          pip install boto3
-          python .github/scripts/update_waf_country.py ADD

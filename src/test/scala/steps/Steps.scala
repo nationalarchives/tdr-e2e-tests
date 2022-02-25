@@ -89,7 +89,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val formErrorMessages: Seq[String] = formType match {
       case "Final Transfer Confirmation" =>
         Seq("All records must be confirmed as open before proceeding",
-          "Transferral of legal ownership of all records must be confirmed before proceeding")
+          "Transferral of legal custody of all records must be confirmed before proceeding")
     }
     val errorElements: util.List[WebElement] = webDriver.findElements(By.cssSelector(errorClassName))
     Assert.assertNotNull(elementMissingMessage(errorClassName), errorElements)
@@ -564,9 +564,9 @@ class Steps extends ScalaDsl with EN with Matchers {
     loadPage("some-page")
   }
 
-  And("^the user confirms that they are transferring legal ownership of the records to TNA") {
-    val transferLegalOwnership = webDriver.findElement(By.id("transferLegalOwnership"))
-    transferLegalOwnership.click()
+  And("^the user confirms that they are transferring legal custody of the records to TNA") {
+    val transferLegalCustody = webDriver.findElement(By.id("transferLegalCustody"))
+    transferLegalCustody.click()
   }
 
   Then("^the confirm transfer page shows the user that (.*) files have been uploaded") {

@@ -357,7 +357,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.createTransferAgreementCompliance(consignmentId)
   }
 
-  And("^the records checks are complete") {
+  And("^the file checks are complete") {
     val client = GraphqlUtility(userCredentials)
     val files = List("testfile1", "testfile2")
     val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({

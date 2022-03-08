@@ -19,7 +19,7 @@ Feature: Upload
     And the user clicks the continue button
     Then the upload progress should be visible
 
-  Scenario: The records page is shown when the upload is completed
+  Scenario: The file checks page is shown when the upload is completed
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing private beta transfer agreement
@@ -29,7 +29,7 @@ Feature: Upload
     And the user clicks the continue button
     Then the user will be on a page with the title "Checking your records"
 
-  Scenario: The upload is complete page is shown when the user navigates back from the records page after upload has completed
+  Scenario: The upload is complete page is shown when the user navigates back from the file checks page after upload has completed
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing private beta transfer agreement
@@ -49,7 +49,7 @@ Feature: Upload
     And the logged out user attempts to access the upload page
     Then the logged out user should be on the login page
 
-  Scenario: The judgment's records page is shown when the upload is completed
+  Scenario: The judgment's file checks page is shown when the upload is completed
     Given A logged out judgment user
     And an existing judgment consignment for transferring body MOCK1
     And an existing private beta transfer agreement

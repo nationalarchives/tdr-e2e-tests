@@ -18,16 +18,26 @@ concurrency: env.ENVIRONMENT
 jobs:
   setup-e2e-tests:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
     outputs:
       files: ${{ steps.generate-files.outputs.files }}
-      environment: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
+      environment: ${{ steps.set-secret-names.outputs.environment }}
+      account_number_secret: ${{ steps.set-secret-names.outputs.account_number_secret }}
+      user_admin_secret: ${{ steps.set-secret-names.outputs.user_admin_secret }}
+      backend_checks_secret: ${{ steps.set-secret-names.outputs.backend_checks_secret }}
+      title_environment: ${{ steps.set-secret-names.outputs.title_environment }}
+      is_pr: ${{ steps.set-secret-names.outputs.is_pr }}
+      last_status: ${{ steps.get-last-status.outputs.last_status }}
       driver: ${{ steps.get-driver.outputs.driver }}
+      browser: ${{ steps.get-driver.outputs.browser }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - id: get-driver
-        run: echo ::set-output name=driver::$(python .github/scripts/get_driver_location.py ${{ github.event.inputs.browser }})
+        run: python .github/scripts/get_driver_location.py ${{ github.event.inputs.browser }}
+      - id: get-last-status
+        run: pip install requests && python .github/scripts/get_last_status.py
+      - id: set-secret-names
+        run: python .github/scripts/set_secret_names.py ${{ github.event.inputs.environment }}
       - name: Set feature file names
         id: generate-files
         run: |
@@ -35,7 +45,6 @@ jobs:
           echo ::set-output name=files::${FILES}
   run-e2e-tests:
     runs-on: ubuntu-latest
-    environment: ${{ needs.setup-e2e-tests.outputs.environment }}
     needs:
       - setup-e2e-tests
     strategy:
@@ -48,11 +57,11 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ secrets.TITLE_STAGE }}
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
       - name: Update security group
-        run: .github/scripts/update-security-group.sh INSERT ${{ secrets.ACCOUNT_NUMBER }}
+        run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -62,14 +71,25 @@ jobs:
       - name: Run Tests
         env:
           DRIVER_LOCATION: ${{ needs.setup-e2e-tests.outputs.driver }}
-        run: CUCUMBER_PUBLISH_TOKEN=${{ secrets.CUCUMBER_PUBLISH_TOKEN }} sbt test -Daccount.number=${{ secrets.ACCOUNT_NUMBER }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ secrets.USER_ADMIN_SECRET }} -Dkeycloak.backendchecks.secret=${{ secrets.BACKEND_CHECKS_SECRET }} -Dbrowser=firefox -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
+        run: sbt test -Daccount.number=${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ secrets[needs.setup-e2e-tests.outputs.user_admin_secret] }} -Dkeycloak.backendchecks.secret=${{ secrets[needs.setup-e2e-tests.outputs.backend_checks_secret] }} -Dbrowser=${{ needs.setup-e2e-tests.outputs.browser }} -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
       - name: Configure AWS credentials
         if: ${{ always() }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_NUMBER }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ secrets.TITLE_STAGE }}
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
       - name: Remove access
         if: ${{ always() }}
-        run: .github/scripts/update-security-group.sh DELETE ${{ secrets.ACCOUNT_NUMBER }}
+        run: .github/scripts/update-security-group.sh DELETE ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
+  send-messages:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs:
+      - run-e2e-tests
+      - setup-e2e-tests
+    steps:
+      - run: echo "Sending failure message"
+        if: ${{ needs.run-e2e-tests.result=='failure' && needs.setup-e2e-tests.outputs.is_pr == 'False' }}
+      - run: echo "Sending success message" && echo ${{ needs.setup-e2e-tests.outputs.last_status }}
+        if: ${{ needs.run-e2e-tests.result=='success' && needs.setup-e2e-tests.outputs.is_pr == 'False' && needs.setup-e2e-tests.outputs.last_status != 'success' }}

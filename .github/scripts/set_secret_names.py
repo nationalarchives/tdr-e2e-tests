@@ -1,5 +1,5 @@
 import sys
-is_pr = sys.argv[1] == ""
+is_pr = len(sys.argv) == 1
 env = "intg" if is_pr else sys.argv[1]
 print(f"::set-output name=environment::{env}")
 print(f"::set-output name=account_number_secret::{env.upper()}_ACCOUNT_NUMBER")

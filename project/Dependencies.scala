@@ -6,7 +6,7 @@ object Dependencies {
   private val cucumberCoreVersion = "7.2.3"
   private val cucumberScalaVersion = "8.2.2"
   private val cucumberJUnitVersion = "7.2.3"
-  private val keycloakVersion = "16.1.0"
+  private val keycloakVersion = "16.1.1"
   private val softwareMillVersion = "2.1.1"
 
   lazy val scalaTestPlusPlay   = "org.scalatestplus.play" %% "scalatestplus-play" % "4.0.3"

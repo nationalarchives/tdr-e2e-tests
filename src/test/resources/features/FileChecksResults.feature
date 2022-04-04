@@ -51,7 +51,7 @@ Feature: File Checks results Page
     And an existing compliance transfer agreement
     And the FFID "password protected" check has failed
     When the user is logged in on the file checks results page
-    Then the user will see the error summary "One or more files you uploaded have failed our checks"
+    Then the user will see the error summary "We cannot accept password protected files. Once removed or replaced, try uploading your folder again."
 
   Scenario: The user will see an error when there is a FFID zip file failure
     Given A logged out standard user
@@ -60,7 +60,7 @@ Feature: File Checks results Page
     And an existing compliance transfer agreement
     And the FFID "zip file" check has failed
     When the user is logged in on the file checks results page
-    Then the user will see the error summary "One or more files you uploaded have failed our checks"
+    Then the user will see the error summary "We cannot accept zip files and similar archival package file formats."
 
   Scenario: Results page is accessed by a logged out judgment user
     Given A logged out judgment user

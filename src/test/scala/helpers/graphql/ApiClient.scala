@@ -5,7 +5,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import helpers.keycloak.{KeycloakUtility, UserCredentials}
 import io.circe.{Decoder, Encoder}
 import sangria.ast.Document
-import sttp.client.{HttpURLConnectionBackend, Identity, NothingT, SttpBackend}
+import sttp.client3.{HttpURLConnectionBackend, Identity, SttpBackend}
 import uk.gov.nationalarchives.tdr.{GraphQLClient, GraphQlResponse}
 
 import scala.concurrent.Await
@@ -48,7 +48,7 @@ class BackendApiClient[Data, Variables](implicit val decoder: Decoder[Data], val
 }
 
 object ApiClient {
-  implicit private val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
+  implicit private val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()
   private val configuration: Config = ConfigFactory.load
 
   def sendApiRequest[Data, Variables](document: Document, variables: Variables, token: BearerAccessToken)(implicit decoder: Decoder[Data], encoder: Encoder[Variables]): GraphQlResponse[Data] = {

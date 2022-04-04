@@ -3,13 +3,13 @@ package helpers.keycloak
 import cats.implicits._
 import com.typesafe.config.ConfigFactory
 import io.circe.generic.auto._
-import sttp.client.circe._
-import sttp.client.{HttpURLConnectionBackend, Identity, NothingT, Response, SttpBackend, UriContext, basicRequest}
+import sttp.client3.circe._
+import  sttp.client3.{HttpURLConnectionBackend, Identity, Response, SttpBackend, UriContext, basicRequest}
 
 import scala.language.postfixOps
 
 object KeycloakClient {
-  implicit val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
+  implicit val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()
 
   private val configuration = ConfigFactory.load()
   private val userAdminClient: String = configuration.getString("keycloak.user.admin.client")

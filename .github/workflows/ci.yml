@@ -11,6 +11,10 @@ on:
         description: 'Environment'
         required: true
         default: 'intg'
+      wait:
+        description: 'The time in seconds to wait before starting the tests'
+        required: false
+        default: '0'
 permissions:
   id-token: write
   contents: read
@@ -29,6 +33,8 @@ jobs:
       driver: ${{ steps.get-driver.outputs.driver }}
       browser: ${{ steps.get-driver.outputs.browser }}
     steps:
+      - name: Wait
+        run: sleep ${{ github.event.inputs.wait != '' && github.event.inputs.wait || '0' }}
       - name: Checkout
         uses: actions/checkout@v2
       - id: get-driver

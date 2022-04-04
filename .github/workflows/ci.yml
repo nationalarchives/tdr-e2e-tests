@@ -14,7 +14,6 @@ on:
 permissions:
   id-token: write
   contents: read
-concurrency: env.ENVIRONMENT
 jobs:
   setup-e2e-tests:
     runs-on: ubuntu-latest

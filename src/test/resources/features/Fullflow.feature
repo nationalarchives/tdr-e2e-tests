@@ -8,8 +8,9 @@ Feature: Full user journey
     And the logged out user enters valid credentials
     And the user clicks the continue button
     Then the user should be on the homepage page
-    When the logged in user navigates to the series page
-    And the user selects the series MOCK1 123
+    When the user clicks the continue button
+    Then the user should be on the series page
+    When the user selects the series MOCK1 123
     And the user clicks the continue button
     Then the user should be on the transfer-agreement page
     When the user selects yes to all transfer agreement checks

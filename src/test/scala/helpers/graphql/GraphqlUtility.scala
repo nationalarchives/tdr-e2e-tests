@@ -75,7 +75,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createBackendChecksumMetadata(fileId: UUID, checksumValue: Option[String]): Unit = {
     val client = new BackendApiClient[afm.Data, afm.Variables]
-    val input = AddFileMetadataInput("SHA256ServerSideChecksum", fileId, checksumValue.getOrElse("checksumValue"))
+    val input = AddFileMetadataWithFileIdInput("SHA256ServerSideChecksum", fileId, checksumValue.getOrElse("checksumValue"))
     client.sendRequest(afm.document, afm.Variables(input))
   }
 

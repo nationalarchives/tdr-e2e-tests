@@ -4,7 +4,8 @@ import java.nio.file.{Files, Path}
 import java.security.MessageDigest
 import helpers.keycloak.UserCredentials
 import org.openqa.selenium.support.ui.WebDriverWait
-import org.openqa.selenium.{By, StaleElementReferenceException, WebDriver}
+import org.openqa.selenium.{By, StaleElementReferenceException, WebDriver, WebElement}
+import scala.jdk.CollectionConverters._
 
 object StepsUtility {
   def waitForElementTitle(webDriver: WebDriver, title: String, elementClassName: String): Any = {
@@ -15,8 +16,8 @@ object StepsUtility {
       such as from the upload page to the file checks page. In this case, we only want to check the element on the second page,
       so it doesn't matter if the same element on the first page has disappeared.*/
       .until((driver: WebDriver) => {
-        val panel = webDriver.findElement(By.className(elementClassName)).getText
-        panel == title
+        val panels: List[WebElement] = webDriver.findElements(By.className(elementClassName)).asScala.toList
+        panels.exists(_.getText == title)
       })
   }
 

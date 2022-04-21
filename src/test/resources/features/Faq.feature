@@ -1,4 +1,4 @@
-Feature: Faq Page
+Feature: FAQ Page
 
   Scenario: FAQ page is accessed by a standard user
     Given A logged in standard user

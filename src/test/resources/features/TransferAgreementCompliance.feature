@@ -3,6 +3,7 @@ Feature: Transfer Agreement Continued Page
   Scenario: A logged in user completes the Transfer Agreement compliance form correctly
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
+    And an selected series MOCK1
     And an existing private beta transfer agreement
     And the user is logged in on the Transfer Agreement Continued page
     When the user confirms all the records are open
@@ -13,6 +14,7 @@ Feature: Transfer Agreement Continued Page
   Scenario: A logged in user submits Transfer Agreement compliance form without DRO approval
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
+    And an selected series MOCK1
     And an existing private beta transfer agreement
     And the user is logged in on the Transfer Agreement Continued page
     And the user confirms all the records are open

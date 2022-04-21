@@ -12,6 +12,7 @@ import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPriv
 import graphql.codegen.AddTransferAgreementCompliance.{addTransferAgreementCompliance => atac}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
+import graphql.codegen.UpdateConsignmentSeriesId.{updateConsignmentSeriesId => ucs}
 import graphql.codegen.types._
 import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.UserCredentials
@@ -35,6 +36,13 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   def getSeries(body: String): Option[gs.Data] = {
     val client = new UserApiClient[gs.Data, gs.Variables](userCredentials)
     client.result(gs.document, gs.Variables(body)).data
+  }
+
+  def updateSeries(consignmentId: UUID, body: String): Unit = {
+    val client = new UserApiClient[ucs.Data, ucs.Variables](userCredentials)
+    val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
+    val input = UpdateConsignmentSeriesIdInput(consignmentId, seriesId)
+    client.result(ucs.document, ucs.Variables(input))
   }
 
   def createTransferAgreementPrivateBeta(consignmentId: UUID): Unit = {

@@ -67,9 +67,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   private def loadPage(page: String): Unit = {
-    val path = if(userType == "judgment") "judgment" else "consignment"
+    val isJudgment = userType == "judgment"
+    val path = if(isJudgment) "judgment" else "consignment"
     val pageWithConsignment = page match {
       case "homepage" | "some-page" => s"$baseUrl/$page"
+      case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$page" else s"$baseUrl/$page"
       case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)
@@ -223,6 +225,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user will be on a page with a heading \"(.*)\"") {
     heading: String =>
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-m")
+  }
+
+  Then("^the user will be on a page with a small heading \"(.*)\"") {
+    heading: String =>
+      StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-s")
   }
 
   Then("^the user will be on a page with a banner titled \"(.*)\"") {

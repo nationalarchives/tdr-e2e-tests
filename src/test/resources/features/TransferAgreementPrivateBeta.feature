@@ -3,6 +3,7 @@ Feature: Transfer Agreement Page
   Scenario: A logged in user completes the Transfer Agreement private beta form correctly
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
+    And an existing series MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes to all transfer agreement checks
     And the user clicks the continue button
@@ -11,6 +12,7 @@ Feature: Transfer Agreement Page
   Scenario: A logged in user submits Transfer Agreement private beta form without responding yes to all questions
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
+    And an existing series MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes for all checks except "The records are all English"
     And the user clicks the continue button

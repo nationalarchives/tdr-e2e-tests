@@ -52,8 +52,6 @@ Feature: Upload
   Scenario: The judgment's file checks page is shown when the upload is completed
     Given A logged out judgment user
     And an existing judgment consignment for transferring body MOCK1
-    And an existing private beta transfer agreement
-    And an existing compliance transfer agreement
     And the user is logged in on the upload page
     When the user selects the file: testdocxfile.docx
     And the user clicks the continue button

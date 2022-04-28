@@ -7,6 +7,7 @@ Feature: Upload
     And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And the user is logged in on the upload page
+    Then the user will be on a page with the title "Upload your records"
     Then the upload progress should not be visible
 
   Scenario: The progress bar is shown after file upload
@@ -17,7 +18,8 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: largefile
     And the user clicks the continue button
-    Then the upload progress should be visible
+    Then the user will be on a page with the title "Uploading records"
+    And the upload progress should be visible
 
   Scenario: The file checks page is shown when the upload is completed
     Given A logged out standard user
@@ -27,6 +29,8 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
+    Then the user will be on a page with the title "Uploading records"
+    And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"
 
   Scenario: The upload is complete page is shown when the user navigates back from the file checks page after upload has completed
@@ -37,6 +41,8 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
+    Then the user will be on a page with the title "Uploading records"
+    And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"
     When the user clicks their browser's back button
     Then the user will see the message "Your upload is complete and has been saved. You cannot make amendments to your upload or add additional files."
@@ -55,4 +61,6 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects the file: testdocxfile.docx
     And the user clicks the continue button
+    Then the user will be on a page with the title "Uploading judgment"
+    And the upload progress should be visible
     Then the user will be on a page with the title "Checking your upload"

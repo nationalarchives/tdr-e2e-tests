@@ -196,6 +196,14 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
+  Then("^the user should be on a page with (.*) and a consignmentId in the URL") {
+    page: String =>
+      val currentUrl: String = webDriver.getCurrentUrl
+      val consignmentIdAsString = currentUrl.split("/").takeRight(2).head
+      consignmentId = UUID.fromString(consignmentIdAsString)
+      Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+  }
+
   And("^the (.*) transfer export will be complete") {
     consignmentType: String =>
     val client = GraphqlUtility(userCredentials)

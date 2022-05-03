@@ -318,7 +318,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       seriesDropdown.selectByVisibleText(selectedSeries)
   }
 
-  And("^the user clicks the continue button") {
+  And("^the user clicks the (.*) button") {
     val button = webDriver.findElement(By.cssSelector("[type='submit']"))
     button.click()
   }

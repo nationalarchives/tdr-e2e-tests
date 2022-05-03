@@ -319,8 +319,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user clicks the (.*) button") {
-    val button = webDriver.findElement(By.cssSelector("[type='submit']"))
-    button.click()
+    button: String =>
+      val button = webDriver.findElement(By.cssSelector("[type='submit']"))
+      button.click()
   }
 
   When("^the user selects yes for all checks except \"The records are all English\"") {

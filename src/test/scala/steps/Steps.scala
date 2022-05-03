@@ -496,7 +496,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  Then("^the (.*) should be visible") {
+  And("^the (.*) should be visible") {
     targetIdName: String => {
       val id = targetIdName.replaceAll(" ", "-")
       new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {

@@ -69,5 +69,4 @@ Feature: File Checks Page
     And 1 of the checksum scans for the judgment transfer have finished
     And 1 of the antivirus scans for the judgment transfer have finished
     Then the user will be on a page with the title "Checking your upload"
-    And the user waits for the checks to complete
     Then the user will be on a page with the title "Results of checks"

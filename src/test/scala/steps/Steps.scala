@@ -240,9 +240,9 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-s")
   }
 
-  Then("^the user will be on a page with a banner titled \"(.*)\"") {
-    panelTitle: String =>
-      StepsUtility.waitForElementTitle(webDriver, panelTitle, "success-summary__title")
+  And("^the user should see a banner titled Success") {
+    () =>
+      StepsUtility.waitForElementTitle(webDriver, "Success", "success-summary__title")
   }
 
   Then("^the user should see a general service error \"(.*)\"") {
@@ -500,7 +500,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) should be visible") {
     targetIdName: String => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 180).until((driver: WebDriver) => {
         val isVisible = !StepsUtility.elementHasClassHide(id, driver)
         isVisible
       })
@@ -527,7 +527,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) button should be enabled") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 25).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 180).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
         Assert.assertFalse(StepsUtility.elementHasClassDisabled(id, webDriver))
       })
     }

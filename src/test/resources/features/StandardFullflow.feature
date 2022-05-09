@@ -1,5 +1,5 @@
 #Feature will not work with chromedriver in headless mode due to following bug: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
-@wip
+
 Feature: Standard Full user journey
   Scenario: Full transfer standard workflow
     Given A logged out standard user

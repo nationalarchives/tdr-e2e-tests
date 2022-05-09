@@ -196,6 +196,14 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 
+  Then("^the user should be on a page with (.*) and a consignmentId in the URL") {
+    page: String =>
+      val currentUrl: String = webDriver.getCurrentUrl
+      val consignmentIdAsString = currentUrl.split("/").takeRight(2).head
+      consignmentId = UUID.fromString(consignmentIdAsString)
+      Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
+  }
+
   And("^the (.*) transfer export will be complete") {
     consignmentType: String =>
     val client = GraphqlUtility(userCredentials)
@@ -310,9 +318,10 @@ class Steps extends ScalaDsl with EN with Matchers {
       seriesDropdown.selectByVisibleText(selectedSeries)
   }
 
-  And("^the user clicks the continue button") {
-    val button = webDriver.findElement(By.cssSelector("[type='submit']"))
-    button.click()
+  And("^the user clicks the (.*) button") {
+    button: String =>
+      val button = webDriver.findElement(By.cssSelector("[type='submit']"))
+      button.click()
   }
 
   When("^the user selects yes for all checks except \"The records are all English\"") {

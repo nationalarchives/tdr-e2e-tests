@@ -179,14 +179,15 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the logged out user should be on the login page") {
     val currentUrl: String = webDriver.getCurrentUrl
-    Assert.assertTrue(doesNotMatchExpected(currentUrl, "login"), currentUrl.startsWith(s"$authUrl/auth"))
+    Assert.assertTrue(doesNotMatchExpected(currentUrl, "login"), currentUrl.startsWith(s"$authUrl"))
   }
 
   Then("^the user will remain on the (.*) page") {
     page: String =>
       val currentUrl: String = webDriver.getCurrentUrl
       val url = if (page == "auth") authUrl else baseUrl
-      Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$url/$page"))
+      val expectedPage = if (page == "auth") "realms" else page
+      Assert.assertTrue(doesNotMatchExpected(currentUrl, expectedPage), currentUrl.startsWith(s"$url/$expectedPage"))
   }
 
   Then("^the user should be on the (.*) page") {

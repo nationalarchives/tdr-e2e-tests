@@ -18,7 +18,7 @@ object KeycloakUtility {
 
     val request = basicRequest
       .body(requestBody)
-      .post(uri"$authUrl/auth/realms/tdr/protocol/openid-connect/token")
+      .post(uri"$authUrl/realms/tdr/protocol/openid-connect/token")
       .response(asJson[AuthResponse])
 
     val response = backend.send(request)

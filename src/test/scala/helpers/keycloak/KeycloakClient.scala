@@ -21,7 +21,7 @@ object KeycloakClient {
     val authUrl = configuration.getString("tdr.auth.url")
 
     val response = basicRequest
-      .post(uri"$authUrl/auth/realms/tdr/protocol/openid-connect/token")
+      .post(uri"$authUrl/realms/tdr/protocol/openid-connect/token")
       .auth.basic(userAdminClient, userAdminSecret)
       .body(Map("grant_type" -> "client_credentials"))
       .response(asJson[AuthResponse])

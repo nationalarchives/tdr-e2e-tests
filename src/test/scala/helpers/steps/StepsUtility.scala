@@ -5,11 +5,13 @@ import java.security.MessageDigest
 import helpers.keycloak.UserCredentials
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.{By, StaleElementReferenceException, WebDriver, WebElement}
+
+import java.time.Duration
 import scala.jdk.CollectionConverters._
 
 object StepsUtility {
   def waitForElementTitle(webDriver: WebDriver, title: String, elementClassName: String): Any = {
-    new WebDriverWait(webDriver, 180)
+    new WebDriverWait(webDriver, Duration.ofSeconds(180))
       .ignoring(classOf[StaleElementReferenceException])
       /*Ignore stale references exceptions.
       These seem to happen when Selenium selects an element which then disappears when the user is redirected to the next page,

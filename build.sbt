@@ -6,12 +6,23 @@ version := "0.1"
 
 scalaVersion := "2.13.8"
 
+//assemblyPackageScala / assembleArtifact := false
+//assemblyPackageDependency / assembleArtifact := false
+//assemblyPackageDependency / test := {}
+assembly / mainClass := Option("runners.Lambda")
+enablePlugins(PackPlugin)
+packMain := Map("lambda" -> "runners.Lambda")
+
 libraryDependencies ++= Seq(
-  scalaTestPlusPlay % Test,
-  keycloakCore % Test,
-  keycloakAdminClient % Test,
+  keycloakCore,
+  keycloakAdminClient,
   tdrGraphQlClient,
   tdrGenerateGraphQl,
+  "org.scalatest" %% "scalatest" % "3.2.12",
+  "org.seleniumhq.selenium" % "selenium-java" % "4.2.0",
+  "com.typesafe" % "config" % "1.4.2",
+  "com.amazonaws" % "aws-lambda-java-runtime-interface-client" % "2.1.1",
+  "com.github.sbt" % "junit-interface" % "0.13.2",
   circeCore,
   circeGeneric,
   softwareMillCore,
@@ -20,7 +31,20 @@ libraryDependencies ++= Seq(
   awsSdkSts,
   cucumberCore,
   cucumberScala,
-  cucumberJunit
+  cucumberJunit,
+  lambdaJavaCore,
+  lambdaJavaEvents
 )
+assembly / fullClasspath := (assembly / fullClasspath).value ++ (Test / fullClasspath).value
 
-resolvers += "TDR Releases" at "s3://tdr-releases-mgmt"
+(assembly / assemblyMergeStrategy) := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("reference.conf") => MergeStrategy.concat
+  case _ => MergeStrategy.first
+}
+
+(assemblyPackageDependency / assemblyMergeStrategy) := {
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("reference.conf") => MergeStrategy.concat
+  case _ => MergeStrategy.first
+}

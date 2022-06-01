@@ -14,7 +14,7 @@ import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
-import org.scalatest.Matchers
+//import org.scalatest.Matchers
 
 import java.nio.file.Paths
 import java.time.Duration
@@ -23,7 +23,7 @@ import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.jdk.CollectionConverters._
 
-class Steps extends ScalaDsl with EN with Matchers {
+class Steps extends ScalaDsl with EN {
   var webDriver: WebDriver = _
   var userId: String = ""
   var userType: String = ""
@@ -501,7 +501,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) should be visible") {
     targetIdName: String => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 180).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(180)).until((driver: WebDriver) => {
         val isVisible = !StepsUtility.elementHasClassHide(id, driver)
         isVisible
       })
@@ -511,7 +511,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the (.*) should not be visible") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(10)).until((driver: WebDriver) => {
         val isNotVisible = StepsUtility.elementHasAttributeHidden(id, webDriver)
         isNotVisible
       })
@@ -528,7 +528,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) button should be enabled") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 180).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(180)).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
         Assert.assertFalse(StepsUtility.elementHasClassDisabled(id, webDriver))
       })
     }
@@ -569,7 +569,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"
-       new WebDriverWait(webDriver, 10).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
+       new WebDriverWait(webDriver, Duration.ofSeconds(10)).ignoring(classOf[AssertionError]).until((driver: WebDriver) => {
          val errorElement = webDriver.findElement(By.cssSelector(selector))
          Assert.assertNotNull(elementMissingMessage(selector), errorElement)
 

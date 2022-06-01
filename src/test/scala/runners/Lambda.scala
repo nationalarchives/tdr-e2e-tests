@@ -1,11 +1,9 @@
 package runners
 
 import com.amazonaws.services.lambda.runtime.{Context, RequestStreamHandler}
-import com.typesafe.config.ConfigFactory
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import io.cucumber.core.cli.Main
-import io.cucumber.core.runtime.ExitStatus
 
 import java.io.{InputStream, OutputStream}
 import scala.io.Source

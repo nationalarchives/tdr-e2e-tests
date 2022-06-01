@@ -23,7 +23,6 @@ class AWSUtility {
   val provider: AwsCredentialsProvider = DefaultCredentialsProvider.builder().build()
 
   val s3: S3Client = S3Client.builder()
-    .credentialsProvider(provider)
     .region(Region.EU_WEST_2)
     .httpClient(httpClient)
     .build()

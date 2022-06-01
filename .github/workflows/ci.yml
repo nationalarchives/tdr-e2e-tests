@@ -67,7 +67,7 @@ jobs:
           role-session-name: E2ETests
       - name: Run Tests
         run: |
-          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --payload '{"feature":"${{ matrix.file }}"}' out
+          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --payload '{ "feature": "${{ matrix.file }}" }' out
           cat out
 
   send-messages:

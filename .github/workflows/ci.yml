@@ -62,9 +62,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.MANAGEMENT_ACCOUNT }}:role/TDRGithubActionsE2ETestsMgmt
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
-          role-session-name: E2ETests
+          role-session-name: UpdateWAF
       - name: Run Tests
         run: |
           aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}" }' out

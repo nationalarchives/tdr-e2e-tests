@@ -67,7 +67,7 @@ jobs:
           role-session-name: UpdateWAF
       - name: Run Tests
         run: |
-          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}" }' out
+          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --cli-read-timeout 0 --cli-connect-timeout 0 --log-type Tail --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}" }' out
           cat out
 
   send-messages:

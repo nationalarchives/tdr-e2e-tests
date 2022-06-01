@@ -66,7 +66,10 @@ jobs:
           aws-region: eu-west-2
           role-session-name: E2ETests
       - name: Run Tests
-        run: aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --payload '{"feature":"${{ matrix.file }}"}'
+        run: |
+          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --payload '{"feature":"${{ matrix.file }}"}' out
+          cat out
+
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

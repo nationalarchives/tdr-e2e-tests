@@ -199,9 +199,16 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user should be on a page with (.*) and a consignmentId in the URL") {
     page: String =>
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+        val currentUrl: String = webDriver.getCurrentUrl
+        val elementInUrl = currentUrl.split("/").takeRight(2).head
+        val consignmentTypes = Set("judgment", "consignment")
+        !consignmentTypes.contains(elementInUrl) // if element is not "judgment" nor "consignment", then it's probably the consignmentId
+        })
       val currentUrl: String = webDriver.getCurrentUrl
       val consignmentIdAsString = currentUrl.split("/").takeRight(2).head
       consignmentId = UUID.fromString(consignmentIdAsString)
+
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 

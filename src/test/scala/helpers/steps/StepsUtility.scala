@@ -28,11 +28,15 @@ object StepsUtility {
   }
 
   def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
-    val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
-    val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
+    new WebDriverWait(webDriver, 30).until(
+      (driver: WebDriver) => {
+        val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
+        val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
 
-    userNameElement.sendKeys(userCredentials.email)
-    passwordElement.sendKeys(userCredentials.password)
+        userNameElement.sendKeys(userCredentials.email)
+        passwordElement.sendKeys(userCredentials.password)
+      }
+    )
   }
 
   def elementHasClassHide(id: String, webDriver: WebDriver): Boolean = {

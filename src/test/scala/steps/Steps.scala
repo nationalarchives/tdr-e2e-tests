@@ -169,7 +169,9 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user clicks on the (.*) button") {
     button: String =>
-      webDriver.findElement(By.linkText(button)).click()
+      new WebDriverWait(webDriver, 30).until(
+        (driver: WebDriver) => webDriver.findElement(By.linkText(button)).click()
+      )
   }
 
   Then("^the (.*) button is not displayed on the page") {

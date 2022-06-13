@@ -192,6 +192,10 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user should be on the (.*) page") {
     page: String =>
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+        val currentUrl: String = webDriver.getCurrentUrl
+        currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page)
+      })
       val currentUrl: String = webDriver.getCurrentUrl
 
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))

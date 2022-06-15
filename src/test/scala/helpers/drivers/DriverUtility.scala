@@ -4,11 +4,11 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
 import org.openqa.selenium.html5.WebStorage
-import org.openqa.selenium.remote.RemoteWebDriver
+import org.openqa.selenium.remote.{LocalFileDetector, RemoteWebDriver}
+
+import java.net.URL
 
 object DriverUtility {
-  val driverLocation: String = System.getenv("DRIVER_LOCATION")
-
   val configuration: Config = ConfigFactory.load()
   val firefoxBinaryLocation: String = configuration.getString("firefox.binary.location")
 
@@ -19,8 +19,6 @@ object DriverUtility {
     chromeOptions.addArguments("--no-sandbox")
     chromeOptions.addArguments("--disable-dev-shm-usage")
     chromeOptions.addArguments("--verbose")
-    System.setProperty("webdriver.chrome.driver", driverLocation)
-
     chromeOptions
   }
 
@@ -31,15 +29,16 @@ object DriverUtility {
     firefoxOptions.addArguments("--no-sandbox")
     firefoxOptions.addArguments("--disable-dev-shm-usage")
     firefoxOptions.addArguments("--verbose")
-    System.setProperty("webdriver.gecko.driver", driverLocation)
-
     firefoxOptions
   }
 
-  def initDriver: RemoteWebDriver with WebStorage = {
+  def initDriver: RemoteWebDriver = {
     ConfigFactory.load.getString("browser") match {
       case "chrome" => new ChromeDriver(chromeOptions)
-      case "firefox" => new FirefoxDriver(firefoxOptions)
+      case "firefox" =>
+        val remoteWebDriver = new RemoteWebDriver(new URL("http://localhost:9001"), firefoxOptions)
+        remoteWebDriver.setFileDetector(new LocalFileDetector())
+        remoteWebDriver
     }
   }
 }

@@ -4,7 +4,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
 import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
 import org.openqa.selenium.html5.WebStorage
-import org.openqa.selenium.remote.RemoteWebDriver
+import org.openqa.selenium.remote.{LocalFileDetector, RemoteWebDriver}
 
 import java.net.URL
 
@@ -41,7 +41,10 @@ object DriverUtility {
   def initDriver: RemoteWebDriver = {
     ConfigFactory.load.getString("browser") match {
       case "chrome" => new ChromeDriver(chromeOptions)
-      case "firefox" => new RemoteWebDriver(new URL("http://localhost:9001"), firefoxOptions)
+      case "firefox" =>
+        val remoteWebDriver = new RemoteWebDriver(new URL("http://localhost:9001"), firefoxOptions)
+        remoteWebDriver.setFileDetector(new LocalFileDetector())
+        remoteWebDriver
     }
   }
 }

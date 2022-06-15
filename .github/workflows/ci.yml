@@ -64,29 +64,12 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
-          role-session-name: UpdateWAF
-      - name: Update security group
-        run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.MANAGEMENT_ACCOUNT }}:role/TDRGithubActionsE2ETestsMgmt
-          aws-region: eu-west-2
           role-session-name: E2ETests
+      - run: nohup aws ssm start-session --target ecs:file_format_build_intg_e688b84daa5042799b6762f7602d79e7_e688b84daa5042799b6762f7602d79e7-4049965449 --document-name AWS-StartPortForwardingSession --parameters \{\"portNumber\":\[\"4444\"\],\"localPortNumber\":\[\"9001\"\]\} &
       - name: Run Tests
         env:
           DRIVER_LOCATION: ${{ needs.setup-e2e-tests.outputs.driver }}
         run: sbt test -Daccount.number=${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ secrets[needs.setup-e2e-tests.outputs.user_admin_secret] }} -Dkeycloak.backendchecks.secret=${{ secrets[needs.setup-e2e-tests.outputs.backend_checks_secret] }} -Dbrowser=${{ needs.setup-e2e-tests.outputs.browser }} -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
-      - name: Configure AWS credentials
-        if: ${{ always() }}
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
-          aws-region: eu-west-2
-          role-session-name: UpdateWAF
-      - name: Remove access
-        if: ${{ always() }}
-        run: .github/scripts/update-security-group.sh DELETE ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

@@ -2,10 +2,11 @@ import boto3
 import sys
 
 stage = sys.argv[1]
+browser = sys.argv[2].lower()
 client = boto3.client('ecs')
 ec2_client = boto3.client("ec2")
 cluster = f"file_format_build_{stage}"
-task = "test-e2e-proxy"
+task = f"selenium-grid-{browser}-{stage}"
 security_groups = ec2_client.describe_security_groups()['SecurityGroups']
 filtered_security_groups = list(filter(lambda sg: sg['GroupName'] == "tdr-lambda-signed_cookies", security_groups))
 security_groups = [security_group['GroupId'] for security_group in filtered_security_groups]

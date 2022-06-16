@@ -33,9 +33,9 @@ object DriverUtility {
   }
 
   def initDriver: RemoteWebDriver = {
-    val options = ConfigFactory.load.getString("browser") match {
-      case "chrome" => chromeOptions
-      case "firefox" => firefoxOptions
+    val options = System.getProperty("browser") match {
+      case "Chrome" => chromeOptions
+      case "Firefox" => firefoxOptions
     }
     val nodeUrl = System.getProperty("selenium.node.url")
     val remoteWebDriver = new RemoteWebDriver(new URL(nodeUrl), options)

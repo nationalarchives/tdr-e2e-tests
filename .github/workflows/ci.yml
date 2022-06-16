@@ -5,10 +5,19 @@ on:
     inputs:
       browser:
         description: 'The browser used to run the tests'
+        type: choice
         required: false
+        options:
+          - Chrome
+          - Firefox
         default: 'Firefox'
       environment:
         description: 'Environment'
+        type: choice
+        options:
+          - intg
+          - staging
+          - prod
         required: true
         default: 'intg'
       wait:
@@ -59,7 +68,7 @@ jobs:
       - id: start-ecs
         run: |
           pip install boto3
-          python .github/scripts/start_ecs_task.py ${{ github.event.inputs.environment }}
+          python .github/scripts/start_ecs_task.py ${{ github.event.inputs.environment }} ${{ github.event.inputs.browser }}
   run-e2e-tests:
     runs-on: ubuntu-latest
     needs:
@@ -78,7 +87,7 @@ jobs:
           role-session-name: UpdateWAF
       - name: Run Tests
         run: |
-          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --cli-read-timeout 0 --cli-connect-timeout 0 --log-type Tail --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "nodeUrl": "http://${{ needs.setup-e2e-tests.outputs.node-ip }}:4444" }' out
+          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --cli-read-timeout 0 --cli-connect-timeout 0 --log-type Tail --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "nodeUrl": "http://${{ needs.setup-e2e-tests.outputs.node-ip }}:4444", "browser": "${{ github.event.inputs.browser }}" }' out
           cat out
   send-messages:
     runs-on: ubuntu-latest

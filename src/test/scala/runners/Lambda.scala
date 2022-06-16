@@ -9,7 +9,7 @@ import java.io.{InputStream, OutputStream}
 import scala.io.Source
 
 class Lambda extends RequestStreamHandler {
-  case class Filter(feature: String, nodeUrl: String)
+  case class Filter(feature: String, nodeUrl: String, browser: String)
 
   override def handleRequest(input: InputStream, output: OutputStream, context: Context): Unit = {
     val inputString = Source.fromInputStream(input).mkString
@@ -17,6 +17,7 @@ class Lambda extends RequestStreamHandler {
       case Left(_) => throw new Exception("No feature file name provided")
       case Right(filter) =>
         System.setProperty("selenium.node.url", filter.nodeUrl)
+        System.setProperty("browser", filter.browser)
         val exitStatus = Main.run(s"classpath:features/${filter.feature}")
         if(exitStatus != 0x0) {
           throw new Exception("Tests have failed")

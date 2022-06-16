@@ -95,7 +95,7 @@ jobs:
           role-session-name: StopECS
       - run: |
           pip install boto3
-          python stop_ecs_task ${{ github.event.inputs.environment }} ${{ needs.setup-e2e-tests.outputs.task-id }}
+          python .github/scripts/stop_ecs_task.py ${{ github.event.inputs.environment }} ${{ needs.setup-e2e-tests.outputs.task-id }}
       - uses: nationalarchives/tdr-github-actions/.github/actions/slack-send@main
         if: ${{ needs.run-e2e-tests.result=='failure' && needs.setup-e2e-tests.outputs.is_pr == 'False' }}
         with:

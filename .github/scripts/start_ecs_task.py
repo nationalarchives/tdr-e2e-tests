@@ -40,3 +40,4 @@ describe_response = client.describe_tasks(cluster=cluster, tasks=[task_arn])
 ip = describe_response["tasks"][0]["containers"][0]["networkInterfaces"][0]["privateIpv4Address"]
 
 print(f"::set-output name=node-ip::{ip}")
+print(f"::set-output name=task-arn::{task_arn}")

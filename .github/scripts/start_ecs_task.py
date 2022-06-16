@@ -38,6 +38,6 @@ waiter.wait(cluster=cluster, tasks=[task_arn])
 
 describe_response = client.describe_tasks(cluster=cluster, tasks=[task_arn])
 ip = describe_response["tasks"][0]["containers"][0]["networkInterfaces"][0]["privateIpv4Address"]
-
+task_id = task_arn.split("/")[-1]
 print(f"::set-output name=node-ip::{ip}")
-print(f"::set-output name=task-arn::{task_arn}")
+print(f"::set-output name=task-id::{task_id}")

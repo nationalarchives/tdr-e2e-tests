@@ -33,7 +33,7 @@ jobs:
       driver: ${{ steps.get-driver.outputs.driver }}
       lambda-name: ${{ steps.get-driver.outputs.lambda-name }}
       node-ip: ${{ steps.start-ecs.outputs.node-ip }}
-      task-arn: ${{ steps.start-ecs.outputs.task-arn }}
+      task-id: ${{ steps.start-ecs.outputs.task-id }}
     steps:
       - name: Wait
         run: sleep ${{ github.event.inputs.wait != '' && github.event.inputs.wait || '0' }}
@@ -90,12 +90,12 @@ jobs:
       - name: Use a new role here
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets[steps.set-secret-names.outputs.account_number_secret] }}:role/TestRunECSTaskRole${{ steps.set-secret-names.outputs.title_environment }}
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TestRunECSTaskRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: StopECS
       - run: |
           pip install boto3
-          python stop_ecs_task ${{ github.event.inputs.environment }} ${{ needs.setup-e2e-tests.outputs.task-arn }}
+          python stop_ecs_task ${{ github.event.inputs.environment }} ${{ needs.setup-e2e-tests.outputs.task-id }}
       - uses: nationalarchives/tdr-github-actions/.github/actions/slack-send@main
         if: ${{ needs.run-e2e-tests.result=='failure' && needs.setup-e2e-tests.outputs.is_pr == 'False' }}
         with:

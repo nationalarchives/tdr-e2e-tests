@@ -52,7 +52,7 @@ jobs:
       - name: Use a new role here
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets[steps.set-secret-names.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ steps.set-secret-names.outputs.title_environment }}
+          role-to-assume: arn:aws:iam::${{ secrets[steps.set-secret-names.outputs.account_number_secret] }}:role/TestRunECSTaskRole${{ steps.set-secret-names.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: StartECS
       - id: start-ecs
@@ -72,7 +72,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TestRunE2ELambdaRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
       - name: Run Tests

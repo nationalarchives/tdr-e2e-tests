@@ -24,6 +24,5 @@ class Lambda extends RequestStreamHandler {
           throw new Exception("Tests have failed")
         }
     }
-    output.write(Files.readAllBytes(Paths.get("/tmp/output.log")))
   }
 }

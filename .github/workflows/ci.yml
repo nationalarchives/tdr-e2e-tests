@@ -48,8 +48,6 @@ jobs:
         run: sleep ${{ github.event.inputs.wait != '' && github.event.inputs.wait || '0' }}
       - name: Checkout
         uses: actions/checkout@v2
-      - id: get-driver
-        run: python .github/scripts/get_driver_location.py ${{ github.event.inputs.browser }} ${{ github.event.inputs.environment }}
       - id: get-last-status
         run: pip install requests && python .github/scripts/get_last_status.py
       - id: set-secret-names
@@ -87,8 +85,8 @@ jobs:
           role-session-name: UpdateWAF
       - name: Run Tests
         run: |
-          aws lambda invoke --function-name tdr-e2e-tests-${{ github.event.inputs.environment }} --cli-read-timeout 0 --cli-connect-timeout 0 --log-type Tail --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "nodeUrl": "http://${{ needs.setup-e2e-tests.outputs.node-ip }}:4444", "browser": "${{ github.event.inputs.browser }}" }' out
-          cat out
+          pip install boto3
+          python .github/scripts/invoke_lambda.py ${{ github.event.inputs.environment }} ${{ matrix.file }} ${{ needs.setup-e2e-tests.outputs.node-ip }} ${{ github.event.inputs.browser }}
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

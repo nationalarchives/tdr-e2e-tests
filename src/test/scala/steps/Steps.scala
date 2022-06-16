@@ -39,6 +39,7 @@ class Steps extends ScalaDsl with EN {
   val baseUrl: String = configuration.getString("tdr.base.url")
   val authUrl: String = configuration.getString("tdr.auth.url")
   val email: String = s"${RandomUtility.randomString()}@testSomething.com"
+  val testfileDir: String = configuration.getString("testfiles.dir")
   val differentEmail: String = s"${RandomUtility.randomString()}@testSomething.com"
   val password: String = RandomUtility.randomString(10)
   val differentPassword: String = RandomUtility.randomString(10)
@@ -106,7 +107,7 @@ class Steps extends ScalaDsl with EN {
     Thread.sleep(15 * 1000)
 
     val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
-    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
+    input.sendKeys(s"${System.getProperty("user.dir")}/$testfileDir/testfiles/$fileName")
     webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
   }
 
@@ -385,7 +386,7 @@ class Steps extends ScalaDsl with EN {
     val files = List("testfile1", "testfile2")
     val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({
       case (fileName, idx) =>
-        val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
+        val path = Paths.get(s"${System.getProperty("user.dir")}/$testfileDir/testfiles/$fileName")
         val checksumValue = calculateTestFileChecksum(path)
         MatchIdInfo(checksumValue, path, idx)
     })
@@ -440,7 +441,7 @@ class Steps extends ScalaDsl with EN {
       val files = List("testfile1", "testfile2")
 
       val matchIdInfo: List[MatchIdInfo] = List.tabulate(numberOfFiles)(n => n).map(idx => {
-        val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")
+        val path = Paths.get(s"${System.getProperty("user.dir")}/$testfileDir/testfiles/${files(idx % 2)}")
         val checksumValue = calculateTestFileChecksum(path)
         MatchIdInfo(checksumValue, path, idx)
       })

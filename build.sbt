@@ -1,5 +1,4 @@
 import Dependencies._
-import Tests._
 
 name := "tdr-e2e-tests"
 

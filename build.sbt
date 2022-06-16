@@ -1,4 +1,5 @@
 import Dependencies._
+import Tests._
 
 name := "tdr-e2e-tests"
 
@@ -6,11 +7,14 @@ version := "0.1"
 
 scalaVersion := "2.13.8"
 
-//assemblyPackageScala / assembleArtifact := false
-//assemblyPackageDependency / assembleArtifact := false
-//assemblyPackageDependency / test := {}
+
+assembly / assemblyOption ~= {
+  _.withIncludeScala(false)
+    .withIncludeDependency(false)
+}
 assembly / mainClass := Option("runners.Lambda")
 enablePlugins(PackPlugin)
+
 packMain := Map("lambda" -> "runners.Lambda")
 
 libraryDependencies ++= Seq(

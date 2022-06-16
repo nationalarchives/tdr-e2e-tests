@@ -40,10 +40,13 @@ class Steps extends ScalaDsl with EN with Matchers {
   val authUrl: String = configuration.getString("tdr.auth.url")
   val email: String = s"${RandomUtility.randomString()}@testSomething.com"
   val differentEmail: String = s"${RandomUtility.randomString()}@testSomething.com"
+  val invalidEmail: String = "dgfhfdgjhgfj"
   val password: String = RandomUtility.randomString(10)
   val differentPassword: String = RandomUtility.randomString(10)
+  val invalidPassword: String = "fdghfdgh"
   val userCredentials: UserCredentials = UserCredentials(email, password)
   val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
+  val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
 
   Before { scenario : Scenario =>
@@ -150,11 +153,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the logged out user enters invalid credentials") {
-    val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
-    val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
-
-    userNameElement.sendKeys("dgfhfdgjhgfj")
-    passwordElement.sendKeys("fdghfdgh")
+    StepsUtility.enterUserCredentials(webDriver, invalidUserCredentials)
   }
 
   When("^the logged in user navigates to the (.*) page") {
@@ -169,7 +168,9 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user clicks on the (.*) button") {
     button: String =>
-      webDriver.findElement(By.linkText(button)).click()
+      new WebDriverWait(webDriver, 30).until(
+        (driver: WebDriver) => webDriver.findElement(By.linkText(button)).click()
+      )
   }
 
   Then("^the (.*) button is not displayed on the page") {
@@ -192,6 +193,10 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user should be on the (.*) page") {
     page: String =>
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+        val currentUrl: String = webDriver.getCurrentUrl
+        currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page)
+      })
       val currentUrl: String = webDriver.getCurrentUrl
 
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))

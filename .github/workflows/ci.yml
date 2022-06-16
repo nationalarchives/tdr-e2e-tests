@@ -56,7 +56,9 @@ jobs:
           aws-region: eu-west-2
           role-session-name: StartECS
       - id: start-ecs
-        run: python .github/scripts/start_ecs_task.py
+        run: |
+          pip install boto3
+          python .github/scripts/start_ecs_task.py
   run-e2e-tests:
     runs-on: ubuntu-latest
     needs:

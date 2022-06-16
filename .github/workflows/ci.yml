@@ -52,7 +52,7 @@ jobs:
       - name: Use a new role here
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ steps.set-secret-names.outputs.account_number_secret }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ steps.set-secret-names.outputs.title_environment }}
+          role-to-assume: arn:aws:iam::${{ secrets[steps.set-secret-names.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ steps.set-secret-names.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: StartECS
       - id: start-ecs

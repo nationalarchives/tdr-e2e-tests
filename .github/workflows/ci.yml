@@ -87,7 +87,7 @@ jobs:
           role-session-name: UpdateWAF
       - name: Run Tests
         run: |
-          aws lambda invoke --function-name ${{ needs.setup-e2e-tests.outputs.lambda-name }} --cli-read-timeout 0 --cli-connect-timeout 0 --log-type Tail --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "nodeUrl": "http://${{ needs.setup-e2e-tests.outputs.node-ip }}:4444", "browser": "${{ github.event.inputs.browser }}" }' out
+          aws lambda invoke --function-name tdr-e2e-tests-${{ github.event.inputs.environment }} --cli-read-timeout 0 --cli-connect-timeout 0 --log-type Tail --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "nodeUrl": "http://${{ needs.setup-e2e-tests.outputs.node-ip }}:4444", "browser": "${{ github.event.inputs.browser }}" }' out
           cat out
   send-messages:
     runs-on: ubuntu-latest

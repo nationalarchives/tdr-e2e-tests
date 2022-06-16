@@ -6,6 +6,7 @@ import io.circe.parser.decode
 import io.cucumber.core.cli.Main
 
 import java.io.{InputStream, OutputStream}
+import java.nio.file.{Files, Paths}
 import scala.io.Source
 
 class Lambda extends RequestStreamHandler {
@@ -23,6 +24,6 @@ class Lambda extends RequestStreamHandler {
           throw new Exception("Tests have failed")
         }
     }
-
+    output.write(Files.readAllBytes(Paths.get("/tmp/output.log")))
   }
 }

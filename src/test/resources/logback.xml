@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
   <root level="debug">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+      <file>/tmp/output.log</file>
+      <append>true</append>
+    </appender>
     <appender-ref ref="STDOUT"/>
   </root>
   <logger name="org.apache" level="DEBUG"/>

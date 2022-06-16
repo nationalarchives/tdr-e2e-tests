@@ -58,7 +58,7 @@ jobs:
       - id: start-ecs
         run: |
           pip install boto3
-          python .github/scripts/start_ecs_task.py
+          python .github/scripts/start_ecs_task.py ${{ github.event.inputs.environment }}
   run-e2e-tests:
     runs-on: ubuntu-latest
     needs:

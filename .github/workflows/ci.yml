@@ -93,6 +93,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TestRunECSTaskRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: StopECS
+      - uses: actions/checkout@v3
       - run: |
           pip install boto3
           python .github/scripts/stop_ecs_task.py ${{ github.event.inputs.environment }} ${{ needs.setup-e2e-tests.outputs.task-id }}

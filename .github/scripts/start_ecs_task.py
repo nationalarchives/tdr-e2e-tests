@@ -14,8 +14,8 @@ subnets = [subnet['SubnetId'] for subnet in ec2_client.describe_subnets(Filters=
     {
         'Name': 'tag:Name',
         'Values': [
-            'tdr-private-subnet-0-' + stage,
-            'tdr-private-subnet-1-' + stage,
+            'tdr-efs-private-subnet-backend-checks-efs-0-' + stage,
+            'tdr-efs-private-subnet-backend-checks-efs-1-' + stage
         ]
     },
 ])['Subnets']]

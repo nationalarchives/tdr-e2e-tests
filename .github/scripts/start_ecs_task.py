@@ -5,7 +5,7 @@ stage = sys.argv[1]
 browser = sys.argv[2].lower()
 client = boto3.client('ecs')
 ec2_client = boto3.client("ec2")
-cluster = f"file_format_build_{stage}"
+cluster = f"consignmentapi_{stage}"
 task = f"selenium-grid-{browser}-{stage}"
 security_groups = ec2_client.describe_security_groups()['SecurityGroups']
 filtered_security_groups = list(filter(lambda sg: sg['GroupName'] == "tdr-lambda-signed_cookies", security_groups))

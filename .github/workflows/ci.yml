@@ -86,7 +86,7 @@ jobs:
       - name: Run Tests
         run: |
           pip install boto3
-          python .github/scripts/invoke_lambda.py ${{ github.event.inputs.environment }} ${{ matrix.file }} ${{ needs.setup-e2e-tests.outputs.node-ip }} ${{ github.event.inputs.browser }}
+          python .github/scripts/invoke_lambda.py ${{ github.event.inputs.environment }} ${{ matrix.file }} 10.0.0.28 ${{ github.event.inputs.browser }}
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

@@ -165,7 +165,7 @@ class Steps extends ScalaDsl with EN {
 
   And("^the user clicks on the (.*) button") {
     button: String =>
-      new WebDriverWait(webDriver, 30).until(
+      new WebDriverWait(webDriver, Duration.ofSeconds(30)).until(
         (driver: WebDriver) => webDriver.findElement(By.linkText(button)).click()
       )
   }
@@ -176,7 +176,11 @@ class Steps extends ScalaDsl with EN {
   }
 
   Then("^the logged out user should be on the login page") {
+    new WebDriverWait(webDriver, Duration.ofSeconds(30)).until((driver: WebDriver) =>
+      driver.getCurrentUrl.startsWith(s"$authUrl")
+    )
     val currentUrl: String = webDriver.getCurrentUrl
+
     Assert.assertTrue(doesNotMatchExpected(currentUrl, "login"), currentUrl.startsWith(s"$authUrl"))
   }
 
@@ -190,7 +194,7 @@ class Steps extends ScalaDsl with EN {
 
   Then("^the user should be on the (.*) page") {
     page: String =>
-      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(30)).until((driver: WebDriver) => {
         val currentUrl: String = webDriver.getCurrentUrl
         currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page)
       })
@@ -202,7 +206,7 @@ class Steps extends ScalaDsl with EN {
   Then("^the user should be on a page with (.*) and a consignmentId in the URL") {
     page: String =>
       val nonConsignmentIds = Set("judgment", "consignment", "nationalarchives.gov.uk")
-      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, Duration.ofSeconds(30)).until((driver: WebDriver) => {
         val currentUrl: String = webDriver.getCurrentUrl
         val secondFromLastElementInUrl = currentUrl.split("/").takeRight(2).head
         // Checking that the consignmentId is available in the url. If 2nd from last element does not contain

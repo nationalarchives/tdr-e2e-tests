@@ -30,7 +30,7 @@ object StepsUtility {
   }
 
   def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
-    new WebDriverWait(webDriver, 30).until(
+    new WebDriverWait(webDriver, Duration.ofSeconds(30)).until(
       (driver: WebDriver) => {
         val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
         val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))

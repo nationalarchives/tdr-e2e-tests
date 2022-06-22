@@ -37,8 +37,8 @@ object DriverUtility {
       case "Chrome" => chromeOptions
       case "Firefox" => firefoxOptions
     }
-    val url: String = sys.env("SELENIUM_URL")
-    val remoteWebDriver = new RemoteWebDriver(new URL(url), options)
+    val nodeUrl = System.getProperty("selenium.node.url")
+    val remoteWebDriver = new RemoteWebDriver(new URL(nodeUrl), options)
 
     remoteWebDriver.setFileDetector(new LocalFileDetector())
     remoteWebDriver

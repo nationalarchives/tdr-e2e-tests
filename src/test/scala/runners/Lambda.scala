@@ -10,13 +10,14 @@ import java.nio.file.{Files, Paths}
 import scala.io.Source
 
 class Lambda extends RequestStreamHandler {
-  case class Filter(feature: String, browser: String)
+  case class Filter(feature: String, nodeUrl: String, browser: String)
 
   override def handleRequest(input: InputStream, output: OutputStream, context: Context): Unit = {
     val inputString = Source.fromInputStream(input).mkString
     decode[Filter](inputString) match {
       case Left(_) => throw new Exception("No feature file name provided")
       case Right(filter) =>
+        System.setProperty("selenium.node.url", filter.nodeUrl)
         System.setProperty("browser", filter.browser)
         val exitStatus = Main.run(s"classpath:features/${filter.feature}")
         if(exitStatus != 0x0) {

@@ -5,7 +5,7 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import io.cucumber.core.cli.Main
 
-import java.io.{InputStream, OutputStream}
+import java.io.{ByteArrayInputStream, InputStream, OutputStream}
 import java.nio.file.{Files, Paths}
 import scala.io.Source
 
@@ -25,3 +25,7 @@ class Lambda extends RequestStreamHandler {
     }
   }
 }
+//object Lambda extends App {
+//  val i = new ByteArrayInputStream("""{"feature": "Series.feature", "browser" : "Firefox"}""".getBytes())
+//  new Lambda().handleRequest(i, null, null)
+//}

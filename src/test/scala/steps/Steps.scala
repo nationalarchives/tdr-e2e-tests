@@ -14,7 +14,6 @@ import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
-//import org.scalatest.Matchers
 
 import java.nio.file.Paths
 import java.time.Duration
@@ -24,7 +23,7 @@ import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN {
-  var webDriver: WebDriver = _
+  var webDriver: WebDriver = initDriver
   var userId: String = ""
   var userType: String = ""
   var differentUserId: String = ""
@@ -47,9 +46,6 @@ class Steps extends ScalaDsl with EN {
   val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
   val checksumValue = "checksum"
 
-  Before { scenario : Scenario =>
-    webDriver = initDriver
-  }
 
   After { scenario : Scenario =>
     webDriver.quit()

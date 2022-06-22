@@ -40,10 +40,13 @@ class Steps extends ScalaDsl with EN {
   val email: String = s"${RandomUtility.randomString()}@testSomething.com"
   val testfileDir: String = configuration.getString("testfiles.dir")
   val differentEmail: String = s"${RandomUtility.randomString()}@testSomething.com"
+  val invalidEmail: String = "dgfhfdgjhgfj"
   val password: String = RandomUtility.randomString(10)
   val differentPassword: String = RandomUtility.randomString(10)
+  val invalidPassword: String = "fdghfdgh"
   val userCredentials: UserCredentials = UserCredentials(email, password)
   val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
+  val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
 
 
@@ -147,11 +150,7 @@ class Steps extends ScalaDsl with EN {
   }
 
   And("^the logged out user enters invalid credentials") {
-    val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
-    val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))
-
-    userNameElement.sendKeys("dgfhfdgjhgfj")
-    passwordElement.sendKeys("fdghfdgh")
+    StepsUtility.enterUserCredentials(webDriver, invalidUserCredentials)
   }
 
   When("^the logged in user navigates to the (.*) page") {
@@ -166,7 +165,9 @@ class Steps extends ScalaDsl with EN {
 
   And("^the user clicks on the (.*) button") {
     button: String =>
-      webDriver.findElement(By.linkText(button)).click()
+      new WebDriverWait(webDriver, 30).until(
+        (driver: WebDriver) => webDriver.findElement(By.linkText(button)).click()
+      )
   }
 
   Then("^the (.*) button is not displayed on the page") {
@@ -189,6 +190,10 @@ class Steps extends ScalaDsl with EN {
 
   Then("^the user should be on the (.*) page") {
     page: String =>
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+        val currentUrl: String = webDriver.getCurrentUrl
+        currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page)
+      })
       val currentUrl: String = webDriver.getCurrentUrl
 
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
@@ -196,9 +201,18 @@ class Steps extends ScalaDsl with EN {
 
   Then("^the user should be on a page with (.*) and a consignmentId in the URL") {
     page: String =>
+      val nonConsignmentIds = Set("judgment", "consignment", "nationalarchives.gov.uk")
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+        val currentUrl: String = webDriver.getCurrentUrl
+        val secondFromLastElementInUrl = currentUrl.split("/").takeRight(2).head
+        // Checking that the consignmentId is available in the url. If 2nd from last element does not contain
+        // "judgment", "consignment" or "nationalarchives.gov.uk", then it's probably the consignmentId
+        !nonConsignmentIds.exists(notConsignmentId => secondFromLastElementInUrl.contains(notConsignmentId))
+        })
       val currentUrl: String = webDriver.getCurrentUrl
       val consignmentIdAsString = currentUrl.split("/").takeRight(2).head
       consignmentId = UUID.fromString(consignmentIdAsString)
+
       Assert.assertTrue(doesNotMatchExpected(currentUrl, page), currentUrl.startsWith(s"$baseUrl/$page") || currentUrl.endsWith(page))
   }
 

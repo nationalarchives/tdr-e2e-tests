@@ -1,9 +1,8 @@
 package helpers.drivers
 
 import com.typesafe.config.{Config, ConfigFactory}
-import org.openqa.selenium.chrome.{ChromeDriver, ChromeOptions}
-import org.openqa.selenium.firefox.{FirefoxDriver, FirefoxOptions}
-import org.openqa.selenium.html5.WebStorage
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.remote.{LocalFileDetector, RemoteWebDriver}
 
 import java.net.URL
@@ -37,8 +36,8 @@ object DriverUtility {
       case "Chrome" => chromeOptions
       case "Firefox" => firefoxOptions
     }
-    val nodeUrl = System.getProperty("selenium.node.url")
-    val remoteWebDriver = new RemoteWebDriver(new URL(nodeUrl), options)
+    val nodeIp = System.getProperty("selenium.node.ip")
+    val remoteWebDriver = new RemoteWebDriver(new URL(s"http://$nodeIp:4444"), options)
 
     remoteWebDriver.setFileDetector(new LocalFileDetector())
     remoteWebDriver

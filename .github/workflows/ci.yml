@@ -75,8 +75,8 @@ jobs:
           role-session-name: UpdateWAF
       - name: Run Tests
         run: |
-          pip install boto3
-          python .github/scripts/invoke_lambda.py ${{ github.event.inputs.environment }} ${{ matrix.file }} ${{ github.event.inputs.browser }}
+          aws lambda invoke --cli-read-timeout 0 --function-name tdr-e2e-tests-${{ github.event.inputs.environment }} --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "browser": "${{ github.event.inputs.browser }}" }' out > response
+          ! jq -e '.FunctionError' response
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

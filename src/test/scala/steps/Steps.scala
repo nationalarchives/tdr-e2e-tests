@@ -142,6 +142,14 @@ class Steps extends ScalaDsl with EN with Matchers {
     page: String =>
       loadPage(page)
       StepsUtility.userLogin(webDriver, userCredentials)
+      val pageNameInUrl = page.toLowerCase.replaceAll(" ", "-")
+
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+        val currentUrl: String = webDriver.getCurrentUrl
+        currentUrl.contains(pageNameInUrl)
+      })
+      val currentUrl: String = webDriver.getCurrentUrl
+      Assert.assertTrue(doesNotMatchExpected(currentUrl, s"the url of the $page"), currentUrl.contains(pageNameInUrl))
   }
 
   When("^the user navigates to TDR Start Page") {

@@ -67,6 +67,7 @@ jobs:
         run: |
           pip install boto3
           python .github/scripts/start_ecs_task.py ${{ github.event.inputs.environment }} ${{ github.event.inputs.browser }}
+          sleep 15
   run-e2e-tests:
     runs-on: ubuntu-latest
     needs:
@@ -102,5 +103,6 @@ jobs:
           role-session-name: StopECS
       - uses: actions/checkout@v3
       - run: |
+          sleep 30
           pip install boto3
           python .github/scripts/stop_ecs_task.py ${{ github.event.inputs.environment }} ${{ needs.setup-e2e-tests.outputs.task-id }}

@@ -86,7 +86,7 @@ jobs:
           role-session-name: UpdateWAF
       - name: Run Tests
         run: |
-          aws lambda invoke --cli-read-timeout 0 --function-name tdr-e2e-tests-${{ github.event.inputs.environment }} --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "browser": "${{ github.event.inputs.browser }}", "nodeIp": "${{ needs.setup-e2e-tests.outputs.node-ip }}" }' out > response
+          aws lambda invoke --cli-read-timeout 370 --function-name tdr-e2e-tests-${{ github.event.inputs.environment }} --cli-binary-format raw-in-base64-out --payload '{ "feature": "${{ matrix.file }}", "browser": "${{ github.event.inputs.browser }}", "nodeIp": "${{ needs.setup-e2e-tests.outputs.node-ip }}" }' out > response
           ! jq -e '.FunctionError' response
   send-messages:
     runs-on: ubuntu-latest

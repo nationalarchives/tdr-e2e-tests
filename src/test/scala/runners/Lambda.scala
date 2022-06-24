@@ -17,6 +17,7 @@ class Lambda extends RequestStreamHandler {
     decode[Filter](inputString) match {
       case Left(_) => throw new Exception("No feature file name provided")
       case Right(filter) =>
+        println(s"Running tests for ${filter.feature} in ${filter.browser} on IP ${filter.nodeIp}")
         System.setProperty("selenium.node.ip", filter.nodeIp)
         System.setProperty("browser", filter.browser)
         val exitStatus = Main.run(s"classpath:features/${filter.feature}")

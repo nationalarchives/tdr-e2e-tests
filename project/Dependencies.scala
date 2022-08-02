@@ -4,12 +4,12 @@ object Dependencies {
   private val awsSdkVersion = "2.17.162"
   private val circeVersion = "0.14.2"
   private val cucumberCoreVersion = "7.5.0"
-  private val cucumberScalaVersion = "8.5.1"
+  private val cucumberScalaVersion = "8.6.0"
   private val cucumberJUnitVersion = "7.5.0"
   private val keycloakVersion = "18.0.2"
   private val softwareMillVersion = "2.3.0"
 
-  lazy val tdrGraphQlClient    = "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.45"
+  lazy val tdrGraphQlClient    = "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.46"
   lazy val scalaTestPlusPlay   = "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"
   lazy val keycloakCore        = "org.keycloak" % "keycloak-core" % keycloakVersion
   lazy val keycloakAdminClient = "org.keycloak" % "keycloak-admin-client" % keycloakVersion

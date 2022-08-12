@@ -359,6 +359,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   When("^the user selects yes to all transfer agreement checks") {
+    new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+      webDriver.findElement(By.id("publicRecord"))
+      webDriver.findElement(By.id("crownCopyright"))
+      webDriver.findElement(By.id("english"))
+    })
     val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
     val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
     val recordsAllEnglish = webDriver.findElement(By.id("english"))
@@ -368,6 +373,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user confirms all the records are open") {
+    new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+      webDriver.findElement(By.id("openRecords"))
+    })
+
     val openRecords = webDriver.findElement(By.id("openRecords"))
     openRecords.click()
   }

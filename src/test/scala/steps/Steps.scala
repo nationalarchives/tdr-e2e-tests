@@ -352,6 +352,10 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   When("^the user selects yes for all checks except \"The records are all English\"") {
+    new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+      val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
+      val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
+    })
     val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
     val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
     recordsAllPublicRecords.click()

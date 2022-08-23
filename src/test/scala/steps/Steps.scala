@@ -301,6 +301,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user will see a form error message \"(.*)\"") {
     formErrorMessage: String =>
       val selector = ".govuk-error-message"
+      new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+        webDriver.findElement(By.cssSelector(selector))
+      })
       val errorElement = webDriver.findElement(By.cssSelector(selector))
       Assert.assertNotNull(elementMissingMessage(selector), errorElement)
       Assert.assertEquals(s"Error:\n" + formErrorMessage, errorElement.getText)

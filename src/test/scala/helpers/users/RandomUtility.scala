@@ -14,6 +14,7 @@ object RandomUtility {
       randomString = RandomStringUtils.randomAlphanumeric(length)
     }
     while (!checkPassword(randomString))
+    randomString
   }
 
   def checkPassword(s: String): Boolean = {

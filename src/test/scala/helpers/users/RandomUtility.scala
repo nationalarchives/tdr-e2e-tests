@@ -3,16 +3,18 @@ package helpers.users
 import org.apache.commons.lang3.RandomStringUtils
 
 import java.util.regex.Pattern
+import scala.annotation.tailrec
 
 object RandomUtility {
 
+  @tailrec
   def randomString(length: Int = 8): String = {
-    var randomString = ""
-    do {
-      randomString = RandomStringUtils.randomAlphanumeric(length)
+    val stringToCheck = RandomStringUtils.randomAlphanumeric(length)
+    if(checkPassword(stringToCheck)) {
+      stringToCheck
+    } else {
+      randomString(length)
     }
-    while (!checkPassword(randomString))
-    randomString
   }
 
   def checkPassword(s: String): Boolean = {

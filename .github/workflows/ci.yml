@@ -47,7 +47,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRGitHubActionsGetE2ESecretsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRGithubActionsGetE2ESecretsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: GetKeycloakSecrets
       - id: get-keycloak-secrets

@@ -26,8 +26,6 @@ jobs:
       files: ${{ steps.generate-files.outputs.files }}
       environment: ${{ steps.set-secret-names.outputs.environment }}
       account_number_secret: ${{ steps.set-secret-names.outputs.account_number_secret }}
-      user_admin_secret: ${{ steps.set-secret-names.outputs.user_admin_secret }}
-      backend_checks_secret: ${{ steps.set-secret-names.outputs.backend_checks_secret }}
       title_environment: ${{ steps.set-secret-names.outputs.title_environment }}
       is_pr: ${{ steps.set-secret-names.outputs.is_pr }}
       last_status: ${{ steps.get-last-status.outputs.last_status }}
@@ -62,6 +60,14 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRGithubActionsGetE2ESecretsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
+          aws-region: eu-west-2
+          role-session-name: GetKeycloakSecrets
+      - id: get-keycloak-secrets
+        run: pip install boto3 && python .github/scripts/get_keycloak_secrets.py ${{ github.event.inputs.environment }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
@@ -76,7 +82,7 @@ jobs:
       - name: Run Tests
         env:
           DRIVER_LOCATION: ${{ needs.setup-e2e-tests.outputs.driver }}
-        run: sbt test -Daccount.number=${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ secrets[needs.setup-e2e-tests.outputs.user_admin_secret] }} -Dkeycloak.backendchecks.secret=${{ secrets[needs.setup-e2e-tests.outputs.backend_checks_secret] }} -Dbrowser=${{ needs.setup-e2e-tests.outputs.browser }} -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
+        run: sbt test -Daccount.number=${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ steps.get-keycloak-secrets.outputs.user_admin_secret }} -Dkeycloak.backendchecks.secret=${{ steps.get-keycloak-secrets.outputs.backend_checks_secret }} -Dbrowser=${{ needs.setup-e2e-tests.outputs.browser }} -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
       - name: Configure AWS credentials
         if: ${{ always() }}
         uses: aws-actions/configure-aws-credentials@v1

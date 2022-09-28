@@ -16,11 +16,13 @@ import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
 import org.scalatest.Matchers
 
+import java.io.File
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
+import scala.io.Source
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
@@ -75,6 +77,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val pageWithConsignment = page match {
       case "homepage" | "some-page" => s"$baseUrl/$page"
       case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$page" else s"$baseUrl/$page"
+      case "Download Metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/${page.toLowerCase.replaceAll(" ", "-")}/"
       case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)
@@ -354,6 +357,19 @@ class Steps extends ScalaDsl with EN with Matchers {
       button.click()
   }
 
+  And("^the user clicks the (.*) link") {
+    linkName: String =>
+      val linkClass = linkName.toLowerCase.replaceAll(" ", "-")
+      val link = webDriver.findElement(By.cssSelector(s"a.$linkClass"))
+      link.click()
+      val client = GraphqlUtility(userCredentials)
+      val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
+
+      new WebDriverWait(webDriver, 180).until((_: WebDriver) => {
+        new File(s"/tmp/$consignmentRef-metadata.csv").exists()
+      })
+  }
+
   When("^the user selects yes for all checks except \"The records are all English\"") {
     new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
       val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
@@ -474,6 +490,23 @@ class Steps extends ScalaDsl with EN with Matchers {
         case "zip file" => client.createFfidMetadata(id, zipFilePuid)
       }
     }
+  }
+
+  And("^the user has created additional metadata") {
+    val client = GraphqlUtility(userCredentials)
+    client.createMetadata(consignmentId)
+  }
+
+  Then("^the metadata csv will have the correct columns for (.*) files") {
+    numberOfFiles: Int =>
+      val client = GraphqlUtility(userCredentials)
+      val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
+      val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
+      val rows = source.getLines().toList
+
+      Assert.assertEquals(rows.size, numberOfFiles + 1)
+      //No columns are set for export at the moment so the only column you get is the file name one
+      Assert.assertEquals(rows.head.split(",").length, 1)
   }
 
   And("^an existing upload of (\\d+) files") {
@@ -683,5 +716,15 @@ class Steps extends ScalaDsl with EN with Matchers {
       val expectedText = pageMessage
       Assert.assertTrue(doesNotContain(summaryText, expectedText), summaryText.contains(expectedText))
     }
+  }
+
+  Then("^the download metadata page elements are loaded") {
+    val href = webDriver.findElement(By.cssSelector("a.download-metadata")).getAttribute("href")
+    val buttonText = webDriver.findElement(By.cssSelector("a.govuk-button")).getText
+    val iconUrl = webDriver.findElement(By.cssSelector("img.thumbnail")).getAttribute("src")
+
+    Assert.assertEquals(s"$baseUrl/consignment/$consignmentId/additional-metadata/download-metadata/csv", href)
+    Assert.assertEquals("Continue", buttonText)
+    Assert.assertEquals(s"$baseUrl/assets/images/csv-icon.png", iconUrl)
   }
 }

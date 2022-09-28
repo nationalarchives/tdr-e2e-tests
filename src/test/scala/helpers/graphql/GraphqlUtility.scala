@@ -17,7 +17,7 @@ import graphql.codegen.types._
 import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.UserCredentials
 
-import java.nio.file.Path
+import java.nio.file.{Path, Paths}
 
 class GraphqlUtility(userCredentials: UserCredentials) {
   val standardConsignmentType = "standard"
@@ -73,6 +73,21 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     )
     val input = AddFileAndMetadataInput(consignmentId, metadataInput, None)
     client.result(afam.document, afam.Variables(input)).data.get.addFilesAndMetadata
+  }
+
+  def createMetadata(consignmentId: UUID): Unit = {
+    val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/testfile1")
+    val client = new BackendApiClient[afm.Data, afm.Variables]
+    val matchIds = List(MatchIdInfo("checksum", path, 1))
+    val metadataProperties = List("FoiExemptionCode", "ClosurePeriod", "TitleClosed")
+    addFilesAndMetadata(consignmentId, "parent", matchIds).map(row => {
+      metadataProperties.map(property => {
+        val input = AddFileMetadataWithFileIdInput(property, row.fileId, s"$property-value")
+        client.sendRequest(afm.document, afm.Variables(input))
+      })
+
+    })
+
   }
 
   def createAVMetadata(fileId: UUID, result: String = ""): Unit = {

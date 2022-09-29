@@ -16,11 +16,13 @@ import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
 import org.scalatest.Matchers
 
+import java.io.File
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
+import scala.io.Source
 import scala.jdk.CollectionConverters._
 
 class Steps extends ScalaDsl with EN with Matchers {
@@ -75,6 +77,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val pageWithConsignment = page match {
       case "homepage" | "some-page" => s"$baseUrl/$page"
       case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$page" else s"$baseUrl/$page"
+      case "Download Metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/${page.toLowerCase.replaceAll(" ", "-")}/"
       case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)
@@ -354,6 +357,19 @@ class Steps extends ScalaDsl with EN with Matchers {
       button.click()
   }
 
+  And("^the user clicks the (.*) link") {
+    linkName: String =>
+      val linkClass = linkName.toLowerCase.replaceAll(" ", "-")
+      val link = webDriver.findElement(By.cssSelector(s"a.$linkClass"))
+      link.click()
+      val client = GraphqlUtility(userCredentials)
+      val consignmentRef = client.getConsignmentReference(consignmentId)
+
+      new WebDriverWait(webDriver, 180).until((_: WebDriver) => {
+        new File(s"/tmp/$consignmentRef-metadata.csv").exists()
+      })
+  }
+
   When("^the user selects yes for all checks except \"The records are all English\"") {
     new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
       val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
@@ -474,6 +490,32 @@ class Steps extends ScalaDsl with EN with Matchers {
         case "zip file" => client.createFfidMetadata(id, zipFilePuid)
       }
     }
+  }
+
+  And("^the user has created additional metadata") {
+    val client = GraphqlUtility(userCredentials)
+    client.createMetadata(consignmentId)
+  }
+
+  Then("^the metadata csv will have the correct columns for (.*) files") {
+    numberOfFiles: Int =>
+      val client = GraphqlUtility(userCredentials)
+      val consignmentRef = client.getConsignmentReference(consignmentId)
+      val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
+      val rows = source.getLines().toList
+      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"E2E_tests/original/path$num,true,2022-09-28 14:31:17.746,true,1")
+
+      Assert.assertEquals(rows.size, numberOfFiles + 1)
+      val customMetadata = client.getCustomMetadata(consignmentId).filter(_.allowExport).sortBy(_.exportOrdinal.getOrElse(Int.MaxValue))
+      val headerRow = rows.head.split(",")
+      Assert.assertEquals(headerRow.length, customMetadata.size + 1)
+      Assert.assertTrue(filterCsvRows(0).isDefined)
+      Assert.assertTrue(filterCsvRows(1).isDefined)
+      headerRow.tail.zipWithIndex.map {
+        case (title, idx) =>
+          val customMetadataName = customMetadata(idx).fullName.getOrElse("")
+          Assert.assertEquals(customMetadataName, title)
+      }
   }
 
   And("^an existing upload of (\\d+) files") {
@@ -683,5 +725,15 @@ class Steps extends ScalaDsl with EN with Matchers {
       val expectedText = pageMessage
       Assert.assertTrue(doesNotContain(summaryText, expectedText), summaryText.contains(expectedText))
     }
+  }
+
+  Then("^the download metadata page elements are loaded") {
+    val href = webDriver.findElement(By.cssSelector("a.download-metadata")).getAttribute("href")
+    val buttonText = webDriver.findElement(By.cssSelector("a.govuk-button")).getText
+    val svgClass = webDriver.findElement(By.cssSelector("svg")).getAttribute("class")
+
+    Assert.assertEquals(s"$baseUrl/consignment/$consignmentId/additional-metadata/download-metadata/csv", href)
+    Assert.assertEquals("Continue", buttonText)
+    Assert.assertEquals("thumbnail-icon", svgClass)
   }
 }

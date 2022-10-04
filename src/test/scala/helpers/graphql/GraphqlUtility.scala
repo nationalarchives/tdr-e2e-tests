@@ -83,7 +83,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(gcs.document, gcs.Variables(consignmentId)).data.get.getConsignment.get.consignmentReference
   }
 
-  def createMetadata(consignmentId: UUID): Unit = {
+  def createCustomMetadata(consignmentId: UUID): Unit = {
     val client = new UserApiClient[abfm.Data, abfm.Variables](userCredentials)
     val metadataProperties = getCustomMetadata(consignmentId).filter(_.allowExport)
     val files = getConsignmentExport(consignmentId).get.getConsignment.get.files.filter(!_.fileType.contains("Folder"))

@@ -20,9 +20,8 @@ Feature: Download Metadata page
     Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
 
   Scenario: Download metadata page is accessed by a judgment user
-    Given A logged out judgment user
+    Given A logged in judgment user
     And an existing judgment consignment for transferring body MOCK1
-    And a user who did not create the consignment
     When the logged in user navigates to the Download Metadata page
     Then the user should see a general service error "Page not found"
 

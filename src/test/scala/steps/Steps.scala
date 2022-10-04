@@ -494,7 +494,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user has created additional metadata") {
     val client = GraphqlUtility(userCredentials)
-    client.createMetadata(consignmentId)
+    client.createCustomMetadata(consignmentId)
   }
 
   Then("^the metadata csv will have the correct columns for (.*) files") {

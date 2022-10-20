@@ -553,7 +553,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the (.*) should not be visible") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 180).until((driver: WebDriver) => {
+      new WebDriverWait(webDriver, 10).until((driver: WebDriver) => {
         val isNotVisible = StepsUtility.elementIsHidden(id, webDriver)
         isNotVisible
       })

@@ -39,19 +39,14 @@ object StepsUtility {
     )
   }
 
-  def elementHasClassHide(id: String, webDriver: WebDriver): Boolean = {
+  def elementIsHidden(id: String, webDriver: WebDriver): Boolean = {
     val element = webDriver.findElement(By.cssSelector(s"#$id"))
-    element.getAttribute("class").contains("hide")
+    element.getAttribute("class").contains("hide") || Option(element.getAttribute("hidden")).isDefined
   }
 
   def elementHasClassDisabled(id: String, webDriver: WebDriver): Boolean = {
     val element = webDriver.findElement(By.cssSelector(s"#$id"))
     element.getAttribute("class").contains("govuk-button--disabled")
-  }
-
-  def elementHasAttributeHidden(id: String, webDriver: WebDriver): Boolean = {
-    val element = webDriver.findElement(By.cssSelector(s"#$id"))
-    Option(element.getAttribute("hidden")).isDefined
   }
 
   def calculateTestFileChecksum(filePath: Path): String = {

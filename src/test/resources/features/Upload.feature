@@ -1,7 +1,7 @@
 #Feature will not work with chromedriver in headless mode due to following bug: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
 
 Feature: Upload
-  Scenario: The progress bar is hidden before file upload
+  Scenario: The success message and progress bar are hidden before file selection/upload
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing private beta transfer agreement
@@ -9,6 +9,16 @@ Feature: Upload
     And the user is logged in on the upload page
     Then the user will be on a page with the title "Upload your records"
     Then the upload progress should not be visible
+    And the success and removal message container should not be visible
+
+  Scenario: The success message should be displayed when a folder is selected
+    Given A logged out standard user
+    And an existing standard consignment for transferring body MOCK1
+    And an existing private beta transfer agreement
+    And an existing compliance transfer agreement
+    And the user is logged in on the upload page
+    When the user selects directory containing: testfile1
+    Then the success and removal message container should be visible
 
   Scenario: The progress bar is shown after file upload
     Given A logged out standard user
@@ -60,6 +70,7 @@ Feature: Upload
     And an existing judgment consignment for transferring body MOCK1
     And the user is logged in on the upload page
     When the user selects the file: testdocxfile.docx
+    And the success and removal message container should be visible
     And the user clicks the continue button
     Then the user will be on a page with the title "Uploading judgment"
     And the upload progress should be visible

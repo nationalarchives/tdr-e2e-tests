@@ -21,7 +21,8 @@ Feature: Standard Full user journey
     And the user clicks the continue button
     Then the user will be on a page with the title "Upload your records"
     When the user selects directory containing: testfile1
-    And the user clicks the Start upload button
+    Then the success and removal message container should be visible
+    When the user clicks the Start upload button
     Then the user will be on a page with the title "Uploading records"
     And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"

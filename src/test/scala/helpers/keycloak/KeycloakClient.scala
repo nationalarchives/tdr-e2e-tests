@@ -25,7 +25,10 @@ object KeycloakClient {
       .auth.basic(userAdminClient, userAdminSecret)
       .body(Map("grant_type" -> "client_credentials"))
       .response(asJson[AuthResponse])
-      .send()
+      .send(backend)
+    println(">>>>>Auth - " + authUrl)
+    println(">>>>>userAdminClient - " + userAdminClient)
+    println(">>>>>userAdminSecret - " + userAdminSecret)
 
     response.body match {
       case Right(body) =>

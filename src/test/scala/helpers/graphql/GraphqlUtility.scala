@@ -7,11 +7,14 @@ import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
+import graphql.codegen.AddBulkFileMetadata.{addBulkFileMetadata => abfm}
 import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPrivateBeta => atapb}
 import graphql.codegen.AddTransferAgreementCompliance.{addTransferAgreementCompliance => atac}
+import graphql.codegen.GetCustomMetadata.{customMetadata => cm}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
+import graphql.codegen.GetConsignmentSummary.{getConsignmentSummary => gcs}
 import graphql.codegen.UpdateConsignmentSeriesId.{updateConsignmentSeriesId => ucs}
 import graphql.codegen.types._
 import helpers.graphql.GraphqlUtility.MatchIdInfo
@@ -73,6 +76,37 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     )
     val input = AddFileAndMetadataInput(consignmentId, metadataInput, None)
     client.result(afam.document, afam.Variables(input)).data.get.addFilesAndMetadata
+  }
+
+  def getConsignmentReference(consignmentId: UUID): String = {
+    val client = new UserApiClient[gcs.Data, gcs.Variables](userCredentials)
+    client.result(gcs.document, gcs.Variables(consignmentId)).data.get.getConsignment.get.consignmentReference
+  }
+
+  def createCustomMetadata(consignmentId: UUID): Unit = {
+    val client = new UserApiClient[abfm.Data, abfm.Variables](userCredentials)
+    val metadataProperties = getCustomMetadata(consignmentId)
+      .filter(_.allowExport)
+      .filter(cm => !List("ClientSideOriginalFilepath", "Filename").contains(cm.name))
+    val files = getConsignmentExport(consignmentId).get.getConsignment.get.files.filter(!_.fileType.contains("Folder"))
+    val fileIds =  files.map(_.fileId)
+    val updateMetadata = metadataProperties.map(prop => {
+      val value = prop.dataType match {
+        case DataType.DateTime => "2022-09-28 14:31:17.746"
+        case DataType.Text => s"${prop.name}-value"
+        case DataType.Boolean => "true"
+        case _ => "1"
+      }
+      UpdateFileMetadataInput(filePropertyIsMultiValue = true, prop.name, value)
+    })
+    val input = UpdateBulkFileMetadataInput(consignmentId, fileIds, updateMetadata)
+    client.result(abfm.document, abfm.Variables(input))
+  }
+
+  def getCustomMetadata(consignmentId: UUID): List[cm.CustomMetadata] = {
+    val client = new BackendApiClient[cm.Data, cm.Variables]()
+    val variables = cm.Variables(consignmentId)
+    client.sendRequest(cm.document, variables).data.get.customMetadata
   }
 
   def createAVMetadata(fileId: UUID, result: String = ""): Unit = {

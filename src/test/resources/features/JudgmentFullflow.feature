@@ -13,7 +13,8 @@ Feature: Judgment Full user journey
     When the user clicks on the Continue button
     Then the user will be on a page with the title "Upload judgment"
     When the user selects the file: testdocxfile.docx
-    And the user clicks the Start upload button
+    Then the success and removal message container should be visible
+    When the user clicks the Start upload button
     Then the user will be on a page with the title "Uploading judgment"
     Then the user will be on a page with the title "Checking your upload"
     Then the user will be on a page with the title "Results of checks"

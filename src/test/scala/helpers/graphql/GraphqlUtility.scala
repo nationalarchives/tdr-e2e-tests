@@ -85,7 +85,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createCustomMetadata(consignmentId: UUID): Unit = {
     val client = new UserApiClient[abfm.Data, abfm.Variables](userCredentials)
-    val metadataProperties = getCustomMetadata(consignmentId).filter(_.allowExport)
+    val metadataProperties = getCustomMetadata(consignmentId)
+      .filter(_.allowExport)
+      .filter(cm => !List("ClientSideOriginalFilepath", "Filename").contains(cm.name))
     val files = getConsignmentExport(consignmentId).get.getConsignment.get.files.filter(!_.fileType.contains("Folder"))
     val fileIds =  files.map(_.fileId)
     val updateMetadata = metadataProperties.map(prop => {
@@ -95,7 +97,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
         case DataType.Boolean => "true"
         case _ => "1"
       }
-      UpdateFileMetadataInput(prop.name, value)
+      UpdateFileMetadataInput(filePropertyIsMultiValue = true, prop.name, value)
     })
     val input = UpdateBulkFileMetadataInput(consignmentId, fileIds, updateMetadata)
     client.result(abfm.document, abfm.Variables(input))

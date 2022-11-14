@@ -503,15 +503,15 @@ class Steps extends ScalaDsl with EN with Matchers {
       val consignmentRef = client.getConsignmentReference(consignmentId)
       val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
       val rows = source.getLines().toList
-      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"E2E_tests/original/path$num,true,2022-09-28 14:31:17.746,true,1")
+      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28 14:31:17.746,ClosureType-value,2022-09-28 14:31:17.746,1,FoiExemptionCode-value,2022-09-28 14:31:17.746,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28 14:31:17.746,date_range-value,2022-09-28 14:31:17.746,2022-09-28 14:31:17.746,file_name_language-value,file_name_translation-value,file_name_translation_language-value")
 
       Assert.assertEquals(rows.size, numberOfFiles + 1)
       val customMetadata = client.getCustomMetadata(consignmentId).filter(_.allowExport).sortBy(_.exportOrdinal.getOrElse(Int.MaxValue))
       val headerRow = rows.head.split(",")
-      Assert.assertEquals(headerRow.length, customMetadata.size + 1)
+      Assert.assertEquals(headerRow.length, customMetadata.size)
       Assert.assertTrue(filterCsvRows(0).isDefined)
       Assert.assertTrue(filterCsvRows(1).isDefined)
-      headerRow.tail.zipWithIndex.map {
+      headerRow.zipWithIndex.map {
         case (title, idx) =>
           val customMetadataName = customMetadata(idx).fullName.getOrElse("")
           Assert.assertEquals(customMetadataName, title)

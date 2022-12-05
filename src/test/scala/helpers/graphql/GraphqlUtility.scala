@@ -111,20 +111,20 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createAVMetadata(fileId: UUID, result: String = ""): Unit = {
     val client = new BackendApiClient[aav.Data, aav.Variables]
-    val input = AddAntivirusMetadataInput(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", result, System.currentTimeMillis)
+    val input = AddAntivirusMetadataInputValues(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", result, System.currentTimeMillis)
     client.sendRequest(aav.document, aav.Variables(input))
   }
 
   def createBackendChecksumMetadata(fileId: UUID, checksumValue: Option[String]): Unit = {
     val client = new BackendApiClient[afm.Data, afm.Variables]
-    val input = AddFileMetadataWithFileIdInput("SHA256ServerSideChecksum", fileId, checksumValue.getOrElse("checksumValue"))
+    val input = AddFileMetadataWithFileIdInputValues("SHA256ServerSideChecksum", fileId, checksumValue.getOrElse("checksumValue"))
     client.sendRequest(afm.document, afm.Variables(input))
   }
 
   def createFfidMetadata(fileId: UUID, puid: String = "x-fmt/111"): Unit = {
     val client = new BackendApiClient[affm.Data, affm.Variables]
     val ffidInputMatches = FFIDMetadataInputMatches(Some("txt"), "e2e-test-basis", Some(puid))
-    val input = FFIDMetadataInput(
+    val input = FFIDMetadataInputValues(
       fileId,
       "e2e-test-software",
       "e2e-test-software-version",

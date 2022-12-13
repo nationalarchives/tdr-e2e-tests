@@ -77,7 +77,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val pageWithConsignment = page match {
       case "homepage" | "some-page" => s"$baseUrl/$page"
       case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$page" else s"$baseUrl/$page"
-      case "Download Metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/${page.toLowerCase.replaceAll(" ", "-")}/"
+      case "Download Metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/${page.toLowerCase.replaceAll(" ", "-")}"
       case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
     }
     webDriver.get(pageWithConsignment)

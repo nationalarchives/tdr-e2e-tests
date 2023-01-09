@@ -96,8 +96,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   private def findFormErrorMessageOnPage(formType: String, genericErrorMessage: String = "", errorClassName: String): Unit = {
     val formErrorMessages: Seq[String] = formType match {
       case "Final Transfer Confirmation" =>
-        Seq("All records must be confirmed as open before proceeding",
-          "Transferral of legal custody of all records must be confirmed before proceeding")
+        Seq("Transferral of legal custody of all records must be confirmed before proceeding")
     }
     val errorElements: util.List[WebElement] = webDriver.findElements(By.cssSelector(errorClassName))
     Assert.assertNotNull(elementMissingMessage(errorClassName), errorElements)
@@ -393,15 +392,6 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllPublicRecords.click()
     recordsAllCrownCopyright.click()
     recordsAllEnglish.click()
-  }
-
-  And("^the user confirms all the records are open") {
-    new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
-      webDriver.findElement(By.id("openRecords"))
-    })
-
-    val openRecords = webDriver.findElement(By.id("openRecords"))
-    openRecords.click()
   }
 
   And("^the user confirms that DRO has signed off on the records") {

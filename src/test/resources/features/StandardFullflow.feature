@@ -1,5 +1,4 @@
 #Feature will not work with chromedriver in headless mode due to following bug: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
-
 Feature: Standard Full user journey
   Scenario: Full transfer standard workflow
     Given A logged out standard user
@@ -16,8 +15,7 @@ Feature: Standard Full user journey
     When the user selects yes to all transfer agreement checks
     And the user clicks the continue button
     Then the user should be on the transfer-agreement-continued page
-    When the user confirms all the records are open
-    And the user confirms that DRO has signed off on the records
+    When the user selects yes to all transfer agreement continued checks
     And the user clicks the continue button
     Then the user will be on a page with the title "Upload your records"
     When the user selects directory containing: testfile1
@@ -35,8 +33,7 @@ Feature: Standard Full user journey
     And the user should see a banner titled Success
     When the user clicks on the Continue button
     Then the user will be on a page with the title "Confirm transfer"
-    When the user confirms all the records are open
-    And the user confirms that they are transferring legal custody of the records to TNA
+    When the user confirms that they are transferring legal custody of the records to TNA
     And the user clicks the Transfer your records button
     Then the user will be on a page with a panel titled "Transfer complete"
     And the standard transfer export will be complete

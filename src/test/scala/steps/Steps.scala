@@ -96,8 +96,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   private def findFormErrorMessageOnPage(formType: String, genericErrorMessage: String = "", errorClassName: String): Unit = {
     val formErrorMessages: Seq[String] = formType match {
       case "Final Transfer Confirmation" =>
-        Seq("All records must be confirmed as open before proceeding",
-          "Transferral of legal custody of all records must be confirmed before proceeding")
+        Seq("Transferral of legal custody of all records must be confirmed before proceeding")
     }
     val errorElements: util.List[WebElement] = webDriver.findElements(By.cssSelector(errorClassName))
     Assert.assertNotNull(elementMissingMessage(errorClassName), errorElements)
@@ -395,13 +394,18 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllEnglish.click()
   }
 
-  And("^the user confirms all the records are open") {
+  When("^the user selects yes to all transfer agreement continued checks") {
+    val recordsDroAppraisal = webDriver.findElement(By.id("droAppraisalSelection"))
+    val recordsDroSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    val recordsOpenRecords = webDriver.findElement(By.id("openRecords"))
     new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
-      webDriver.findElement(By.id("openRecords"))
+      recordsDroAppraisal
+      recordsDroSensitivity
+      recordsOpenRecords
     })
-
-    val openRecords = webDriver.findElement(By.id("openRecords"))
-    openRecords.click()
+    recordsDroAppraisal.click()
+    recordsDroSensitivity.click()
+    recordsOpenRecords.click()
   }
 
   And("^the user confirms that DRO has signed off on the records") {
@@ -412,7 +416,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user does not confirm DRO sign off for the records") {
+    val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
     val droSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    droAppraisalAndSelection.click()
     droSensitivity.click()
   }
 
@@ -503,7 +509,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       val consignmentRef = client.getConsignmentReference(consignmentId)
       val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
       val rows = source.getLines().toList
-      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28 14:31:17.746,ClosureType-value,2022-09-28 14:31:17.746,1,FoiExemptionCode-value,2022-09-28 14:31:17.746,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28 14:31:17.746,date_range-value,2022-09-28 14:31:17.746,2022-09-28 14:31:17.746,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
+      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28T14:31:17,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,date_range-value,2022-09-28T14:31:17,2022-09-28T14:31:17,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
 
       Assert.assertEquals(rows.size, numberOfFiles + 1)
       val customMetadata = client.getCustomMetadata(consignmentId).filter(_.allowExport).sortBy(_.exportOrdinal.getOrElse(Int.MaxValue))

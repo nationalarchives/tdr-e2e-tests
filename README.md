@@ -159,3 +159,23 @@ Cucumber reports for the test run are available when running locally here: [proj
 The Jenkins cucumber reports plugin (https://plugins.jenkins.io/cucumber-reports/) generates a set of reports after each test run.
 
 The test reports are available via a link "Cucumber reports" on the Jenkins' job home page.
+
+## Troubleshoot
+
+#### Your firefox profile cannot be loaded. It may be missing or inaccessible.
+
+Ubuntu 22.04 uses the snap version of firefox instead of an apt.
+
+* Ensure you are using at least geckodriver 0.32.0 or newer.
+As noted in the [release notes](https://github.com/mozilla/geckodriver/releases) for geckodriver 0.32.0. This issue can now be worked around by using the --profile-root command line option or setting the TMPDIR environment variable to a location that both Firefox and geckodriver have read/write access to e.g.:
+
+```
+% mkdir $HOME/tmp
+% geckodriver --profile-root=~/tmp
+```
+or
+```
+% TMPDIR=$HOME/tmp geckodriver
+```
+Alternatively, geckodriver may be used with a Firefox install that is not packaged inside a sandbox e.g. from mozilla.org.
+Guide on how to [install Firefox via Apt](shorturl.at/ijuZ1).

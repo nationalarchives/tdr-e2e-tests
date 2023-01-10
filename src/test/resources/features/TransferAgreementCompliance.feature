@@ -6,8 +6,7 @@ Feature: Transfer Agreement Continued Page
     And an selected series MOCK1
     And an existing private beta transfer agreement
     And the user is logged in on the Transfer Agreement Continued page
-    When the user confirms all the records are open
-    And the user confirms that DRO has signed off on the records
+    When the user selects yes to all transfer agreement continued checks
     And the user clicks the continue button
     Then the user will be on a page with the title "Upload your records"
 
@@ -17,7 +16,7 @@ Feature: Transfer Agreement Continued Page
     And an selected series MOCK1
     And an existing private beta transfer agreement
     And the user is logged in on the Transfer Agreement Continued page
-    And the user confirms all the records are open
+    And the user selects yes to all transfer agreement continued checks
     And the user does not confirm DRO sign off for the records
     And the user clicks the continue button
     Then the user will see a form error message "Departmental Records Officer (DRO) must have signed off the appraisal and selection decision for records"

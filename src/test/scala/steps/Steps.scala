@@ -394,6 +394,20 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllEnglish.click()
   }
 
+  When("^the user selects yes to all transfer agreement continued checks") {
+    val recordsDroAppraisal = webDriver.findElement(By.id("droAppraisalSelection"))
+    val recordsDroSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    val recordsOpenRecords = webDriver.findElement(By.id("openRecords"))
+    new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
+      recordsDroAppraisal
+      recordsDroSensitivity
+      recordsOpenRecords
+    })
+    recordsDroAppraisal.click()
+    recordsDroSensitivity.click()
+    recordsOpenRecords.click()
+  }
+
   And("^the user confirms that DRO has signed off on the records") {
     val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
     val droSensitivity = webDriver.findElement(By.id("droSensitivity"))

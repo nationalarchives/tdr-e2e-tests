@@ -416,7 +416,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user does not confirm DRO sign off for the records") {
+    val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
     val droSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    droAppraisalAndSelection.click()
     droSensitivity.click()
   }
 

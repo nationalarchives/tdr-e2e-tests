@@ -493,7 +493,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       val consignmentRef = client.getConsignmentReference(consignmentId)
       val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
       val rows = source.getLines().toList
-      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28 14:31:17.746,ClosureType-value,2022-09-28 14:31:17.746,1,FoiExemptionCode-value,2022-09-28 14:31:17.746,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28 14:31:17.746,date_range-value,2022-09-28 14:31:17.746,2022-09-28 14:31:17.746,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
+      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28T14:31:17,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,date_range-value,2022-09-28T14:31:17,2022-09-28T14:31:17,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
 
       Assert.assertEquals(rows.size, numberOfFiles + 1)
       val customMetadata = client.getCustomMetadata(consignmentId).filter(_.allowExport).sortBy(_.exportOrdinal.getOrElse(Int.MaxValue))

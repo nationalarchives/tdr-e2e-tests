@@ -32,6 +32,11 @@ Feature: Standard Full user journey
     Then the user will be on a page with the title "Results of your checks"
     And the user should see a banner titled Success
     When the user clicks on the Continue button
+    Then the user will be on a page with the title "Add, edit or delete metadata"
+    # currently skip adding additional metadata
+    When the user clicks on the Continue button
+    Then the user will be on a page with the title "Download or view metadata"
+    When the user clicks on the Continue button
     Then the user will be on a page with the title "Confirm transfer"
     When the user confirms that they are transferring legal custody of the records to TNA
     And the user clicks the Transfer your records button

@@ -6,7 +6,7 @@ Feature: File Checks Page
     And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And an existing upload of 5 files
-    And 1 of the antivirus scans for the standard transfer have finished
+    And 1 of the antivirus scans have finished
     When the user is logged in on the file checks page
     Then the user will be on a page with the title "Checking your records"
     And the file checks completed banner should not be visible
@@ -18,9 +18,9 @@ Feature: File Checks Page
     And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And an existing upload of 10 files
-    And 2 of the FFID scans for the standard transfer have finished
-    And 5 of the checksum scans for the standard transfer have finished
-    And 8 of the antivirus scans for the standard transfer have finished
+    And 2 of the FFID scans have finished
+    And 5 of the checksum scans have finished
+    And 8 of the antivirus scans have finished
     When the user is logged in on the file checks page
     Then the user will be on a page with the title "Checking your records"
     And the user waits for the checks to complete
@@ -54,7 +54,7 @@ Feature: File Checks Page
     And an existing private beta transfer agreement
     And an existing compliance transfer agreement
     And an existing upload of 1 files
-    And 1 of the antivirus scans for the judgment transfer have finished
+    And 1 of the antivirus scans have finished
     When the logged in user navigates to the file checks page
     Then the user will be on a page with the title "Checking your upload"
 
@@ -65,8 +65,8 @@ Feature: File Checks Page
     And an existing compliance transfer agreement
     And an existing upload of 1 files
     When the logged in user navigates to the file checks page
-    And 1 of the FFID scans for the judgment transfer have finished
-    And 1 of the checksum scans for the judgment transfer have finished
-    And 1 of the antivirus scans for the judgment transfer have finished
+    And 1 of the FFID scans have finished
+    And 1 of the checksum scans have finished
+    And 1 of the antivirus scans have finished
     Then the user will be on a page with the title "Checking your upload"
     Then the user will be on a page with the title "Results of checks"

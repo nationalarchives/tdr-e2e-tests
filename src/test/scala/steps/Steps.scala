@@ -462,20 +462,22 @@ class Steps extends ScalaDsl with EN with Matchers {
     })
   }
 
-  And("^the checksum check has failed") {
+  And("^the (checksum|antivirus|FFID) check has (.*)") {
     val client = GraphqlUtility(userCredentials)
-    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
-    val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-
-    client.createBackendChecksFileStatuses(id, "Success", "Mismatch", "Success")
-  }
-
-  And("^the antivirus check has failed") {
-    val client = GraphqlUtility(userCredentials)
-
-    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
-    val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-    client.createBackendChecksFileStatuses(id, "VirusDetected", "Success", "Success")
+    (checkName: String, result: String) => {
+      val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
+      val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
+      val statusType = checkName.toLowerCase match {
+        case "antivirus" => "Antivirus"
+        case "ffid" => "FFID"
+        case "checksum" => "ChecksumMatch"
+      }
+      val statusValue = result match {
+        case "failed" => "Failed"
+        case "succeeded" => "Succeeded"
+      }
+      client.addFileStatus(id, statusType, statusValue)
+    }
   }
 
   And("^the FFID \"(.*)\" check has failed") {
@@ -483,11 +485,11 @@ class Steps extends ScalaDsl with EN with Matchers {
       val client = GraphqlUtility(userCredentials)
       val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
       val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-      val statusName = checkName match {
+      val statusValue = checkName match {
         case "password protected" =>"PasswordProtected"
         case "zip file" => "Zip"
       }
-      client.createBackendChecksFileStatuses(id, "Success", "Success", statusName)
+      client.addFileStatus(id, "FFID", statusValue)
     }
   }
 
@@ -540,22 +542,17 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^(\\d+) of the (.*) scans for the (.*) transfer have finished") {
+  And("^(\\d+) of the (.*) scans have finished") {
     val client = GraphqlUtility(userCredentials)
-    (filesToProcess: Int, metadataType: String, consignmentType: String) => {
-      val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
-      metadataType match {
-        case "antivirus" =>
-          fileRangeToProcess.foreach(id => client.createAVMetadata(id))
-          filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
-        case "FFID" =>
-          val puid: String = if (consignmentType == "judgment") { "fmt/412" } else { "x-fmt/111" }
-          fileRangeToProcess.foreach(id => client.createFfidMetadata(id, puid))
-          filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
-        case "checksum" =>
-          fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id)))
-          filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
+    (filesToProcess: Int, metadataType: String) => {
+      val statusType = metadataType.toLowerCase match {
+        case "antivirus" => "Antivirus"
+        case "ffid" => "FFID"
+        case "checksum" => "ChecksumMatch"
       }
+      val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
+      fileRangeToProcess.foreach(id => client.addFileStatus(id, statusType, "Success"))
+      filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
     }
   }
 

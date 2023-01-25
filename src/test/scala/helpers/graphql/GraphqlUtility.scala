@@ -4,7 +4,7 @@ import java.time.Instant
 import java.util.UUID
 import graphql.codegen.AddAntivirusMetadata.{addAntivirusMetadata => aav}
 import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
-import graphql.codegen.AddMultipleFileStatuses.{addMultipleFileStatuses => amfs}
+import graphql.codegen.AddFileStatus.{addFileStatus => afs}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
@@ -79,16 +79,12 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(afam.document, afam.Variables(input)).data.get.addFilesAndMetadata
   }
 
-  def createBackendChecksFileStatuses(fileId: UUID, avStatus: String, checksumStatus: String, ffidStatus: String): List[amfs.AddMultipleFileStatuses] = {
-    val fileStatusClient = new UserApiClient[amfs.Data, amfs.Variables](userCredentials)
-    val statusInputs = List(
-      AddFileStatusInput(fileId, "ChecksumMatch", checksumStatus),
-      AddFileStatusInput(fileId, "FFID", ffidStatus),
-      AddFileStatusInput(fileId, "Antivirus", avStatus)
-    )
+  def addFileStatus(fileId: UUID, statusType: String, statusValue: String): afs.AddFileStatus = {
+    val fileStatusClient = new UserApiClient[afs.Data, afs.Variables](userCredentials)
 
-    val variables = amfs.Variables(AddMultipleFileStatusesInput(statusInputs))
-    fileStatusClient.result(amfs.document, variables).data.get.addMultipleFileStatuses
+
+    val variables = afs.Variables(AddFileStatusInput(fileId, statusType, statusValue))
+    fileStatusClient.result(afs.document, variables).data.get.addFileStatus
   }
 
   def getConsignmentReference(consignmentId: UUID): String = {

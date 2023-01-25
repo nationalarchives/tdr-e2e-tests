@@ -14,7 +14,7 @@ import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
-import org.scalatest.Matchers
+import org.scalatest.{Matchers, stats}
 
 import java.io.File
 import java.nio.file.Paths
@@ -467,9 +467,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
     val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
 
-    client.createAVMetadata(id)
-    client.createBackendChecksumMetadata(id, Option("mismatchedchecksumvalue"))
-    client.createFfidMetadata(id)
+    client.createBackendChecksFileStatuses(id, "Success", "Mismatch", "Success")
   }
 
   And("^the antivirus check has failed") {
@@ -477,24 +475,19 @@ class Steps extends ScalaDsl with EN with Matchers {
 
     val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
     val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-    client.createAVMetadata(id, "antivirus failed")
-    client.createBackendChecksumMetadata(id, Some(checksumValue))
-    client.createFfidMetadata(id)
+    client.createBackendChecksFileStatuses(id, "VirusDetected", "Success", "Success")
   }
 
   And("^the FFID \"(.*)\" check has failed") {
     (checkName: String) => {
-      val passwordProtectedPuid = "fmt/494"
-      val zipFilePuid = "fmt/289"
       val client = GraphqlUtility(userCredentials)
       val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
       val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-      client.createAVMetadata(id)
-      client.createBackendChecksumMetadata(id, Some(checksumValue))
-      checkName match {
-        case "password protected" => client.createFfidMetadata(id, passwordProtectedPuid)
-        case "zip file" => client.createFfidMetadata(id, zipFilePuid)
+      val statusName = checkName match {
+        case "password protected" =>"PasswordProtected"
+        case "zip file" => "Zip"
       }
+      client.createBackendChecksFileStatuses(id, "Success", "Success", statusName)
     }
   }
 

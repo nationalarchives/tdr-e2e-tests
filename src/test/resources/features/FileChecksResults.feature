@@ -90,9 +90,9 @@ Feature: File Checks results Page
     Given A logged out judgment user
     And an existing judgment consignment for transferring body MOCK1
     And an existing upload of 1 files
-    And 1 of the antivirus scans have finished
-    And 1 of the FFID scans have finished
-    And 1 of the checksum scans have finished
+    And 1 of the antivirus scans for the judgment transfer have finished
+    And 1 of the FFID scans for the judgment transfer have finished
+    And 1 of the checksum scans for the judgment transfer have finished
     And the user is logged in on the file checks results page
     Then the user will be on a page with the title "Results of checks"
     When the user clicks the continue button

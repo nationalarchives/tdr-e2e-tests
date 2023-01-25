@@ -457,9 +457,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     fileAndMatchIds.foreach(fm => {
       val checksum = checksumWithIndex.find(_.matchId == fm.matchId).map(_.checksum)
       client.createAVMetadata(fm.fileId)
+      client.addFileStatus(fm.fileId, "Antivirus", "Success")
       client.createBackendChecksumMetadata(fm.fileId, checksum)
+      client.addFileStatus(fm.fileId, "ChecksumMatch", "Success")
       client.createFfidMetadata(fm.fileId)
+      client.addFileStatus(fm.fileId, "FFID", "Success")
     })
+
   }
 
   And("^the (checksum|antivirus|FFID) check has (.*)") {
@@ -542,17 +546,31 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  And("^(\\d+) of the (.*) scans have finished") {
+  And("^(\\d+) of the (.*) scans for the (.*) transfer have finished") {
     val client = GraphqlUtility(userCredentials)
-    (filesToProcess: Int, metadataType: String) => {
-      val statusType = metadataType.toLowerCase match {
-        case "antivirus" => "Antivirus"
-        case "ffid" => "FFID"
-        case "checksum" => "ChecksumMatch"
-      }
+    (filesToProcess: Int, metadataType: String, consignmentType: String) => {
       val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
-      fileRangeToProcess.foreach(id => client.addFileStatus(id, statusType, "Success"))
-      filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
+      metadataType match {
+        case "antivirus" =>
+          fileRangeToProcess.foreach(id => {
+            client.createAVMetadata(id)
+            client.addFileStatus(id, "Antivirus", "Success")
+          })
+          filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
+        case "FFID" =>
+          val puid: String = if (consignmentType == "judgment") { "fmt/412" } else { "x-fmt/111" }
+          fileRangeToProcess.foreach(id => {
+            client.createFfidMetadata(id, puid)
+            client.addFileStatus(id, "FFID", "Success")
+          })
+          filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
+        case "checksum" =>
+          fileRangeToProcess.foreach(id => {
+            client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+            client.addFileStatus(id, "ChecksumMatch", "Success")
+          })
+          filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
+      }
     }
   }
 

@@ -14,7 +14,7 @@ import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
-import org.scalatest.Matchers
+import org.scalatest.{Matchers, stats}
 
 import java.io.File
 import java.nio.file.Paths
@@ -457,44 +457,43 @@ class Steps extends ScalaDsl with EN with Matchers {
     fileAndMatchIds.foreach(fm => {
       val checksum = checksumWithIndex.find(_.matchId == fm.matchId).map(_.checksum)
       client.createAVMetadata(fm.fileId)
+      client.addFileStatus(fm.fileId, "Antivirus", "Success")
       client.createBackendChecksumMetadata(fm.fileId, checksum)
+      client.addFileStatus(fm.fileId, "ChecksumMatch", "Success")
       client.createFfidMetadata(fm.fileId)
+      client.addFileStatus(fm.fileId, "FFID", "Success")
     })
+
   }
 
-  And("^the checksum check has failed") {
+  And("^the (checksum|antivirus|FFID) check has (.*)") {
     val client = GraphqlUtility(userCredentials)
-    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
-    val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-
-    client.createAVMetadata(id)
-    client.createBackendChecksumMetadata(id, Option("mismatchedchecksumvalue"))
-    client.createFfidMetadata(id)
-  }
-
-  And("^the antivirus check has failed") {
-    val client = GraphqlUtility(userCredentials)
-
-    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
-    val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-    client.createAVMetadata(id, "antivirus failed")
-    client.createBackendChecksumMetadata(id, Some(checksumValue))
-    client.createFfidMetadata(id)
+    (checkName: String, result: String) => {
+      val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
+      val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
+      val statusType = checkName.toLowerCase match {
+        case "antivirus" => "Antivirus"
+        case "ffid" => "FFID"
+        case "checksum" => "ChecksumMatch"
+      }
+      val statusValue = result match {
+        case "failed" => "Failed"
+        case "succeeded" => "Succeeded"
+      }
+      client.addFileStatus(id, statusType, statusValue)
+    }
   }
 
   And("^the FFID \"(.*)\" check has failed") {
     (checkName: String) => {
-      val passwordProtectedPuid = "fmt/494"
-      val zipFilePuid = "fmt/289"
       val client = GraphqlUtility(userCredentials)
       val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
       val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-      client.createAVMetadata(id)
-      client.createBackendChecksumMetadata(id, Some(checksumValue))
-      checkName match {
-        case "password protected" => client.createFfidMetadata(id, passwordProtectedPuid)
-        case "zip file" => client.createFfidMetadata(id, zipFilePuid)
+      val statusValue = checkName match {
+        case "password protected" =>"PasswordProtected"
+        case "zip file" => "Zip"
       }
+      client.addFileStatus(id, "FFID", statusValue)
     }
   }
 
@@ -553,14 +552,23 @@ class Steps extends ScalaDsl with EN with Matchers {
       val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
       metadataType match {
         case "antivirus" =>
-          fileRangeToProcess.foreach(id => client.createAVMetadata(id))
+          fileRangeToProcess.foreach(id => {
+            client.createAVMetadata(id)
+            client.addFileStatus(id, "Antivirus", "Success")
+          })
           filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
         case "FFID" =>
           val puid: String = if (consignmentType == "judgment") { "fmt/412" } else { "x-fmt/111" }
-          fileRangeToProcess.foreach(id => client.createFfidMetadata(id, puid))
+          fileRangeToProcess.foreach(id => {
+            client.createFfidMetadata(id, puid)
+            client.addFileStatus(id, "FFID", "Success")
+          })
           filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
         case "checksum" =>
-          fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id)))
+          fileRangeToProcess.foreach(id => {
+            client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+            client.addFileStatus(id, "ChecksumMatch", "Success")
+          })
           filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
       }
     }

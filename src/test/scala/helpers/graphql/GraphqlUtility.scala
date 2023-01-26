@@ -4,6 +4,7 @@ import java.time.Instant
 import java.util.UUID
 import graphql.codegen.AddAntivirusMetadata.{addAntivirusMetadata => aav}
 import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
+import graphql.codegen.AddFileStatus.{addFileStatus => afs}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
@@ -76,6 +77,12 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     )
     val input = AddFileAndMetadataInput(consignmentId, metadataInput, None)
     client.result(afam.document, afam.Variables(input)).data.get.addFilesAndMetadata
+  }
+
+  def addFileStatus(fileId: UUID, statusType: String, statusValue: String): afs.AddFileStatus = {
+    val fileStatusClient = new UserApiClient[afs.Data, afs.Variables](userCredentials)
+    val variables = afs.Variables(AddFileStatusInput(fileId, statusType, statusValue))
+    fileStatusClient.result(afs.document, variables).data.get.addFileStatus
   }
 
   def getConsignmentReference(consignmentId: UUID): String = {

@@ -81,8 +81,6 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def addFileStatus(fileId: UUID, statusType: String, statusValue: String): afs.AddFileStatus = {
     val fileStatusClient = new UserApiClient[afs.Data, afs.Variables](userCredentials)
-
-
     val variables = afs.Variables(AddFileStatusInput(fileId, statusType, statusValue))
     fileStatusClient.result(afs.document, variables).data.get.addFileStatus
   }

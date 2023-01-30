@@ -34,7 +34,7 @@ Feature: Standard Full user journey
     When the user clicks on the Continue button
     Then the user will be on a page with the title "Descriptive & closure metadata"
     # currently skip adding additional metadata
-    When the user clicks on the Continue button
+    When the user clicks on the Next button
     Then the user will be on a page with the title "Download or view metadata"
     When the user clicks on the Continue button
     Then the user will be on a page with the title "Confirm transfer"

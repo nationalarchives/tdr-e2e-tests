@@ -1,4 +1,5 @@
 #Feature will not work with chromedriver in headless mode due to following bug: https://bugs.chromium.org/p/chromedriver/issues/detail?id=2521&q=directory%20upload&colspec=ID%20Status%20Pri%20Owner%20Summary
+@test
 Feature: Standard Full user journey
   Scenario: Full transfer standard workflow
     Given A logged out standard user
@@ -32,7 +33,7 @@ Feature: Standard Full user journey
     Then the user will be on a page with the title "Results of your checks"
     And the user should see a banner titled Success
     When the user clicks on the Continue button
-    Then the user will be on a page with the title "Add, edit or delete metadata"
+    Then the user will be on a page with the title "Descriptive & closure metadata"
     # currently skip adding additional metadata
     When the user clicks on the Continue button
     Then the user will be on a page with the title "Download or view metadata"

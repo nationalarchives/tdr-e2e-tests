@@ -369,43 +369,35 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  When("^the user selects yes for all checks except \"The records are all English\"") {
+  When("^the user selects yes for all checks except \"I confirm that the records are all Crown Copyright.\"") {
     new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
-      val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
-      val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
+      webDriver.findElement(By.id("publicRecord"))
+      webDriver.findElement(By.id("crownCopyright"))
     })
     val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
-    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
     recordsAllPublicRecords.click()
-    recordsAllCrownCopyright.click()
   }
 
   When("^the user selects yes to all transfer agreement checks") {
     new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
       webDriver.findElement(By.id("publicRecord"))
       webDriver.findElement(By.id("crownCopyright"))
-      webDriver.findElement(By.id("english"))
     })
     val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
     val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
-    val recordsAllEnglish = webDriver.findElement(By.id("english"))
     recordsAllPublicRecords.click()
     recordsAllCrownCopyright.click()
-    recordsAllEnglish.click()
   }
 
   When("^the user selects yes to all transfer agreement continued checks") {
     val recordsDroAppraisal = webDriver.findElement(By.id("droAppraisalSelection"))
     val recordsDroSensitivity = webDriver.findElement(By.id("droSensitivity"))
-    val recordsOpenRecords = webDriver.findElement(By.id("openRecords"))
     new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
       recordsDroAppraisal
       recordsDroSensitivity
-      recordsOpenRecords
     })
     recordsDroAppraisal.click()
     recordsDroSensitivity.click()
-    recordsOpenRecords.click()
   }
 
   And("^the user confirms that DRO has signed off on the records") {

@@ -14,7 +14,7 @@ import helpers.users.RandomUtility
 import org.junit.Assert
 import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
-import org.scalatest.Matchers
+import org.scalatest.{Matchers, stats}
 
 import java.io.File
 import java.nio.file.Paths
@@ -96,8 +96,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   private def findFormErrorMessageOnPage(formType: String, genericErrorMessage: String = "", errorClassName: String): Unit = {
     val formErrorMessages: Seq[String] = formType match {
       case "Final Transfer Confirmation" =>
-        Seq("All records must be confirmed as open before proceeding",
-          "Transferral of legal custody of all records must be confirmed before proceeding")
+        Seq("Transferral of legal custody of all records must be confirmed before proceeding")
     }
     val errorElements: util.List[WebElement] = webDriver.findElements(By.cssSelector(errorClassName))
     Assert.assertNotNull(elementMissingMessage(errorClassName), errorElements)
@@ -395,13 +394,18 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllEnglish.click()
   }
 
-  And("^the user confirms all the records are open") {
+  When("^the user selects yes to all transfer agreement continued checks") {
+    val recordsDroAppraisal = webDriver.findElement(By.id("droAppraisalSelection"))
+    val recordsDroSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    val recordsOpenRecords = webDriver.findElement(By.id("openRecords"))
     new WebDriverWait(webDriver, 30).until((driver: WebDriver) => {
-      webDriver.findElement(By.id("openRecords"))
+      recordsDroAppraisal
+      recordsDroSensitivity
+      recordsOpenRecords
     })
-
-    val openRecords = webDriver.findElement(By.id("openRecords"))
-    openRecords.click()
+    recordsDroAppraisal.click()
+    recordsDroSensitivity.click()
+    recordsOpenRecords.click()
   }
 
   And("^the user confirms that DRO has signed off on the records") {
@@ -412,7 +416,9 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user does not confirm DRO sign off for the records") {
+    val droAppraisalAndSelection = webDriver.findElement(By.id("droAppraisalSelection"))
     val droSensitivity = webDriver.findElement(By.id("droSensitivity"))
+    droAppraisalAndSelection.click()
     droSensitivity.click()
   }
 
@@ -451,44 +457,43 @@ class Steps extends ScalaDsl with EN with Matchers {
     fileAndMatchIds.foreach(fm => {
       val checksum = checksumWithIndex.find(_.matchId == fm.matchId).map(_.checksum)
       client.createAVMetadata(fm.fileId)
+      client.addFileStatus(fm.fileId, "Antivirus", "Success")
       client.createBackendChecksumMetadata(fm.fileId, checksum)
+      client.addFileStatus(fm.fileId, "ChecksumMatch", "Success")
       client.createFfidMetadata(fm.fileId)
+      client.addFileStatus(fm.fileId, "FFID", "Success")
     })
+
   }
 
-  And("^the checksum check has failed") {
+  And("^the (checksum|antivirus|FFID) check has (.*)") {
     val client = GraphqlUtility(userCredentials)
-    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
-    val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-
-    client.createAVMetadata(id)
-    client.createBackendChecksumMetadata(id, Option("mismatchedchecksumvalue"))
-    client.createFfidMetadata(id)
-  }
-
-  And("^the antivirus check has failed") {
-    val client = GraphqlUtility(userCredentials)
-
-    val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
-    val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-    client.createAVMetadata(id, "antivirus failed")
-    client.createBackendChecksumMetadata(id, Some(checksumValue))
-    client.createFfidMetadata(id)
+    (checkName: String, result: String) => {
+      val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
+      val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
+      val statusType = checkName.toLowerCase match {
+        case "antivirus" => "Antivirus"
+        case "ffid" => "FFID"
+        case "checksum" => "ChecksumMatch"
+      }
+      val statusValue = result match {
+        case "failed" => "Failed"
+        case "succeeded" => "Succeeded"
+      }
+      client.addFileStatus(id, statusType, statusValue)
+    }
   }
 
   And("^the FFID \"(.*)\" check has failed") {
     (checkName: String) => {
-      val passwordProtectedPuid = "fmt/494"
-      val zipFilePuid = "fmt/289"
       val client = GraphqlUtility(userCredentials)
       val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
       val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
-      client.createAVMetadata(id)
-      client.createBackendChecksumMetadata(id, Some(checksumValue))
-      checkName match {
-        case "password protected" => client.createFfidMetadata(id, passwordProtectedPuid)
-        case "zip file" => client.createFfidMetadata(id, zipFilePuid)
+      val statusValue = checkName match {
+        case "password protected" =>"PasswordProtected"
+        case "zip file" => "Zip"
       }
+      client.addFileStatus(id, "FFID", statusValue)
     }
   }
 
@@ -503,7 +508,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       val consignmentRef = client.getConsignmentReference(consignmentId)
       val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
       val rows = source.getLines().toList
-      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28 14:31:17.746,ClosureType-value,2022-09-28 14:31:17.746,1,FoiExemptionCode-value,2022-09-28 14:31:17.746,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28 14:31:17.746,date_range-value,2022-09-28 14:31:17.746,2022-09-28 14:31:17.746,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
+      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28T14:31:17,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,date_range-value,2022-09-28T14:31:17,2022-09-28T14:31:17,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
 
       Assert.assertEquals(rows.size, numberOfFiles + 1)
       val customMetadata = client.getCustomMetadata(consignmentId).filter(_.allowExport).sortBy(_.exportOrdinal.getOrElse(Int.MaxValue))
@@ -547,14 +552,23 @@ class Steps extends ScalaDsl with EN with Matchers {
       val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
       metadataType match {
         case "antivirus" =>
-          fileRangeToProcess.foreach(id => client.createAVMetadata(id))
+          fileRangeToProcess.foreach(id => {
+            client.createAVMetadata(id)
+            client.addFileStatus(id, "Antivirus", "Success")
+          })
           filesWithoutAVMetadata = createdFiles.drop(filesToProcess)
         case "FFID" =>
           val puid: String = if (consignmentType == "judgment") { "fmt/412" } else { "x-fmt/111" }
-          fileRangeToProcess.foreach(id => client.createFfidMetadata(id, puid))
+          fileRangeToProcess.foreach(id => {
+            client.createFfidMetadata(id, puid)
+            client.addFileStatus(id, "FFID", "Success")
+          })
           filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
         case "checksum" =>
-          fileRangeToProcess.foreach(id => client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id)))
+          fileRangeToProcess.foreach(id => {
+            client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+            client.addFileStatus(id, "ChecksumMatch", "Success")
+          })
           filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
       }
     }

@@ -72,13 +72,14 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   private def loadPage(page: String): Unit = {
+    val hyphenatedPageName = page.toLowerCase.replaceAll(" ", "-")
     val isJudgment = userType == "judgment"
     val path = if(isJudgment) "judgment" else "consignment"
-    val pageWithConsignment = page match {
-      case "homepage" | "some-page" => s"$baseUrl/$page"
-      case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$page" else s"$baseUrl/$page"
-      case "Download Metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/${page.toLowerCase.replaceAll(" ", "-")}"
-      case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
+    val pageWithConsignment = hyphenatedPageName match {
+      case "homepage" | "view-transfers" | "some-page" => s"$baseUrl/$hyphenatedPageName"
+      case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$hyphenatedPageName" else s"$baseUrl/$hyphenatedPageName"
+      case "download-metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/$hyphenatedPageName"
+      case _ => s"$baseUrl/$path/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
   }
@@ -267,6 +268,13 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user will be on a page with a small heading \"(.*)\"") {
     heading: String =>
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-s")
+  }
+
+  And("^the user will see a row with a consignment reference that correlates with their consignmentId") {
+    () =>
+      val client = GraphqlUtility(userCredentials)
+      val consignmentRef = client.getConsignmentReference(consignmentId)
+      StepsUtility.waitForElementTitle(webDriver, s"$consignmentRef", "consignment-ref-cell")
   }
 
   And("^the user should see a banner titled Success") {

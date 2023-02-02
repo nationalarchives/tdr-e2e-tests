@@ -9,7 +9,13 @@ import scala.jdk.CollectionConverters._
 
 object StepsUtility {
   def waitForElementTitle(webDriver: WebDriver, title: String, elementClassName: String): Any = {
-    new WebDriverWait(webDriver, 180)
+    new WebDriverWait(webDriver, 180).withMessage{
+      s"""\nCould not find title "$title" in any elements belonging to class "$elementClassName" on the page:
+         |${webDriver.getCurrentUrl}
+         |
+         |Below is the page source:
+         |
+         |${webDriver.getPageSource}""".stripMargin}
       .ignoring(classOf[StaleElementReferenceException])
       /*Ignore stale references exceptions.
       These seem to happen when Selenium selects an element which then disappears when the user is redirected to the next page,
@@ -28,7 +34,12 @@ object StepsUtility {
   }
 
   def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
-    new WebDriverWait(webDriver, 30).until(
+    new WebDriverWait(webDriver, 30).withMessage{
+      s"""Could not find username or password field on this page ${webDriver.getCurrentUrl}
+          |Below is the page source:
+          |
+          |${webDriver.getPageSource}""".stripMargin
+    }.until(
       (driver: WebDriver) => {
         val userNameElement = webDriver.findElement(By.cssSelector("[name='username']"))
         val passwordElement = webDriver.findElement(By.cssSelector("[name='password']"))

@@ -51,13 +51,13 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def createTransferAgreementPrivateBeta(consignmentId: UUID): Unit = {
     val client = new UserApiClient[atapb.Data, atapb.Variables](userCredentials)
-    val input = AddTransferAgreementPrivateBetaInput(consignmentId, true, true, true)
+    val input = AddTransferAgreementPrivateBetaInput(consignmentId, true, true, None)
     client.result(atapb.document, atapb.Variables(input))
   }
 
   def createTransferAgreementCompliance(consignmentId: UUID): Unit = {
     val client = new UserApiClient[atac.Data, atac.Variables](userCredentials)
-    val input = AddTransferAgreementComplianceInput(consignmentId, true, true, true)
+    val input = AddTransferAgreementComplianceInput(consignmentId, true, None, true)
     client.result(atac.document, atac.Variables(input))
   }
 

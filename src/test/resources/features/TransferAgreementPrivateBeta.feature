@@ -14,10 +14,10 @@ Feature: Transfer Agreement Page
     And an existing standard consignment for transferring body MOCK1
     And an selected series MOCK1
     And the user is logged in on the Transfer Agreement page
-    When the user selects yes for all checks except "The records are all English"
+    When the user selects yes for all checks except "I confirm that the records are all Crown Copyright."
     And the user clicks the continue button
-    Then the user will see a form error message "All records must be confirmed as English language before proceeding"
-    Then the user will see a summary error message "All records must be confirmed as English language before proceeding"
+    Then the user will see a form error message "All records must be confirmed Crown Copyright before proceeding"
+    Then the user will see a summary error message "All records must be confirmed Crown Copyright before proceeding"
 
   Scenario: Consignment transfer agreement page is accessed by a logged out user
     Given A logged out standard user

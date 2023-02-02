@@ -72,13 +72,14 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   private def loadPage(page: String): Unit = {
+    val hyphenatedPageName = page.toLowerCase.replaceAll(" ", "-")
     val isJudgment = userType == "judgment"
     val path = if(isJudgment) "judgment" else "consignment"
-    val pageWithConsignment = page match {
-      case "homepage" | "some-page" => s"$baseUrl/$page"
-      case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$page" else s"$baseUrl/$page"
-      case "Download Metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/${page.toLowerCase.replaceAll(" ", "-")}"
-      case _ => s"$baseUrl/$path/$consignmentId/${page.toLowerCase.replaceAll(" ", "-")}"
+    val pageWithConsignment = hyphenatedPageName match {
+      case "homepage" | "view-transfers" | "some-page" => s"$baseUrl/$hyphenatedPageName"
+      case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$hyphenatedPageName" else s"$baseUrl/$hyphenatedPageName"
+      case "download-metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/$hyphenatedPageName"
+      case _ => s"$baseUrl/$path/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
   }
@@ -285,6 +286,13 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-s")
   }
 
+  And("^the user will see a row with a consignment reference that correlates with their consignmentId") {
+    () =>
+      val client = GraphqlUtility(userCredentials)
+      val consignmentRef = client.getConsignmentReference(consignmentId)
+      StepsUtility.waitForElementTitle(webDriver, s"$consignmentRef", "consignment-ref-cell")
+  }
+
   And("^the user should see a banner titled Success") {
     () =>
       StepsUtility.waitForElementTitle(webDriver, "Success", "success-summary__title")
@@ -390,39 +398,34 @@ class Steps extends ScalaDsl with EN with Matchers {
       })
   }
 
-  When("^the user selects yes for all checks except \"The records are all English\"") {
+  When("^the user selects yes for all checks except \"I confirm that the records are all Crown Copyright.\"") {
     new WebDriverWait(webDriver, 30).withMessage {
       s"""Could not find id publicRecord or crownCopyright on page ${webDriver.getCurrentUrl}
          |Below is the page source:
          |
          |${webDriver.getPageSource}""".stripMargin
     }.until((driver: WebDriver) => {
-      val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
-      val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
+      webDriver.findElement(By.id("publicRecord"))
+      webDriver.findElement(By.id("crownCopyright"))
     })
     val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
-    val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
     recordsAllPublicRecords.click()
-    recordsAllCrownCopyright.click()
   }
 
   When("^the user selects yes to all transfer agreement checks") {
     new WebDriverWait(webDriver, 30).withMessage {
-      s"""Could not find id publicRecord, crownCopyright or english on page ${webDriver.getCurrentUrl}
+      s"""Could not find id publicRecord or crownCopyright on page ${webDriver.getCurrentUrl}
          |Below is the page source:
          |
          |${webDriver.getPageSource}""".stripMargin
     }.until((driver: WebDriver) => {
       webDriver.findElement(By.id("publicRecord"))
       webDriver.findElement(By.id("crownCopyright"))
-      webDriver.findElement(By.id("english"))
     })
     val recordsAllPublicRecords = webDriver.findElement(By.id("publicRecord"))
     val recordsAllCrownCopyright = webDriver.findElement(By.id("crownCopyright"))
-    val recordsAllEnglish = webDriver.findElement(By.id("english"))
     recordsAllPublicRecords.click()
     recordsAllCrownCopyright.click()
-    recordsAllEnglish.click()
   }
 
   When("^the user selects yes to all transfer agreement continued checks") {
@@ -435,14 +438,12 @@ class Steps extends ScalaDsl with EN with Matchers {
     }.until((driver: WebDriver) => {
       webDriver.findElement(By.id("droAppraisalSelection"))
       webDriver.findElement(By.id("droSensitivity"))
-      webDriver.findElement(By.id("openRecords"))
     })
     val recordsDroAppraisal = webDriver.findElement(By.id("droAppraisalSelection"))
     val recordsDroSensitivity = webDriver.findElement(By.id("droSensitivity"))
-    val recordsOpenRecords = webDriver.findElement(By.id("openRecords"))
+
     recordsDroAppraisal.click()
     recordsDroSensitivity.click()
-    recordsOpenRecords.click()
   }
 
   And("^the user confirms that DRO has signed off on the records") {

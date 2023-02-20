@@ -1,5 +1,4 @@
 Feature: File Checks results Page
-
   Scenario: The user will see a success message when they access the file checks results page once file checks are complete
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
@@ -9,7 +8,7 @@ Feature: File Checks results Page
     And the user is logged in on the file checks results page
     And the user will be on a page with the title "Results of your checks"
     And the user should see a banner titled Success
-    When the user clicks on the Continue button
+    When the user clicks on the Next button
     Then the user will be on a page with the title "Descriptive & closure metadata"
 
   Scenario: The user will see an error when trying to access file check results for a consignment they don't own

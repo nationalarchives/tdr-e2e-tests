@@ -295,7 +295,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user should see a banner titled Success") {
     () =>
-      StepsUtility.waitForElementTitle(webDriver, "Success", "success-summary__title")
+      StepsUtility.waitForElementTitle(webDriver, "Success", "govuk-notification-banner__title")
   }
 
   Then("^the user should see a general service error \"(.*)\"") {

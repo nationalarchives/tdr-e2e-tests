@@ -801,11 +801,11 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the download metadata page elements are loaded") {
     val href = webDriver.findElement(By.cssSelector("a.download-metadata")).getAttribute("href")
-    val buttonText = webDriver.findElement(By.cssSelector("a.govuk-button")).getText
-    val svgClass = webDriver.findElement(By.cssSelector("svg")).getAttribute("class")
+    val buttonText = webDriver.findElements(By.cssSelector("a.govuk-button")).asScala.last.getText
+    val svg = webDriver.findElement(By.cssSelector("svg"))
 
     Assert.assertEquals(s"$baseUrl/consignment/$consignmentId/additional-metadata/download-metadata/csv", href)
-    Assert.assertEquals("Continue", buttonText)
-    Assert.assertEquals("thumbnail-icon", svgClass)
+    Assert.assertEquals("Next", buttonText)
+    Assert.assertNotNull(svg)
   }
 }

@@ -55,7 +55,7 @@ Feature: Upload
     And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"
     When the user clicks their browser's back button
-    Then the user will see the message "Your upload is complete and has been saved. You cannot make amendments to your upload or add additional files."
+    Then the user will see the message "Your records have been uploaded and saved. You cannot add additional files or folders to this transfer."
 
   Scenario: Consignment upload page is accessed by a logged out user
     Given A logged out standard user

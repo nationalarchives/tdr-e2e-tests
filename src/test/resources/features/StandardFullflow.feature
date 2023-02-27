@@ -21,7 +21,7 @@ Feature: Standard Full user journey
     When the user selects directory containing: testfile1
     Then the success and removal message container should be visible
     When the user clicks the Start upload button
-    Then the user will be on a page with the title "Uploading records"
+    Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"
     And the file checks completed banner should not be visible

@@ -28,7 +28,7 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: largefile
     And the user clicks the continue button
-    Then the user will be on a page with the title "Uploading records"
+    Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible
 
   Scenario: The file checks page is shown when the upload is completed
@@ -39,7 +39,7 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title "Uploading records"
+    Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"
 
@@ -51,11 +51,11 @@ Feature: Upload
     And the user is logged in on the upload page
     When the user selects directory containing: testfile1
     And the user clicks the continue button
-    Then the user will be on a page with the title "Uploading records"
+    Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"
     When the user clicks their browser's back button
-    Then the user will see the message "Your upload is complete and has been saved. You cannot make amendments to your upload or add additional files."
+    Then the user will see the message "Your records have been uploaded and saved. You cannot add additional files or folders to this transfer."
 
   Scenario: Consignment upload page is accessed by a logged out user
     Given A logged out standard user

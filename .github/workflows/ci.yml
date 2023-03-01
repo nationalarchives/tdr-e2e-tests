@@ -35,7 +35,7 @@ jobs:
       - name: Wait
         run: sleep ${{ github.event.inputs.wait != '' && github.event.inputs.wait || '0' }}
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - id: get-driver
         run: python .github/scripts/get_driver_location.py ${{ github.event.inputs.browser }}
       - id: get-last-status
@@ -56,9 +56,9 @@ jobs:
         file: ${{ fromJSON(needs.setup-e2e-tests.outputs.files) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRGithubActionsGetE2ESecretsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
@@ -66,7 +66,7 @@ jobs:
       - id: get-keycloak-secrets
         run: pip install boto3 && python .github/scripts/get_keycloak_secrets.py ${{ github.event.inputs.environment }}
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
@@ -74,7 +74,7 @@ jobs:
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRGithubActionsRunE2ETestsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
@@ -85,7 +85,7 @@ jobs:
         run: sbt test -Daccount.number=${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }} -Dconfig.file=./src/test/resources/application.${{ needs.setup-e2e-tests.outputs.environment }}.conf -Dkeycloak.user.admin.secret=${{ steps.get-keycloak-secrets.outputs.user_admin_secret }} -Dkeycloak.backendchecks.secret=${{ steps.get-keycloak-secrets.outputs.backend_checks_secret }} -Dbrowser=${{ needs.setup-e2e-tests.outputs.browser }} -Dcucumber.features=./src/test/resources/features/${{ matrix.file }}
       - name: Configure AWS credentials
         if: ${{ always() }}
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2

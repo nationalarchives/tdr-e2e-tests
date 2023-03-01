@@ -65,9 +65,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: GetKeycloakSecrets
       - id: get-keycloak-secrets
-        run: pip install boto3 && python .github/scripts/get_keycloak_secrets.py ${{ github.event.inputs.environment }}
-        with:
-          GITHUB_OUTPUT: ${{ needs.setup-e2e-tests.outputs.github_output }}
+        run: pip install boto3 && GITHUB_OUTPUT=${{ needs.setup-e2e-tests.outputs.github_output }} python .github/scripts/get_keycloak_secrets.py ${{ github.event.inputs.environment }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

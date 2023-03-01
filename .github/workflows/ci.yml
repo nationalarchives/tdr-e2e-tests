@@ -45,7 +45,7 @@ jobs:
       - id: set-secret-names
         run: python .github/scripts/set_secret_names.py ${{ github.event.inputs.environment }}
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRGithubActionsGetE2ESecretsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2

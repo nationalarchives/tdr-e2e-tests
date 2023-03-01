@@ -20,5 +20,6 @@ backend_checks_secret = get_client_secret(f"/{env}/keycloak/backend_checks_clien
 with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
     print(f"=user_admin_secret={user_admin_secret}", file=fh)
     print(f"=backend_checks_secret={backend_checks_secret}", file=fh)
-    print(f"::add-mask::{backend_checks_secret}")
-    print(f"::add-mask::{user_admin_secret}")
+
+print(f"::add-mask::{backend_checks_secret}")
+print(f"::add-mask::{user_admin_secret}")

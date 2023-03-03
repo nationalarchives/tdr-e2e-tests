@@ -412,7 +412,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllPublicRecords.click()
   }
 
-  When("^the user selects yes to all transfer agreement checks") {
+  When("^the user selects yes to all transfer agreement part 1 checks") {
     new WebDriverWait(webDriver, 30).withMessage {
       s"""Could not find id publicRecord or crownCopyright on page ${webDriver.getCurrentUrl}
          |Below is the page source:
@@ -428,7 +428,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     recordsAllCrownCopyright.click()
   }
 
-  When("^the user selects yes to all transfer agreement continued checks") {
+  When("^the user selects yes to all transfer agreement part 2 checks") {
 
     new WebDriverWait(webDriver, 30).withMessage {
       s"""Could not find id droAppraisalSelection, droSensitivity or openRecords on page ${webDriver.getCurrentUrl}
@@ -472,12 +472,12 @@ class Steps extends ScalaDsl with EN with Matchers {
     client.updateSeries(consignmentId, body)
   }
 
-  And("^an existing private beta transfer agreement") {
+  And("^an existing transfer agreement part 1") {
     val client = GraphqlUtility(userCredentials)
     client.createTransferAgreementPrivateBeta(consignmentId)
   }
 
-  And("^an existing compliance transfer agreement") {
+  And("^an existing transfer agreement part 2") {
     val client = GraphqlUtility(userCredentials)
     client.createTransferAgreementCompliance(consignmentId)
   }

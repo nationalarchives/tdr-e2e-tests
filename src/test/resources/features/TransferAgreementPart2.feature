@@ -1,4 +1,4 @@
-Feature: Transfer Agreement Continued Page
+Feature: Transfer Agreement Part 2 Page
 
   Scenario: A logged in user completes the Transfer Agreement (part 2) form correctly
     Given A logged out standard user

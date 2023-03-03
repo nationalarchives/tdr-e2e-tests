@@ -12,11 +12,11 @@ Feature: Standard Full user journey
     When the user selects the series MOCK1 123
     And the user clicks the continue button
     Then the user should be on the transfer-agreement page
-    When the user selects yes to all transfer agreement checks
-    And the user clicks the continue button
+    When the user selects yes to all transfer agreement part 1 checks
+    And the user clicks the Agree and continue button
     Then the user should be on the transfer-agreement-continued page
-    When the user selects yes to all transfer agreement continued checks
-    And the user clicks the continue button
+    When the user selects yes to all transfer agreement part 2 checks
+    And the user clicks the Agree and continue button
     Then the user will be on a page with the title "Upload your records"
     When the user selects directory containing: testfile1
     Then the success and removal message container should be visible

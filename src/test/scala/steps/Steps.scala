@@ -84,6 +84,16 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.get(pageWithConsignment)
   }
 
+  private def loadPageByMetadataType(page: String, metadataType: String): Unit = {
+    val hyphenatedPageName = page.toLowerCase.replaceAll(" ", "-")
+    val pageWithConsignment = hyphenatedPageName match {
+      case "files-selection" => s"$baseUrl/consignment/$consignmentId/additional-metadata/files/$metadataType"
+      case "add-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/add/$metadataType?fileIds=${createdFiles.head}"
+      case _ => s"$baseUrl/consignment/$consignmentId/$hyphenatedPageName"
+    }
+    webDriver.get(pageWithConsignment)
+  }
+
   private def userCleanUp(): Unit = {
     this.userType = ""
     KeycloakClient.deleteUser(userId)
@@ -175,6 +185,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   When("^the logged in user navigates to the (.*) page") {
     page: String =>
       loadPage(page)
+  }
+
+  When("^the logged in user navigates to the (.*) page for (.*) metadata") {
+    (page: String, metadataType: String) =>
+      loadPageByMetadataType(page, metadataType)
   }
 
   And("^the (.*) page is loaded") {
@@ -284,6 +299,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user will be on a page with a small heading \"(.*)\"") {
     heading: String =>
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-s")
+  }
+
+  Then("^the user will be on a page with the caption \"(.*)\"") {
+    caption: String =>
+      StepsUtility.waitForElementTitle(webDriver, caption, "govuk-caption-l")
   }
 
   And("^the user will see a row with a consignment reference that correlates with their consignmentId") {

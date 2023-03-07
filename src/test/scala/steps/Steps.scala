@@ -88,6 +88,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val hyphenatedPageName = page.toLowerCase.replaceAll(" ", "-")
     val pageWithConsignment = hyphenatedPageName match {
       case "files-selection" => s"$baseUrl/consignment/$consignmentId/additional-metadata/files/$metadataType"
+      case "confirm-closure-status" => s"$baseUrl/consignment/$consignmentId/additional-metadata/status/closure?fileIds=${createdFiles.head}"
       case "add-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/add/$metadataType?fileIds=${createdFiles.head}"
       case _ => s"$baseUrl/consignment/$consignmentId/$hyphenatedPageName"
     }
@@ -835,13 +836,32 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
-  private def enterMetadata(value: String, field: String) = field match {
+  private def enterMetadata(value: String, field: String): Unit = field match {
     case "description" => webDriver.findElement(By.cssSelector(s"#inputtextarea-$field")).sendKeys(value)
-    case "date of the record" => {
+    case "date of the record" | "FOI decision asserted" | "closure start date" =>
+      val input = if (field == "date of the record") {
+        "date-input-end_date"
+      } else if (field == "FOI decision asserted") {
+        "date-input-FoiExemptionAsserted"
+      } else if (field == "closure start date") {
+        "date-input-ClosureStartDate"
+      }
       val List(day, month, year) = value.split("/").toList
-      webDriver.findElement(By.cssSelector(s"#date-input-end_date-day")).sendKeys(day)
-      webDriver.findElement(By.cssSelector(s"#date-input-end_date-month")).sendKeys(month)
-      webDriver.findElement(By.cssSelector(s"#date-input-end_date-year")).sendKeys(year)
+      webDriver.findElement(By.cssSelector(s"#$input-day")).sendKeys(day)
+      webDriver.findElement(By.cssSelector(s"#$input-month")).sendKeys(month)
+      webDriver.findElement(By.cssSelector(s"#$input-year")).sendKeys(year)
+    case "closure period" => webDriver.findElement(By.id("Years")).sendKeys(value)
+  }
+
+  And("^the user confirms that the closure status has been approved by the advisory council") {
+    val closureStatus = webDriver.findElement(By.id("closureStatus"))
+    closureStatus.click()
+  }
+
+  And("^the user selects (.*) for the (.*) field") {
+    (value: String, _: String) => {
+      val selected = webDriver.findElement(By.cssSelector(s"[value=$value]"))
+      selected.click()
     }
   }
 }

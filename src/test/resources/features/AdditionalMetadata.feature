@@ -36,3 +36,16 @@ Feature: Additional Metadata Pages
     And the logged in user navigates to the add metadata page for closure metadata
     Then the user will be on a page with the caption "Closure metadata"
     And the user will be on a page with the title "Add or edit metadata"
+
+  Scenario: Descriptive metadata form is completed by a standard user
+    Given A logged in standard user
+    And an existing standard consignment for transferring body MOCK1
+    And an existing upload of 2 files
+    And the logged in user navigates to the add metadata page for descriptive metadata
+    Then the user will be on a page with the caption "Descriptive metadata"
+    And the user will be on a page with the title "Add or edit metadata"
+    When the user enters some description for the description field
+    And the user enters 07/03/2023 for the date of the record field
+  #    And the user selects a "English" for the "Language" field
+    When the user clicks the Save and Review button
+    Then the user will be on a page with the title "Review saved changes"

@@ -828,4 +828,20 @@ class Steps extends ScalaDsl with EN with Matchers {
     Assert.assertEquals("Next", buttonText)
     Assert.assertNotNull(svg)
   }
+
+  And("^the user enters (.*) for the (.*) field") {
+    (value: String, field: String) => {
+      enterMetadata(value, field)
+    }
+  }
+
+  private def enterMetadata(value: String, field: String) = field match {
+    case "description" => webDriver.findElement(By.cssSelector(s"#inputtextarea-$field")).sendKeys(value)
+    case "date of the record" => {
+      val List(day, month, year) = value.split("/").toList
+      webDriver.findElement(By.cssSelector(s"#date-input-end_date-day")).sendKeys(day)
+      webDriver.findElement(By.cssSelector(s"#date-input-end_date-month")).sendKeys(month)
+      webDriver.findElement(By.cssSelector(s"#date-input-end_date-year")).sendKeys(year)
+    }
+  }
 }

@@ -146,6 +146,14 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val client = new UserApiClient[gcfe.Data, gcfe.Variables](userCredentials)
     client.result(gcfe.document, gcfe.Variables(consignmentId)).data
   }
+
+  def saveMetadata(consignmentId: UUID, fileIds: List[UUID], metadataType: String): Option[abfm.Data] = {
+    val client = new UserApiClient[abfm.Data, abfm.Variables](userCredentials)
+    val metadataInput = List(UpdateFileMetadataInput(filePropertyIsMultiValue = false, "description", "test description"),
+      UpdateFileMetadataInput(filePropertyIsMultiValue = false, "end_date", "2023-03-08 00:00:00.0"))
+    val updateBulkFileMetadataInput = UpdateBulkFileMetadataInput(consignmentId, fileIds, metadataInput)
+    client.result(abfm.document, abfm.Variables(updateBulkFileMetadataInput)).data
+  }
 }
 
 object GraphqlUtility {

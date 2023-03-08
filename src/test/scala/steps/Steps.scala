@@ -90,6 +90,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       case "files-selection" => s"$baseUrl/consignment/$consignmentId/additional-metadata/files/$metadataType"
       case "confirm-closure-status" => s"$baseUrl/consignment/$consignmentId/additional-metadata/status/closure?fileIds=${createdFiles.head}"
       case "add-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/add/$metadataType?fileIds=${createdFiles.head}"
+      case "view-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/selected-summary/$metadataType?fileIds=${createdFiles.head}"
       case _ => s"$baseUrl/consignment/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
@@ -302,6 +303,11 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-s")
   }
 
+  Then("^the user will be on a page with the large heading \"(.*)\"") {
+    page: String =>
+      StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-xl")
+  }
+
   Then("^the user will be on a page with the caption \"(.*)\"") {
     caption: String =>
       StepsUtility.waitForElementTitle(webDriver, caption, "govuk-caption-l")
@@ -408,15 +414,20 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user clicks the (.*) link") {
     linkName: String =>
-      val linkClass = linkName.toLowerCase.replaceAll(" ", "-")
-      val link = webDriver.findElement(By.cssSelector(s"a.$linkClass"))
-      link.click()
-      val client = GraphqlUtility(userCredentials)
-      val consignmentRef = client.getConsignmentReference(consignmentId)
+      if(linkName == "download metadata") {
+        val linkClass = linkName.toLowerCase.replaceAll(" ", "-")
+        val link = webDriver.findElement(By.cssSelector(s"a.$linkClass"))
+        link.click()
+        val client = GraphqlUtility(userCredentials)
+        val consignmentRef = client.getConsignmentReference(consignmentId)
 
-      new WebDriverWait(webDriver, 180).until((_: WebDriver) => {
-        new File(s"/tmp/$consignmentRef-metadata.csv").exists()
-      })
+        new WebDriverWait(webDriver, 180).until((_: WebDriver) => {
+          new File(s"/tmp/$consignmentRef-metadata.csv").exists()
+        })
+      } else {
+        val link = webDriver.findElement(By.cssSelector(s".govuk-button.govuk-button--secondary"))
+        link.click()
+      }
   }
 
   When("^the user selects yes for all checks except \"I confirm that the records are all Crown Copyright.\"") {
@@ -863,5 +874,29 @@ class Steps extends ScalaDsl with EN with Matchers {
       val selected = webDriver.findElement(By.cssSelector(s"[value=$value]"))
       selected.click()
     }
+  }
+
+  And("^an existing completed (.*) form") {
+    (metadataType: String) =>
+      val client = GraphqlUtility(userCredentials)
+      client.saveMetadata(consignmentId, createdFiles, metadataType)
+  }
+
+  And("^existing metadata should contain (.*) values") {
+    (numberOfMetadata: Int) =>
+      val fieldValues = getSummaryMetadata
+      Assert.assertTrue(fieldValues.size == numberOfMetadata)
+  }
+
+  And("^existing metadata should contain the metadata (.*)") {
+    (metadata: String) =>
+      val fieldValues = getSummaryMetadata
+      Assert.assertTrue(fieldValues.contains(metadata))
+  }
+
+  private def getSummaryMetadata: Map[String, String] = {
+    val fields = webDriver.findElements(By.cssSelector(s".govuk-summary-list__key")).asScala.toList.map(_.getText)
+    val values = webDriver.findElements(By.cssSelector(s".govuk-summary-list__value")).asScala.toList.map(_.getText)
+    (fields zip values).toMap
   }
 }

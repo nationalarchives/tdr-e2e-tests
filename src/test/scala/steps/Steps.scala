@@ -604,7 +604,7 @@ class Steps extends ScalaDsl with EN with Matchers {
         MatchIdInfo(checksumValue, path, idx)
       })
       val addFilesAndMetadataResult = client.addFilesAndMetadata(consignmentId,  "E2E TEST UPLOAD FOLDER", matchIdInfo)
-      createdFiles = addFilesAndMetadataResult.map(_.fileId)
+      createdFiles = addFilesAndMetadataResult.sortBy(_.matchId).map(_.fileId)
 
       val awsUtility = AWSUtility()
 
@@ -888,15 +888,16 @@ class Steps extends ScalaDsl with EN with Matchers {
       Assert.assertTrue(fieldValues.size == numberOfMetadata)
   }
 
-  And("^existing metadata should contain the metadata (.*)") {
-    (metadata: String) =>
+  And("^existing metadata should contain the metadata (.*) with value (.*)") {
+    (metadata: String, value: String) =>
       val fieldValues = getSummaryMetadata
       Assert.assertTrue(fieldValues.contains(metadata))
+      Assert.assertTrue(fieldValues.values.exists(_ == value))
   }
 
   private def getSummaryMetadata: Map[String, String] = {
     val fields = webDriver.findElements(By.cssSelector(s".govuk-summary-list__key")).asScala.toList.map(_.getText)
-    val values = webDriver.findElements(By.cssSelector(s".govuk-summary-list__value")).asScala.toList.map(_.getText)
+    val values = webDriver.findElements(By.cssSelector(s".govuk-summary-list__value")).asScala.toList.map(_.getText.trim)
     (fields zip values).toMap
   }
 }

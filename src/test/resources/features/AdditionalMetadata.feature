@@ -84,7 +84,6 @@ Feature: Additional Metadata Pages
     When the user clicks the Save and Review button
     Then the user will be on a page with the title "Review saved changes"
 
-    @Test
   Scenario: Descriptive metadata is deleted by a standard user
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
@@ -94,10 +93,10 @@ Feature: Additional Metadata Pages
     Then the user will be on a page with the caption "Descriptive metadata"
     And the user will be on a page with the title "View existing metadata"
     And existing metadata should contain 4 values
-    And existing metadata should contain the metadata Name
-    And existing metadata should contain the metadata Date of the record
-    And existing metadata should contain the metadata Description
-    And existing metadata should contain the metadata Language
+    And existing metadata should contain the metadata Name with value path0
+    And existing metadata should contain the metadata Description with value test description
+    And existing metadata should contain the metadata Date of the record with value 08/03/2023
+    And existing metadata should contain the metadata Language with value English
     When the user clicks the Delete metadata link
     Then the user will be on a page with the large heading "Delete descriptive metadata"
     When the user clicks the Delete and return to files button
@@ -105,5 +104,34 @@ Feature: Additional Metadata Pages
     When the logged in user navigates to the view metadata page for descriptive metadata
     Then the user will be on a page with the caption "Descriptive metadata"
     And existing metadata should contain 2 values
-    And existing metadata should contain the metadata Name
-    And existing metadata should contain the metadata Language
+    And existing metadata should contain the metadata Name with value path0
+    And existing metadata should contain the metadata Language with value English
+
+  Scenario: Closure metadata is deleted by a standard user
+    Given A logged in standard user
+    And an existing standard consignment for transferring body MOCK1
+    And an existing upload of 2 files
+    And an existing completed closure form
+    And the logged in user navigates to the view metadata page for closure metadata
+    Then the user will be on a page with the caption "Closure metadata"
+    And the user will be on a page with the title "View metadata"
+    And existing metadata should contain 8 values
+    And existing metadata should contain the metadata Name with value path0
+    And existing metadata should contain the metadata FOI decision asserted with value 01/01/2000
+    And existing metadata should contain the metadata Closure Start Date with value 01/01/2000
+    And existing metadata should contain the metadata Closure status with value Open
+    And existing metadata should contain the metadata Closure Period with value 5 years
+    And existing metadata should contain the metadata FOI exemption code with value 27(1)
+    And existing metadata should contain the metadata Is the title sensitive for the public? with value No, this title can be made public
+    And existing metadata should contain the metadata Is the description sensitive for the public? with value No, this description can be made public
+    When the user clicks the Delete metadata link
+    Then the user will be on a page with the large heading "Delete closure metadata"
+    When the user clicks the Delete and return to files button
+    Then the user will be on a page with the title "Choose a file"
+    When the logged in user navigates to the view metadata page for closure metadata
+    Then the user will be on a page with the caption "Closure metadata"
+    And existing metadata should contain 4 values
+    And existing metadata should contain the metadata Name with value path0
+    And existing metadata should contain the metadata Closure status with value Open
+    And existing metadata should contain the metadata Is the title sensitive for the public? with value No, this title can be made public
+    And existing metadata should contain the metadata Is the description sensitive for the public? with value No, this description can be made public

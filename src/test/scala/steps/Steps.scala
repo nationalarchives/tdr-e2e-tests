@@ -749,6 +749,12 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.userLogin(webDriver, differentUserCredentials)
   }
 
+  And("^the user who did not create the consignment is logged in on the (.*) page for (.*) metadata") {
+    (page: String, metadataType: String) =>
+      loadPageByMetadataType(page, metadataType)
+      StepsUtility.userLogin(webDriver, differentUserCredentials)
+  }
+
   Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"

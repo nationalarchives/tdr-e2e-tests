@@ -20,27 +20,7 @@ class AWSUtility {
   lazy val config: Config = ConfigFactory.load
   lazy val httpClient: SdkHttpClient = ApacheHttpClient.builder.build
 
-  val provider: AwsCredentialsProvider with SdkAutoCloseable = if(config.hasPath("s3.role")) {
-    //Assume role if running on Jenkins
-    val sts = StsClient.builder()
-      .region(Region.EU_WEST_2)
-      .credentialsProvider(DefaultCredentialsProvider.builder().build())
-      .httpClient(httpClient).build()
-
-    StsAssumeRoleCredentialsProvider.builder().stsClient(sts)
-      .refreshRequest(
-        AssumeRoleRequest.builder()
-          .roleArn(config.getString("s3.role"))
-          .roleSessionName(s"e2e-tests-session")
-          .build())
-      .build()
-  } else {
-    //Otherwise, use local credentials
-    DefaultCredentialsProvider.builder().build()
-  }
-
   val s3: S3Client = S3Client.builder()
-    .credentialsProvider(provider)
     .httpClient(httpClient)
     .build()
 

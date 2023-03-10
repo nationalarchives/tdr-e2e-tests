@@ -12,16 +12,16 @@ Feature: Standard Full user journey
     When the user selects the series MOCK1 123
     And the user clicks the continue button
     Then the user should be on the transfer-agreement page
-    When the user selects yes to all transfer agreement checks
-    And the user clicks the continue button
+    When the user selects yes to all transfer agreement part 1 checks
+    And the user clicks the Agree and continue button
     Then the user should be on the transfer-agreement-continued page
-    When the user selects yes to all transfer agreement continued checks
-    And the user clicks the continue button
+    When the user selects yes to all transfer agreement part 2 checks
+    And the user clicks the Agree and continue button
     Then the user will be on a page with the title "Upload your records"
     When the user selects directory containing: testfile1
     Then the success and removal message container should be visible
     When the user clicks the Start upload button
-    Then the user will be on a page with the title "Uploading records"
+    Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible
     Then the user will be on a page with the title "Checking your records"
     And the file checks completed banner should not be visible
@@ -31,12 +31,12 @@ Feature: Standard Full user journey
     When the user clicks the continue button
     Then the user will be on a page with the title "Results of your checks"
     And the user should see a banner titled Success
-    When the user clicks on the Continue button
+    When the user clicks on the Next button
     Then the user will be on a page with the title "Descriptive & closure metadata"
     # currently skip adding additional metadata
     When the user clicks on the Next button
-    Then the user will be on a page with the title "Download or view metadata"
-    When the user clicks on the Continue button
+    Then the user will be on a page with the title "Download and review metadata"
+    When the user clicks on the Next button
     Then the user will be on a page with the title "Confirm transfer"
     When the user confirms that they are transferring legal custody of the records to TNA
     And the user clicks the Transfer your records button

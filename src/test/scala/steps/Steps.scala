@@ -321,9 +321,10 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-xl")
   }
 
-  Then("^the user will be on a page with the caption \"(.*)\"") {
-    caption: String =>
+  Then("^the user will be on the \"(.*)\" \"(.*)\" page") {
+    ( caption: String, title: String) =>
       StepsUtility.waitForElementTitle(webDriver, caption, "govuk-caption-l")
+      StepsUtility.waitForElementTitle(webDriver, title, "govuk-heading-l")
   }
 
   And("^the user will see a row with a consignment reference that correlates with their consignmentId") {
@@ -783,7 +784,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.userLogin(webDriver, differentUserCredentials)
   }
 
-  Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
+  Then("^the user will be on a page with the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"
        new WebDriverWait(webDriver, 10).ignoring(classOf[AssertionError]).withMessage {
@@ -898,13 +899,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     case "closure period" => webDriver.findElement(By.id("Years")).sendKeys(value)
   }
 
-  And("^the user confirms that the closure status has been approved by the advisory council") {
+  And("^the user confirms the closure status of the selected file") {
     val closureStatus = webDriver.findElement(By.id("closureStatus"))
     closureStatus.click()
   }
 
-  And("^the user selects (.*) for the (.*) field") {
-    (value: String, _: String) => {
+  And("^the user (selects|de-selects) (.*) for the (.*) field") {
+    (_: String, value: String, _: String) => {
       val selected = webDriver.findElement(By.cssSelector(s"[value=$value]"))
       selected.click()
     }

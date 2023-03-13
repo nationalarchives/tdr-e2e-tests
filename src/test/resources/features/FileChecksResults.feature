@@ -18,7 +18,7 @@ Feature: File Checks results Page
     And an existing transfer agreement part 2
     And a user who did not create the consignment
     When the user who did not create the consignment is logged in on the file checks results page
-    Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
+    Then the user will be on a page with the error message "You are not permitted to see this page"
 
   Scenario: The user will see an error when trying to access file check results before upload has happened
     Given A logged out standard user
@@ -83,4 +83,4 @@ Feature: File Checks results Page
     And an existing judgment consignment for transferring body MOCK1
     And a user who did not create the consignment
     When the user who did not create the consignment is logged in on the file checks results page
-    Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
+    Then the user will be on a page with the error message "You are not permitted to see this page"

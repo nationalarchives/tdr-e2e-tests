@@ -643,17 +643,6 @@ class Steps extends ScalaDsl with EN with Matchers {
         client.createFfidMetadata(id)
         client.addFileStatus(id, "FFID", "Success")
     }
-
-
-//    (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
-//      id =>
-//        client.createAVMetadata(id)
-//        client.addFileStatus(id, "Antivirus", "Success")
-//        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
-//        client.addFileStatus(id, "ChecksumMatch", "Success")
-//        client.createFfidMetadata(id)
-//        client.addFileStatus(id, "FFID", "Success")
-//    }
   }
 
   When("^the user selects directory containing: (.*)") {

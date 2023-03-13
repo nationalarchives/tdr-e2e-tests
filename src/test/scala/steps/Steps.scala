@@ -18,7 +18,8 @@ import org.scalatest.{Matchers, stats}
 
 import java.io.File
 import java.nio.file.Paths
-import java.time.Duration
+import java.time.{Duration, LocalDateTime}
+import java.time.format.DateTimeFormatter
 import java.util
 import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
@@ -114,6 +115,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
     input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
     webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
+  }
+
+  private def getDownloadedCsv(name: String, downloadPath: String = "/tmp/"): Array[File] = {
+    val expectedFileExtension = ".csv"
+    val dir = new File(downloadPath)
+    val files = dir.listFiles()
+    files.filter(f => f.getName.startsWith(name) && f.getName.endsWith(expectedFileExtension))
   }
 
   Given("^A logged out (.*) user") {
@@ -392,10 +400,13 @@ class Steps extends ScalaDsl with EN with Matchers {
       link.click()
       val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
+      val filteredFiles = getDownloadedCsv(consignmentRef)
 
-      new WebDriverWait(webDriver, 180).until((_: WebDriver) => {
-        new File(s"/tmp/$consignmentRef-metadata.csv").exists()
-      })
+      if (filteredFiles.nonEmpty) {
+        Assert.assertTrue(filteredFiles.last.exists())
+      } else {
+        Assert.fail(s"There were no files in the directory containing the name $consignmentRef")
+      }
   }
 
   When("^the user selects yes for all checks except \"I confirm that the records are all Crown Copyright.\"") {
@@ -544,7 +555,8 @@ class Steps extends ScalaDsl with EN with Matchers {
     numberOfFiles: Int =>
       val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
-      val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
+      val metadataCsv = getDownloadedCsv(consignmentRef).last
+      val source = Source.fromFile(metadataCsv.getAbsolutePath)
       val rows = source.getLines().toList
       def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28T14:31:17,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,date_range-value,2022-09-28T14:31:17,2022-09-28T14:31:17,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
 
@@ -614,11 +626,22 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user waits for the checks to complete") {
     val client = GraphqlUtility(userCredentials)
-    (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
+    filesWithoutChecksumMetadata.foreach {
+      id =>
+        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+        client.addFileStatus(id, "ChecksumMatch", "Success")
+    }
+
+    filesWithoutAVMetadata.foreach {
       id =>
         client.createAVMetadata(id)
-        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+        client.addFileStatus(id, "Antivirus", "Success")
+    }
+
+    filesWithoutFFIDMetadata.foreach {
+      id =>
         client.createFfidMetadata(id)
+        client.addFileStatus(id, "FFID", "Success")
     }
   }
 

@@ -136,6 +136,12 @@ class Steps extends ScalaDsl with EN with Matchers {
     files.filter(f => f.getName.startsWith(name) && f.getName.endsWith(expectedFileExtension))
   }
 
+  private def getSummaryMetadata: Map[String, String] = {
+    val fields = webDriver.findElements(By.cssSelector(s".govuk-summary-list__key")).asScala.toList.map(_.getText)
+    val values = webDriver.findElements(By.cssSelector(s".govuk-summary-list__value")).asScala.toList.map(_.getText.trim)
+    (fields zip values).toMap
+  }
+
   Given("^A logged out (.*) user") {
     userType: String =>
       userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
@@ -922,11 +928,5 @@ class Steps extends ScalaDsl with EN with Matchers {
       val fieldValues = getSummaryMetadata
       Assert.assertTrue(fieldValues.contains(metadata))
       Assert.assertTrue(fieldValues.values.exists(_ == value))
-  }
-
-  private def getSummaryMetadata: Map[String, String] = {
-    val fields = webDriver.findElements(By.cssSelector(s".govuk-summary-list__key")).asScala.toList.map(_.getText)
-    val values = webDriver.findElements(By.cssSelector(s".govuk-summary-list__value")).asScala.toList.map(_.getText.trim)
-    (fields zip values).toMap
   }
 }

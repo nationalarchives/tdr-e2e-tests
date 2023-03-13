@@ -36,8 +36,9 @@ Feature: Descriptive metadata pages
     And an existing upload of 2 files
     And the logged in user navigates to the add metadata page for descriptive metadata
     Then the user will be on a page with the caption "Descriptive metadata"
+    And the user selects "English" for the Language field
     When the user clicks the Save and Review button
-    Then the user will see a form error message "Enter the date of the record for this record"
+    Then the user will see a form error message "Search for and select at least one Language"
 
   Scenario: Descriptive metadata form is fully completed by a standard user
     Given A logged in standard user

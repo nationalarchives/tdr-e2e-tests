@@ -18,7 +18,8 @@ import org.scalatest.{Matchers, stats}
 
 import java.io.File
 import java.nio.file.Paths
-import java.time.Duration
+import java.time.{Duration, LocalDateTime}
+import java.time.format.DateTimeFormatter
 import java.util
 import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
@@ -617,8 +618,11 @@ class Steps extends ScalaDsl with EN with Matchers {
     (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
       id =>
         client.createAVMetadata(id)
+        client.addFileStatus(id, "Antivirus", "Success")
         client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+        client.addFileStatus(id, "ChecksumMatch", "Success")
         client.createFfidMetadata(id)
+        client.addFileStatus(id, "FFID", "Success")
     }
   }
 

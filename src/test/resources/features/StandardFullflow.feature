@@ -36,7 +36,7 @@ Feature: Standard Full user journey
     # currently skip adding additional metadata
     When the user clicks on the Next button
     Then the user will be on a page with the title "Download and review metadata"
-    When the user clicks on the Next button
+    And the user clicks the Next button
     Then the user will be on a page with the title "Confirm transfer"
     When the user confirms that they are transferring legal custody of the records to TNA
     And the user clicks the Transfer your records button

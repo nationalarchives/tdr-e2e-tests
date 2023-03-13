@@ -25,7 +25,6 @@ Feature: Download Metadata page
     When the logged in user navigates to the Download Metadata page
     Then the user should see a general service error "Page not found"
 
-  @wip
   Scenario: Metadata CSV is downloaded by a logged in user
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1

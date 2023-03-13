@@ -117,6 +117,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
   }
 
+  private def getDownloadedCsv(name: String, downloadPath: String = "/tmp/"): Array[File] = {
+    val expectedFileExtension = ".csv"
+    val dir = new File(downloadPath)
+    val files = dir.listFiles()
+    files.filter(f => f.getName.startsWith(name) && f.getName.endsWith(expectedFileExtension))
+  }
+
   Given("^A logged out (.*) user") {
     userType: String =>
       userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
@@ -393,10 +400,13 @@ class Steps extends ScalaDsl with EN with Matchers {
       link.click()
       val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
+      val filteredFiles = getDownloadedCsv(consignmentRef)
 
-      new WebDriverWait(webDriver, 180).until((_: WebDriver) => {
-        new File(s"/tmp/$consignmentRef-metadata.csv").exists()
-      })
+      if (filteredFiles.nonEmpty) {
+        Assert.assertTrue(filteredFiles.last.exists())
+      } else {
+        Assert.fail(s"There were no files in the directory containing the name $consignmentRef")
+      }
   }
 
   When("^the user selects yes for all checks except \"I confirm that the records are all Crown Copyright.\"") {
@@ -545,7 +555,8 @@ class Steps extends ScalaDsl with EN with Matchers {
     numberOfFiles: Int =>
       val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
-      val source = Source.fromFile(s"/tmp/$consignmentRef-metadata.csv")
+      val metadataCsv = getDownloadedCsv(consignmentRef).last
+      val source = Source.fromFile(metadataCsv.getAbsolutePath)
       val rows = source.getLines().toList
       def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28T14:31:17,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,date_range-value,2022-09-28T14:31:17,2022-09-28T14:31:17,file_name_language-value,file_name_translation-value,file_name_translation_language-value,OriginalFilepath-value")
 

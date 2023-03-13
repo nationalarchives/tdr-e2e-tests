@@ -615,15 +615,34 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user waits for the checks to complete") {
     val client = GraphqlUtility(userCredentials)
-    (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
+    filesWithoutChecksumMetadata.foreach {
+      id =>
+        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+        client.addFileStatus(id, "ChecksumMatch", "Success")
+    }
+
+    filesWithoutAVMetadata.foreach {
       id =>
         client.createAVMetadata(id)
         client.addFileStatus(id, "Antivirus", "Success")
-        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
-        client.addFileStatus(id, "ChecksumMatch", "Success")
+    }
+
+    filesWithoutFFIDMetadata.foreach {
+      id =>
         client.createFfidMetadata(id)
         client.addFileStatus(id, "FFID", "Success")
     }
+
+
+//    (filesWithoutChecksumMetadata ++ filesWithoutFFIDMetadata ++ filesWithoutAVMetadata).foreach {
+//      id =>
+//        client.createAVMetadata(id)
+//        client.addFileStatus(id, "Antivirus", "Success")
+//        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+//        client.addFileStatus(id, "ChecksumMatch", "Success")
+//        client.createFfidMetadata(id)
+//        client.addFileStatus(id, "FFID", "Success")
+//    }
   }
 
   When("^the user selects directory containing: (.*)") {

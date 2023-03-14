@@ -18,8 +18,7 @@ import org.scalatest.{Matchers, stats}
 
 import java.io.File
 import java.nio.file.Paths
-import java.time.{Duration, LocalDateTime}
-import java.time.format.DateTimeFormatter
+import java.time.Duration
 import java.util
 import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
@@ -85,6 +84,18 @@ class Steps extends ScalaDsl with EN with Matchers {
     webDriver.get(pageWithConsignment)
   }
 
+  private def loadPageByMetadataType(page: String, metadataType: String): Unit = {
+    val hyphenatedPageName = page.toLowerCase.replaceAll(" ", "-")
+    val pageWithConsignment = hyphenatedPageName match {
+      case "files-selection" => s"$baseUrl/consignment/$consignmentId/additional-metadata/files/$metadataType"
+      case "confirm-closure-status" => s"$baseUrl/consignment/$consignmentId/additional-metadata/status/closure?fileIds=${createdFiles.head}"
+      case "add-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/add/$metadataType?fileIds=${createdFiles.head}"
+      case "view-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/selected-summary/$metadataType?fileIds=${createdFiles.head}"
+      case _ => s"$baseUrl/consignment/$consignmentId/$hyphenatedPageName"
+    }
+    webDriver.get(pageWithConsignment)
+  }
+
   private def userCleanUp(): Unit = {
     this.userType = ""
     KeycloakClient.deleteUser(userId)
@@ -122,6 +133,12 @@ class Steps extends ScalaDsl with EN with Matchers {
     val dir = new File(downloadPath)
     val files = dir.listFiles()
     files.filter(f => f.getName.startsWith(name) && f.getName.endsWith(expectedFileExtension))
+  }
+
+  private def getSummaryMetadata: Map[String, String] = {
+    val fields = webDriver.findElements(By.cssSelector(s".govuk-summary-list__key")).asScala.toList.map(_.getText)
+    val values = webDriver.findElements(By.cssSelector(s".govuk-summary-list__value")).asScala.toList.map(_.getText.trim)
+    (fields zip values).toMap
   }
 
   Given("^A logged out (.*) user") {
@@ -183,6 +200,11 @@ class Steps extends ScalaDsl with EN with Matchers {
   When("^the logged in user navigates to the (.*) page") {
     page: String =>
       loadPage(page)
+  }
+
+  When("^the logged in user navigates to the (.*) page for (.*) metadata") {
+    (page: String, metadataType: String) =>
+      loadPageByMetadataType(page, metadataType)
   }
 
   And("^the (.*) page is loaded") {
@@ -294,6 +316,17 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, heading, "govuk-heading-s")
   }
 
+  Then("^the user will be on a page with the large heading \"(.*)\"") {
+    page: String =>
+      StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-xl")
+  }
+
+  Then("^the user will be on the \"(.*)\" \"(.*)\" page") {
+    ( caption: String, title: String) =>
+      StepsUtility.waitForElementTitle(webDriver, caption, "govuk-caption-l")
+      StepsUtility.waitForElementTitle(webDriver, title, "govuk-heading-l")
+  }
+
   And("^the user will see a row with a consignment reference that correlates with their consignmentId") {
     () =>
       val client = GraphqlUtility(userCredentials)
@@ -395,17 +428,22 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user clicks the (.*) link") {
     linkName: String =>
-      val linkClass = linkName.toLowerCase.replaceAll(" ", "-")
-      val link = webDriver.findElement(By.cssSelector(s"a.$linkClass"))
-      link.click()
-      val client = GraphqlUtility(userCredentials)
-      val consignmentRef = client.getConsignmentReference(consignmentId)
-      val filteredFiles = getDownloadedCsv(consignmentRef)
+      if (linkName == "download metadata") {
+        val linkClass = linkName.toLowerCase.replaceAll(" ", "-")
+        val link = webDriver.findElement(By.cssSelector(s"a.$linkClass"))
+        link.click()
+        val client = GraphqlUtility(userCredentials)
+        val consignmentRef = client.getConsignmentReference(consignmentId)
+        val filteredFiles = getDownloadedCsv(consignmentRef)
 
-      if (filteredFiles.nonEmpty) {
-        Assert.assertTrue(filteredFiles.last.exists())
+        if (filteredFiles.nonEmpty) {
+          Assert.assertTrue(filteredFiles.last.exists())
+        } else {
+          Assert.fail(s"There were no files in the directory containing the name $consignmentRef")
+        }
       } else {
-        Assert.fail(s"There were no files in the directory containing the name $consignmentRef")
+        val link = webDriver.findElement(By.cssSelector(s".govuk-button.govuk-button--secondary"))
+        link.click()
       }
   }
 
@@ -584,7 +622,7 @@ class Steps extends ScalaDsl with EN with Matchers {
         MatchIdInfo(checksumValue, path, idx)
       })
       val addFilesAndMetadataResult = client.addFilesAndMetadata(consignmentId,  "E2E TEST UPLOAD FOLDER", matchIdInfo)
-      createdFiles = addFilesAndMetadataResult.map(_.fileId)
+      createdFiles = addFilesAndMetadataResult.sortBy(_.matchId).map(_.fileId)
 
       val awsUtility = AWSUtility()
 
@@ -740,7 +778,13 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.userLogin(webDriver, differentUserCredentials)
   }
 
-  Then("^the user who did not create the consignment will see the error message \"(.*)\"") {
+  And("^the user who did not create the consignment is logged in on the (.*) page for (.*) metadata") {
+    (page: String, metadataType: String) =>
+      loadPageByMetadataType(page, metadataType)
+      StepsUtility.userLogin(webDriver, differentUserCredentials)
+  }
+
+  Then("^the user will be on a page with the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"
        new WebDriverWait(webDriver, 10).ignoring(classOf[AssertionError]).withMessage {
@@ -830,5 +874,59 @@ class Steps extends ScalaDsl with EN with Matchers {
     Assert.assertEquals(s"$baseUrl/consignment/$consignmentId/additional-metadata/download-metadata/csv", href)
     Assert.assertEquals("Next", buttonText)
     Assert.assertNotNull(svg)
+  }
+
+  And("^the user enters (.*) for the (.*) field") {
+    (value: String, field: String) => {
+      enterMetadata(value, field)
+    }
+  }
+
+  private def enterMetadata(value: String, field: String): Unit = field match {
+    case "description" => webDriver.findElement(By.cssSelector(s"#inputtextarea-$field")).sendKeys(value)
+    case "date of the record" | "FOI decision asserted" | "closure start date" =>
+      val input = if (field == "date of the record") {
+        "date-input-end_date"
+      } else if (field == "FOI decision asserted") {
+        "date-input-FoiExemptionAsserted"
+      } else if (field == "closure start date") {
+        "date-input-ClosureStartDate"
+      }
+      val List(day, month, year) = value.split("/").toList
+      webDriver.findElement(By.cssSelector(s"#$input-day")).sendKeys(day)
+      webDriver.findElement(By.cssSelector(s"#$input-month")).sendKeys(month)
+      webDriver.findElement(By.cssSelector(s"#$input-year")).sendKeys(year)
+    case "closure period" => webDriver.findElement(By.id("Years")).sendKeys(value)
+  }
+
+  And("^the user confirms the closure status of the selected file") {
+    val closureStatus = webDriver.findElement(By.id("closureStatus"))
+    closureStatus.click()
+  }
+
+  And("^the user (selects|de-selects) (.*) for the (.*) field") {
+    (_: String, value: String, _: String) => {
+      val selected = webDriver.findElement(By.cssSelector(s"[value=$value]"))
+      selected.click()
+    }
+  }
+
+  And("^an existing completed (.*) form") {
+    (metadataType: String) =>
+      val client = GraphqlUtility(userCredentials)
+      client.saveMetadata(consignmentId, createdFiles, metadataType)
+  }
+
+  And("^existing metadata should contain (.*) values") {
+    (numberOfMetadata: Int) =>
+      val fieldValues = getSummaryMetadata
+      Assert.assertTrue(fieldValues.size == numberOfMetadata)
+  }
+
+  And("^existing metadata should contain the metadata (.*) with value (.*)") {
+    (metadata: String, value: String) =>
+      val fieldValues = getSummaryMetadata
+      Assert.assertTrue(fieldValues.contains(metadata))
+      Assert.assertTrue(fieldValues.values.exists(_ == value))
   }
 }

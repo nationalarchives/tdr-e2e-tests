@@ -17,7 +17,7 @@ Feature: Download Metadata page
     And an existing standard consignment for transferring body MOCK1
     And a user who did not create the consignment
     When the user who did not create the consignment is logged in on the Download Metadata page
-    Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
+    Then the user will be on a page with the error message "You are not permitted to see this page"
 
   Scenario: Download metadata page is accessed by a judgment user
     Given A logged in judgment user

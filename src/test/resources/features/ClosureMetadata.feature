@@ -55,7 +55,7 @@ Feature: Closure Metadata Pages
     When the user clicks the Save and Review button
     Then the user will be on a page with the title "Review saved changes"
 
-  Scenario: Closure metadata is deleted by a standard user
+  Scenario: Existing closure metadata for a file is deleted by a standard user
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files

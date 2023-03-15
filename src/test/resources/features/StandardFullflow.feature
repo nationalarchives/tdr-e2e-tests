@@ -33,8 +33,8 @@ Feature: Standard Full user journey
     And the user should see a banner titled Success
     When the user clicks on the Next button
     Then the user will be on a page with the title "Descriptive & closure metadata"
-    # currently skip adding additional metadata
-    When the user clicks on the Next button
+    # The additional metadata is tested separately in DescriptiveMetadata.Feature & ClosureMetadata.Feature
+    And the user clicks the Next button
     Then the user will be on a page with the title "Download and review metadata"
     When the user clicks on the Next button
     Then the user will be on a page with the title "Confirm transfer"

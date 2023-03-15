@@ -35,4 +35,4 @@ Feature: Transfer Agreement Part 2 Page
     And an existing transfer agreement part 1
     And a user who did not create the consignment
     When the user who did not create the consignment is logged in on the Transfer Agreement Continued page
-    Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
+    Then the user will be on a page with the error message "You are not permitted to see this page"

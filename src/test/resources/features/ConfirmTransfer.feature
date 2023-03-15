@@ -15,7 +15,7 @@ Feature: Confirm Transfer Page
     And an existing transfer agreement part 2
     And a user who did not create the consignment
     When the user who did not create the consignment is logged in on the Confirm Transfer page
-    Then the user who did not create the consignment will see the error message "You are not permitted to see this page"
+    Then the user will be on a page with the error message "You are not permitted to see this page"
 
   Scenario: Consignment confirm transfer page shows the same number of files as were uploaded
     Given A logged out standard user

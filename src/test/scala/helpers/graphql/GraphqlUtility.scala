@@ -63,7 +63,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
 
   def addFilesAndMetadata(consignmentId: UUID, parentFolderName: String, matchIdInfo: List[MatchIdInfo]): List[afam.AddFilesAndMetadata] = {
     val startUploadClient = new UserApiClient[su.Data, su.Variables](userCredentials)
-    startUploadClient.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolderName)))
+    startUploadClient.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolderName, Option(true))))
     val client = new UserApiClient[afam.Data, afam.Variables](userCredentials)
 
     val metadataInput = matchIdInfo.map(info =>

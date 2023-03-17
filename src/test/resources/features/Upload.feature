@@ -21,7 +21,7 @@ Feature: Upload
     When the user selects directory containing: testfile1
     Then the success and removal message container should be visible
 
-  Scenario: The progress bar is shown after file upload and select the includeTopLevelFolder checkbox
+  Scenario: The progress bar is shown after the 'includeTopLevelFolder' is selected and file is uploaded
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing transfer agreement part 1

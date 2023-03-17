@@ -8,7 +8,8 @@ Feature: Upload
     And an existing transfer agreement part 2
     And the user is logged in on the upload page
     Then the user will be on a page with the title "Upload your records"
-    Then the upload progress should not be visible
+    And the upload progress should not be visible
+    And the includeTopLevelFolder checkbox should be unchecked
     And the success and removal message container should not be visible
 
   Scenario: The success message should be displayed when a folder is selected
@@ -20,18 +21,19 @@ Feature: Upload
     When the user selects directory containing: testfile1
     Then the success and removal message container should be visible
 
-  Scenario: The progress bar is shown after file upload
+  Scenario: The progress bar is shown after the 'includeTopLevelFolder' is selected and file is uploaded
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
     And the user is logged in on the upload page
     When the user selects directory containing: largefile
+    And the user selects includeTopLevelFolder checkbox
     And the user clicks the continue button
     Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible
 
-  Scenario: The file checks page is shown when the upload is completed
+  Scenario: Upload a folder without selecting includeTopLevelFolder checkbox and the file checks page is shown when the upload is completed
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing transfer agreement part 1

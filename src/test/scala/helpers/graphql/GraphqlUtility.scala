@@ -1,5 +1,7 @@
 package helpers.graphql
 
+import cats.implicits.catsSyntaxOptionId
+
 import java.time.Instant
 import java.util.UUID
 import graphql.codegen.AddAntivirusMetadata.{addAntivirusMetadata => aav}
@@ -61,9 +63,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(atac.document, atac.Variables(input))
   }
 
-  def addFilesAndMetadata(consignmentId: UUID, parentFolderName: String, matchIdInfo: List[MatchIdInfo]): List[afam.AddFilesAndMetadata] = {
+  def addFilesAndMetadata(consignmentId: UUID, parentFolderName: String, matchIdInfo: List[MatchIdInfo], includeTopLevelFolder: Boolean = false): List[afam.AddFilesAndMetadata] = {
     val startUploadClient = new UserApiClient[su.Data, su.Variables](userCredentials)
-    startUploadClient.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolderName, Option(true))))
+    startUploadClient.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolderName, includeTopLevelFolder.some)))
     val client = new UserApiClient[afam.Data, afam.Variables](userCredentials)
 
     val metadataInput = matchIdInfo.map(info =>

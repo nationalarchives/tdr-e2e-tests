@@ -1,7 +1,6 @@
 package steps
 
 import com.typesafe.config.{Config, ConfigFactory}
-import io.cucumber.scala.{EN, ScalaDsl, Scenario}
 import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
 import helpers.graphql.GraphqlUtility
@@ -11,10 +10,11 @@ import helpers.logging.AssertionErrorMessages._
 import helpers.steps.StepsUtility
 import helpers.steps.StepsUtility.calculateTestFileChecksum
 import helpers.users.RandomUtility
+import io.cucumber.scala.{EN, ScalaDsl, Scenario}
 import org.junit.Assert
-import org.openqa.selenium.support.ui.{FluentWait, Select, WebDriverWait}
 import org.openqa.selenium._
-import org.scalatest.{Matchers, stats}
+import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Select, WebDriverWait}
+import org.scalatest.Matchers
 
 import java.io.File
 import java.nio.file.Paths
@@ -695,6 +695,13 @@ class Steps extends ScalaDsl with EN with Matchers {
     }
   }
 
+  When("^the user selects (.+) checkbox") {
+    targetIdName: String => {
+      val element = new WebDriverWait(webDriver, 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(s"[for=$targetIdName]")));
+      element.click()
+    }
+  }
+
   And("^the (.*) should be visible") {
     targetIdName: String => {
       val id = targetIdName.replaceAll(" ", "-")
@@ -722,6 +729,12 @@ class Steps extends ScalaDsl with EN with Matchers {
         val isNotVisible = StepsUtility.elementIsHidden(id, webDriver)
         isNotVisible
       })
+    }
+  }
+
+  Then("^the (.+) checkbox should be unchecked") {
+    (id: String) => {
+      Assert.assertFalse(s"$id checkbox should be unchecked", StepsUtility.elementIsSelected(id, webDriver))
     }
   }
 

@@ -55,6 +55,11 @@ object StepsUtility {
     element.getAttribute("class").contains("hide") || Option(element.getAttribute("hidden")).isDefined
   }
 
+  def elementIsSelected(id: String, webDriver: WebDriver): Boolean = {
+    val element = webDriver.findElement(By.cssSelector(s"#$id"))
+    element.isSelected
+  }
+
   def elementHasClassDisabled(id: String, webDriver: WebDriver): Boolean = {
     val element = webDriver.findElement(By.cssSelector(s"#$id"))
     element.getAttribute("class").contains("govuk-button--disabled")

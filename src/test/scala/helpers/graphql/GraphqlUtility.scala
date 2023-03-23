@@ -15,6 +15,7 @@ import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPrivateBeta => atapb}
 import graphql.codegen.AddTransferAgreementCompliance.{addTransferAgreementCompliance => atac}
 import graphql.codegen.GetCustomMetadata.{customMetadata => cm}
+import graphql.codegen.GetDisplayProperties.{displayProperties => dp}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
 import graphql.codegen.GetConsignmentSummary.{getConsignmentSummary => gcs}
@@ -164,6 +165,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     }
     val updateBulkFileMetadataInput = UpdateBulkFileMetadataInput(consignmentId, fileIds, metadataInput)
     client.result(abfm.document, abfm.Variables(updateBulkFileMetadataInput)).data
+  }
+
+  def getDisplayProperties(consignmentId: UUID): Option[dp.Data] = {
+    val client = new UserApiClient[dp.Data, dp.Variables](userCredentials)
+    client.result(dp.document, dp.Variables(consignmentId)).data
   }
 }
 

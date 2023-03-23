@@ -533,6 +533,8 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the file checks are complete") {
     val client = GraphqlUtility(userCredentials)
+    client.startUpload(consignmentId)
+    client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
     val files = List("testfile1", "testfile2")
     val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({
       case (fileName, idx) =>
@@ -550,7 +552,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       client.createFfidMetadata(fm.fileId)
       client.addFileStatus(fm.fileId, "FFID", "Success")
     })
-
   }
 
   And("^the (checksum|antivirus|FFID) check has (.*)") {

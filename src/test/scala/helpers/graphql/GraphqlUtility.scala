@@ -19,7 +19,9 @@ import graphql.codegen.GetDisplayProperties.{displayProperties => dp}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
 import graphql.codegen.GetConsignmentSummary.{getConsignmentSummary => gcs}
+import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.UpdateConsignmentSeriesId.{updateConsignmentSeriesId => ucs}
+import graphql.codegen.UpdateConsignmentStatus.{updateConsignmentStatus => ucst}
 import graphql.codegen.types._
 import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.UserCredentials
@@ -38,6 +40,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
       val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
       client.result(ac.document, ac.Variables(AddConsignmentInput(Some(seriesId), standardConsignmentType))).data
     }
+  }
+
+  def startUpload(consignmentId: UUID, parentFolder: String = "parent"): Option[su.Data] = {
+    val client = new UserApiClient[su.Data, su.Variables](userCredentials)
+    client.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolder, None))).data
   }
 
   def getSeries(body: String): Option[gs.Data] = {
@@ -86,6 +93,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val fileStatusClient = new UserApiClient[afs.Data, afs.Variables](userCredentials)
     val variables = afs.Variables(AddFileStatusInput(fileId, statusType, statusValue))
     fileStatusClient.result(afs.document, variables).data.get.addFileStatus
+  }
+
+  def updateConsignmentStatus(consignmentId: UUID, statusType: String, statusValue: String): Option[ucst.Data] = {
+    val addConsignmentStatusClient = new UserApiClient[ucst.Data, ucst.Variables](userCredentials)
+    addConsignmentStatusClient.result(ucst.document, ucst.Variables(ConsignmentStatusInput(consignmentId, statusType, Option(statusValue)))).data
   }
 
   def getConsignmentReference(consignmentId: UUID): String = {

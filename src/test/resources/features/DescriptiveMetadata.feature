@@ -47,6 +47,8 @@ Feature: Descriptive metadata pages
     Then the user will be on the "Descriptive metadata" "Add or edit metadata" page
     When the user enters some description for the description field
     And the user enters 07/03/2023 for the date of the record field
+    And the user enters translated title for the translated title field
+    And the user enters some reference for the former reference field
     When the user clicks the Save and Review button
     Then the user will be on a page with the title "Review saved changes"
 

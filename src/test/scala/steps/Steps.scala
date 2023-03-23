@@ -920,6 +920,9 @@ class Steps extends ScalaDsl with EN with Matchers {
       webDriver.findElement(By.cssSelector(s"#$input-month")).sendKeys(month)
       webDriver.findElement(By.cssSelector(s"#$input-year")).sendKeys(year)
     case "closure period" => webDriver.findElement(By.id("Years")).sendKeys(value)
+    case "translated title" =>
+      webDriver.findElement(By.name("inputtext-file_name_translation-")).sendKeys(value)
+    case "former reference" => webDriver.findElement(By.name("inputtext-former_reference_department-")).sendKeys(value)
   }
 
   And("^the user confirms the closure status of the selected file") {

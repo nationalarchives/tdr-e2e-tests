@@ -533,6 +533,8 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the file checks are complete") {
     val client = GraphqlUtility(userCredentials)
+    client.startUpload(consignmentId)
+    client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
     val files = List("testfile1", "testfile2")
     val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({
       case (fileName, idx) =>
@@ -550,7 +552,6 @@ class Steps extends ScalaDsl with EN with Matchers {
       client.createFfidMetadata(fm.fileId)
       client.addFileStatus(fm.fileId, "FFID", "Success")
     })
-
   }
 
   And("^the (checksum|antivirus|FFID) check has (.*)") {
@@ -596,17 +597,26 @@ class Steps extends ScalaDsl with EN with Matchers {
       val metadataCsv = getDownloadedCsv(consignmentRef).last
       val source = Source.fromFile(metadataCsv.getAbsolutePath)
       val rows = source.getLines().toList
-      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,FileType-value,1,E2E_tests/original/path$num,RightsCopyright-value,LegalStatus-value,HeldBy-value,2022-09-28T14:31:17,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,true,TitleAlternate-value,description-value,true,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,file_name_translation-value,OriginalFilepath-value")
-
+      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,Yes,TitleAlternate-value,description-value,Yes,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,file_name_translation-value,former_reference_department-value")
+      case class DisplayProperty(active: Boolean, name: String, propertyName: String)
       Assert.assertEquals(rows.size, numberOfFiles + 1)
-      val customMetadata = client.getCustomMetadata(consignmentId).filter(_.allowExport).sortBy(_.exportOrdinal.getOrElse(Int.MaxValue))
+      val displayProperties = client.getDisplayProperties(consignmentId).map(_.displayProperties.map(dp => {
+        val active = dp.attributes.find(_.attribute == "Active").flatMap(_.value).contains("true")
+        val name = dp.attributes.find(_.attribute == "Name").flatMap(_.value).getOrElse("")
+        DisplayProperty(active, name, dp.propertyName)
+      })).getOrElse(Nil).filter(dp => dp.active || dp.propertyName == "Filename").groupBy(_.propertyName)
+
+      val customMetadata = client.getCustomMetadata(consignmentId)
+        .filter(cm => cm.allowExport && displayProperties.keySet.contains(cm.name))
+        .sortBy(_.exportOrdinal.getOrElse(Int.MaxValue))
+
       val headerRow = rows.head.split(",")
       Assert.assertEquals(headerRow.length, customMetadata.size)
       Assert.assertTrue(filterCsvRows(0).isDefined)
       Assert.assertTrue(filterCsvRows(1).isDefined)
       headerRow.zipWithIndex.map {
         case (title, idx) =>
-          val customMetadataName = customMetadata(idx).fullName.getOrElse("")
+          val customMetadataName = displayProperties(customMetadata(idx).name).headOption.map(_.name).getOrElse("")
           Assert.assertEquals(customMetadataName, title)
       }
   }
@@ -910,6 +920,9 @@ class Steps extends ScalaDsl with EN with Matchers {
       webDriver.findElement(By.cssSelector(s"#$input-month")).sendKeys(month)
       webDriver.findElement(By.cssSelector(s"#$input-year")).sendKeys(year)
     case "closure period" => webDriver.findElement(By.id("Years")).sendKeys(value)
+    case "translated title" =>
+      webDriver.findElement(By.name("inputtext-file_name_translation-")).sendKeys(value)
+    case "former reference" => webDriver.findElement(By.name("inputtext-former_reference_department-")).sendKeys(value)
   }
 
   And("^the user confirms the closure status of the selected file") {

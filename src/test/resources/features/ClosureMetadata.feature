@@ -15,7 +15,7 @@ Feature: Closure Metadata Pages
     Then the user will be on the "Closure metadata" "Confirm closure status" page
     When the user confirms the closure status of the selected file
     And the user clicks the Continue button
-    Then the user will be on the "Closure metadata" "Add or edit metadata" page
+    Then the user will be on the "Closure metadata" "Add or edit closure metadata" page
 
   Scenario: User sees an error when trying to view the closure metadata form page for a consignment they don't own
     Given A logged out standard user
@@ -37,7 +37,7 @@ Feature: Closure Metadata Pages
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files
     And the logged in user navigates to the add metadata page for closure metadata
-    Then the user will be on the "Closure metadata" "Add or edit metadata" page
+    Then the user will be on the "Closure metadata" "Add or edit closure metadata" page
     When the user enters 01/01/2023 for the FOI decision asserted field
     And the user clicks the Save and Review button
     Then the user will see a form error message "Enter the closure start date for this record"
@@ -47,7 +47,7 @@ Feature: Closure Metadata Pages
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files
     And the logged in user navigates to the add metadata page for closure metadata
-    Then the user will be on the "Closure metadata" "Add or edit metadata" page
+    Then the user will be on the "Closure metadata" "Add or edit closure metadata" page
     When the user enters 01/01/2023 for the FOI decision asserted field
     And the user enters 07/03/2023 for the closure start date field
     And the user enters 5 for the closure period field
@@ -61,7 +61,7 @@ Feature: Closure Metadata Pages
     And an existing upload of 2 files
     And an existing completed closure form
     And the logged in user navigates to the view metadata page for closure metadata
-    Then the user will be on the "Closure metadata" "View metadata" page
+    Then the user will be on the "Closure metadata" "View Metadata" page
     And existing metadata should contain 8 values
     And existing metadata should contain the metadata Name with value path0
     And existing metadata should contain the metadata FOI decision asserted with value 01/01/2000
@@ -76,7 +76,7 @@ Feature: Closure Metadata Pages
     When the user clicks the Delete and return to files button
     Then the user will be on the "Closure metadata" "Choose a file" page
     When the logged in user navigates to the view metadata page for closure metadata
-    Then the user will be on the "Closure metadata" "View metadata" page
+    Then the user will be on the "Closure metadata" "View Metadata" page
     And existing metadata should contain 4 values
     And existing metadata should contain the metadata Name with value path0
     And existing metadata should contain the metadata Closure status with value Open

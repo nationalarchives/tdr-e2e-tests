@@ -331,7 +331,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     () =>
       val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
-      StepsUtility.waitForElementTitle(webDriver, s"$consignmentRef", "consignment-ref-cell")
+      StepsUtility.waitForElementTitle(webDriver, s"$consignmentRef", "govuk-table__header")
   }
 
   And("^the user should see a banner titled Success") {

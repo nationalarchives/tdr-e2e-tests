@@ -1,5 +1,7 @@
 package helpers.graphql
 
+import cats.implicits.catsSyntaxOptionId
+
 import java.time.Instant
 import java.util.UUID
 import graphql.codegen.AddAntivirusMetadata.{addAntivirusMetadata => aav}
@@ -13,10 +15,13 @@ import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPrivateBeta => atapb}
 import graphql.codegen.AddTransferAgreementCompliance.{addTransferAgreementCompliance => atac}
 import graphql.codegen.GetCustomMetadata.{customMetadata => cm}
+import graphql.codegen.GetDisplayProperties.{displayProperties => dp}
 import graphql.codegen.GetSeries.{getSeries => gs}
 import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
 import graphql.codegen.GetConsignmentSummary.{getConsignmentSummary => gcs}
+import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.UpdateConsignmentSeriesId.{updateConsignmentSeriesId => ucs}
+import graphql.codegen.UpdateConsignmentStatus.{updateConsignmentStatus => ucst}
 import graphql.codegen.types._
 import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.UserCredentials
@@ -35,6 +40,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
       val seriesId: UUID = getSeries(body).get.getSeries.head.seriesid
       client.result(ac.document, ac.Variables(AddConsignmentInput(Some(seriesId), standardConsignmentType))).data
     }
+  }
+
+  def startUpload(consignmentId: UUID, parentFolder: String = "parent"): Option[su.Data] = {
+    val client = new UserApiClient[su.Data, su.Variables](userCredentials)
+    client.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolder, None))).data
   }
 
   def getSeries(body: String): Option[gs.Data] = {
@@ -61,9 +71,9 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(atac.document, atac.Variables(input))
   }
 
-  def addFilesAndMetadata(consignmentId: UUID, parentFolderName: String, matchIdInfo: List[MatchIdInfo]): List[afam.AddFilesAndMetadata] = {
+  def addFilesAndMetadata(consignmentId: UUID, parentFolderName: String, matchIdInfo: List[MatchIdInfo], includeTopLevelFolder: Boolean = false): List[afam.AddFilesAndMetadata] = {
     val startUploadClient = new UserApiClient[su.Data, su.Variables](userCredentials)
-    startUploadClient.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolderName)))
+    startUploadClient.result(su.document, su.Variables(StartUploadInput(consignmentId, parentFolderName, includeTopLevelFolder.some)))
     val client = new UserApiClient[afam.Data, afam.Variables](userCredentials)
 
     val metadataInput = matchIdInfo.map(info =>
@@ -83,6 +93,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val fileStatusClient = new UserApiClient[afs.Data, afs.Variables](userCredentials)
     val variables = afs.Variables(AddFileStatusInput(fileId, statusType, statusValue))
     fileStatusClient.result(afs.document, variables).data.get.addFileStatus
+  }
+
+  def updateConsignmentStatus(consignmentId: UUID, statusType: String, statusValue: String): Option[ucst.Data] = {
+    val addConsignmentStatusClient = new UserApiClient[ucst.Data, ucst.Variables](userCredentials)
+    addConsignmentStatusClient.result(ucst.document, ucst.Variables(ConsignmentStatusInput(consignmentId, statusType, Option(statusValue)))).data
   }
 
   def getConsignmentReference(consignmentId: UUID): String = {
@@ -162,6 +177,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     }
     val updateBulkFileMetadataInput = UpdateBulkFileMetadataInput(consignmentId, fileIds, metadataInput)
     client.result(abfm.document, abfm.Variables(updateBulkFileMetadataInput)).data
+  }
+
+  def getDisplayProperties(consignmentId: UUID): Option[dp.Data] = {
+    val client = new UserApiClient[dp.Data, dp.Variables](userCredentials)
+    client.result(dp.document, dp.Variables(consignmentId)).data
   }
 }
 

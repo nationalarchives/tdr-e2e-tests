@@ -8,4 +8,4 @@ Feature: FAQ Page
   Scenario: FAQ page is accessed by a judgment user
     Given A logged in judgment user
     And the logged in user navigates to the faq page
-    Then the user will be on a page with a small heading "How does transferring a judgment record work?"
+    Then the user will be on a page with a small heading "How does the transferring process work?"

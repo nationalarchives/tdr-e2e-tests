@@ -4,7 +4,7 @@ import cats.implicits.catsSyntaxOptionId
 
 import java.time.Instant
 import java.util.UUID
-import graphql.codegen.AddAntivirusMetadata.{addAntivirusMetadata => aav}
+import graphql.codegen.AddBulkAntivirusMetadata.{addBulkAntivirusMetadata => abavmd}
 import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
 import graphql.codegen.AddFileStatus.{addFileStatus => afs}
 import graphql.codegen.StartUpload.{startUpload => su}
@@ -132,10 +132,14 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   }
 
   def createAVMetadata(fileId: UUID, result: String = ""): Unit = {
-    val client = new BackendApiClient[aav.Data, aav.Variables]
-    val input = AddAntivirusMetadataInputValues(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", result, System.currentTimeMillis)
-    client.sendRequest(aav.document, aav.Variables(input))
+    val client = new BackendApiClient[abavmd.Data, abavmd.Variables]
+    val inputValues = List(
+      AddAntivirusMetadataInputValues(fileId, "E2E tests software", "E2E tests software version", "E2E test DB version", result, System.currentTimeMillis)
+    )
+    val input = new AddAntivirusMetadataInput(inputValues)
+      client.sendRequest(abavmd.document, abavmd.Variables(input))
   }
+
 
   def createBackendChecksumMetadata(fileId: UUID, checksumValue: Option[String]): Unit = {
     val client = new BackendApiClient[afm.Data, afm.Variables]

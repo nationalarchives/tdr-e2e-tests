@@ -4,7 +4,7 @@ object Dependencies {
   private val awsSdkVersion = "2.20.1"
   private val circeVersion = "0.14.5"
   private val cucumberCoreVersion = "7.11.2"
-  private val cucumberScalaVersion = "8.14.2"
+  private val cucumberScalaVersion = "8.15.0"
   private val cucumberJUnitVersion = "7.11.2"
   private val keycloakVersion = "21.1.0"
   private val softwareMillVersion = "2.3.0"

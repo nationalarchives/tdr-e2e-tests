@@ -3,10 +3,10 @@ import sbt._
 object Dependencies {
   private val awsSdkVersion = "2.20.1"
   private val circeVersion = "0.14.5"
-  private val cucumberCoreVersion = "7.11.2"
+  private val cucumberCoreVersion = "7.12.0"
   private val cucumberScalaVersion = "8.15.0"
-  private val cucumberJUnitVersion = "7.11.2"
-  private val keycloakVersion = "21.1.0"
+  private val cucumberJUnitVersion = "7.12.0"
+  private val keycloakVersion = "21.1.1"
   private val softwareMillVersion = "2.3.0"
 
   lazy val tdrGraphQlClient    = "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.100"

@@ -441,6 +441,8 @@ class Steps extends ScalaDsl with EN with Matchers {
         } else {
           Assert.fail(s"There were no files in the directory containing the name $consignmentRef")
         }
+      } else if(linkName == "Delete metadata") {
+        webDriver.findElement(By.id("deleteMetadata")).click()
       } else {
         val link = webDriver.findElement(By.cssSelector(s".govuk-button.govuk-button--secondary"))
         link.click()

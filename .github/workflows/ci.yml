@@ -14,7 +14,6 @@ on:
         options:
           - intg
           - staging
-          - prod
         default: 'intg'
       wait:
         description: 'The time in seconds to wait before starting the tests'

@@ -8,8 +8,12 @@ on:
         required: false
         default: 'Firefox'
       environment:
+        type: choice
         description: 'Environment'
         required: true
+        options:
+          - intg
+          - staging
         default: 'intg'
       wait:
         description: 'The time in seconds to wait before starting the tests'

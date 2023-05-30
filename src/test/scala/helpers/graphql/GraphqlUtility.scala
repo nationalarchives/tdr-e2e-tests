@@ -6,7 +6,6 @@ import java.time.Instant
 import java.util.UUID
 import graphql.codegen.AddBulkAntivirusMetadata.{addBulkAntivirusMetadata => abavmd}
 import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
-import graphql.codegen.AddFileStatus.{addFileStatus => afs}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
@@ -23,6 +22,7 @@ import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.UpdateConsignmentSeriesId.{updateConsignmentSeriesId => ucs}
 import graphql.codegen.UpdateConsignmentStatus.{updateConsignmentStatus => ucst}
 import graphql.codegen.types._
+import graphql.codegen.{AddMultipleFileStatuses => amfs}
 import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.UserCredentials
 
@@ -89,10 +89,10 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     client.result(afam.document, afam.Variables(input)).data.get.addFilesAndMetadata
   }
 
-  def addFileStatus(fileId: UUID, statusType: String, statusValue: String): afs.AddFileStatus = {
-    val fileStatusClient = new UserApiClient[afs.Data, afs.Variables](userCredentials)
-    val variables = afs.Variables(AddFileStatusInput(fileId, statusType, statusValue))
-    fileStatusClient.result(afs.document, variables).data.get.addFileStatus
+  def addFileStatus(fileId: UUID, statusType: String, statusValue: String): List[amfs.addMultipleFileStatuses.AddMultipleFileStatuses] = {
+    val fileStatusClient = new UserApiClient[amfs.addMultipleFileStatuses.Data, amfs.addMultipleFileStatuses.Variables](userCredentials)
+    val variables = amfs.addMultipleFileStatuses.Variables(AddMultipleFileStatusesInput(List(AddFileStatusInput(fileId, statusType, statusValue))))
+    fileStatusClient.result(amfs.addMultipleFileStatuses.document, variables).data.get.addMultipleFileStatuses
   }
 
   def updateConsignmentStatus(consignmentId: UUID, statusType: String, statusValue: String): Option[ucst.Data] = {

@@ -8,11 +8,8 @@ Feature: View Transfers
     When the user clicks on the Back to homepage button
     Then the user should be on the homepage page
 
-#  Uncomment once judgment users can access the view the transfers page
-#  Scenario: The user's consignment is visible on the View Transfers Page when accessed by a judgment user
-#    Given A logged in judgment user
-#    And an existing judgment consignment for transferring body MOCK1
-#    When the logged in user navigates to the View Transfers page
-#    Then the user will see a row with a consignment reference that correlates with their consignmentId
-#    When the user clicks on the Back to homepage button
-#    Then the user should be on the homepage page
+  Scenario: View Transfers page is accessed by a judgment user
+    Given A logged in judgment user
+    And an existing judgment consignment for transferring body MOCK1
+    When the logged in user navigates to the View Transfers page
+    Then the user will be on a page with the error message "You are not permitted to see this page"

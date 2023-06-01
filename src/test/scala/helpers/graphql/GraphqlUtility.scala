@@ -8,7 +8,6 @@ import graphql.codegen.AddBulkAntivirusMetadata.{addBulkAntivirusMetadata => aba
 import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
-import graphql.codegen.AddFileMetadata.{addFileMetadata => afm}
 import graphql.codegen.AddBulkFileMetadata.{addBulkFileMetadata => abfm}
 import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
 import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPrivateBeta => atapb}
@@ -141,10 +140,10 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   }
 
 
-  def createBackendChecksumMetadata(fileId: UUID, checksumValue: Option[String]): Unit = {
-    val client = new BackendApiClient[afm.Data, afm.Variables]
-    val input = AddFileMetadataWithFileIdInputValues("SHA256ServerSideChecksum", fileId, checksumValue.getOrElse("checksumValue"))
-    client.sendRequest(afm.document, afm.Variables(input))
+  def createBackendChecksumMetadata(consignmentId: UUID, fileIds: List[UUID], checksumValue: Option[String]): Unit = {
+    val client = new BackendApiClient[abfm.Data, abfm.Variables]
+    val input = UpdateBulkFileMetadataInput(consignmentId, fileIds, metadataProperties = List(UpdateFileMetadataInput(true, "SHA256ServerSideChecksum", checksumValue.getOrElse("checksumValue"))))
+    client.sendRequest(abfm.document, abfm.Variables(input))
   }
 
   def createFfidMetadata(fileId: UUID, puid: String = "x-fmt/111"): Unit = {

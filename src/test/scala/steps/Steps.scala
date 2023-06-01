@@ -549,7 +549,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       val checksum = checksumWithIndex.find(_.matchId == fm.matchId).map(_.checksum)
       client.createAVMetadata(fm.fileId)
       client.addFileStatus(fm.fileId, "Antivirus", "Success")
-      client.createBackendChecksumMetadata(fm.fileId, checksum)
+      client.createBackendChecksumMetadata(consignmentId, List(fm.fileId), checksum)
       client.addFileStatus(fm.fileId, "ChecksumMatch", "Success")
       client.createFfidMetadata(fm.fileId)
       client.addFileStatus(fm.fileId, "FFID", "Success")
@@ -666,7 +666,7 @@ class Steps extends ScalaDsl with EN with Matchers {
           filesWithoutFFIDMetadata = createdFiles.drop(filesToProcess)
         case "checksum" =>
           fileRangeToProcess.foreach(id => {
-            client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+            client.createBackendChecksumMetadata(consignmentId, List(id), createdFilesIdToChecksum.get(id))
             client.addFileStatus(id, "ChecksumMatch", "Success")
           })
           filesWithoutChecksumMetadata = createdFiles.drop(filesToProcess)
@@ -678,7 +678,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val client = GraphqlUtility(userCredentials)
     filesWithoutChecksumMetadata.foreach {
       id =>
-        client.createBackendChecksumMetadata(id, createdFilesIdToChecksum.get(id))
+        client.createBackendChecksumMetadata(consignmentId, List(id), createdFilesIdToChecksum.get(id))
         client.addFileStatus(id, "ChecksumMatch", "Success")
     }
 

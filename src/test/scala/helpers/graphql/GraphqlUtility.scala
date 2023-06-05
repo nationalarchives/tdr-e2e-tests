@@ -9,7 +9,7 @@ import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.AddConsignment.{addConsignment => ac}
 import graphql.codegen.AddBulkFileMetadata.{addBulkFileMetadata => abfm}
-import graphql.codegen.AddFFIDMetadata.{addFFIDMetadata => affm}
+import graphql.codegen.AddBulkFFIDMetadata.{addBulkFFIDMetadata => abffm}
 import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPrivateBeta => atapb}
 import graphql.codegen.AddTransferAgreementCompliance.{addTransferAgreementCompliance => atac}
 import graphql.codegen.GetCustomMetadata.{customMetadata => cm}
@@ -147,7 +147,7 @@ class GraphqlUtility(userCredentials: UserCredentials) {
   }
 
   def createFfidMetadata(fileId: UUID, puid: String = "x-fmt/111"): Unit = {
-    val client = new BackendApiClient[affm.Data, affm.Variables]
+    val client = new BackendApiClient[abffm.Data, abffm.Variables]
     val ffidInputMatches = FFIDMetadataInputMatches(Some("txt"), "e2e-test-basis", Some(puid))
     val input = FFIDMetadataInputValues(
       fileId,
@@ -157,8 +157,10 @@ class GraphqlUtility(userCredentials: UserCredentials) {
       "e2e-test-container-signature.xml",
       "e2e-test-method",
       List(ffidInputMatches))
-    client.sendRequest(affm.document, affm.Variables(input))
+    val variables = FFIDMetadataInput(List(input))
+    client.sendRequest(abffm.document, abffm.Variables(variables))
   }
+
 
   def getConsignmentExport(consignmentId: UUID): Option[gcfe.Data] = {
     val client = new UserApiClient[gcfe.Data, gcfe.Variables](userCredentials)

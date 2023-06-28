@@ -1,4 +1,3 @@
-@Test
 Feature: View Transfers
 
   Scenario: The user's consignment is visible on the View Transfers Page when accessed by a standard user

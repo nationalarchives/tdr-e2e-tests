@@ -212,7 +212,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       loadPage(page)
   }
 
-  And("^the user clicks on the (.*)(?: button|link)$") {
+  And("^the user clicks on the (.*) button") {
     button: String =>
       new WebDriverWait(webDriver, 30).withMessage {
         s"""Could not find button "$button" on this page ${webDriver.getCurrentUrl}

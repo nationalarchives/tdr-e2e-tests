@@ -8,6 +8,12 @@ Feature: View Transfers
     When the user clicks on the Back to homepage button
     Then the user should be on the homepage page
 
+  Scenario: Show a link to start a new transfer on the View Transfers Page when a new user visits the page
+    Given A logged in standard user
+    When the logged in user navigates to the View Transfers page
+    When the user clicks the Start a new transfer button
+    Then the user should be on the series page
+
   Scenario: View Transfers page is accessed by a judgment user
     Given A logged in judgment user
     And an existing judgment consignment for transferring body MOCK1

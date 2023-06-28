@@ -517,9 +517,10 @@ class Steps extends ScalaDsl with EN with Matchers {
       consignmentId = client.createConsignment(consignmentType, body).get.addConsignment.consignmentid.get
   }
 
-  And("^an selected series (.*)") {
+  And("^an existing selected series (.*)") {
     (body: String) =>
     val client = GraphqlUtility(userCredentials)
+    client.addConsignmentStatus(consignmentId, "Series", "Completed")
     client.updateSeries(consignmentId, body)
   }
 

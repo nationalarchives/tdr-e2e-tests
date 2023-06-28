@@ -3,7 +3,7 @@ Feature: Transfer Agreement Part 1 Page
   Scenario: A logged in user completes the Transfer Agreement (part 1) form correctly
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an selected series MOCK1
+    And an existing selected series MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes to all transfer agreement part 1 checks
     And the user clicks the Agree and continue button
@@ -12,7 +12,7 @@ Feature: Transfer Agreement Part 1 Page
   Scenario: A logged in user submits Transfer Agreement (part 1) form without responding yes to all questions
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an selected series MOCK1
+    And an existing selected series MOCK1
     And the user is logged in on the Transfer Agreement page
     When the user selects yes for all checks except "I confirm that the records are all Crown Copyright."
     And the user clicks the Agree and continue button

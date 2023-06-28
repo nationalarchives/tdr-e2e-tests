@@ -20,6 +20,7 @@ import graphql.codegen.GetConsignmentSummary.{getConsignmentSummary => gcs}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.UpdateConsignmentSeriesId.{updateConsignmentSeriesId => ucs}
 import graphql.codegen.UpdateConsignmentStatus.{updateConsignmentStatus => ucst}
+import graphql.codegen.AddConsignmentStatus.{addConsignmentStatus => acs}
 import graphql.codegen.types._
 import graphql.codegen.{AddMultipleFileStatuses => amfs}
 import helpers.graphql.GraphqlUtility.MatchIdInfo
@@ -92,6 +93,11 @@ class GraphqlUtility(userCredentials: UserCredentials) {
     val fileStatusClient = new UserApiClient[amfs.addMultipleFileStatuses.Data, amfs.addMultipleFileStatuses.Variables](userCredentials)
     val variables = amfs.addMultipleFileStatuses.Variables(AddMultipleFileStatusesInput(List(AddFileStatusInput(fileId, statusType, statusValue))))
     fileStatusClient.result(amfs.addMultipleFileStatuses.document, variables).data.get.addMultipleFileStatuses
+  }
+
+  def addConsignmentStatus(consignmentId: UUID, statusType: String, statusValue: String): Option[acs.Data] = {
+    val addConsignmentStatusClient = new UserApiClient[acs.Data, acs.Variables](userCredentials)
+    addConsignmentStatusClient.result(acs.document, acs.Variables(ConsignmentStatusInput(consignmentId, statusType, Some(statusValue)))).data
   }
 
   def updateConsignmentStatus(consignmentId: UUID, statusType: String, statusValue: String): Option[ucst.Data] = {

@@ -3,7 +3,7 @@ Feature: Transfer Agreement Part 2 Page
   Scenario: A logged in user completes the Transfer Agreement (part 2) form correctly
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an selected series MOCK1
+    And an existing selected series MOCK1
     And an existing transfer agreement part 1
     And the user is logged in on the Transfer Agreement Continued page
     When the user selects yes to all transfer agreement part 2 checks
@@ -13,7 +13,7 @@ Feature: Transfer Agreement Part 2 Page
   Scenario: A logged in user submits Transfer Agreement (part 2) form without DRO approval
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-    And an selected series MOCK1
+    And an existing selected series MOCK1
     And an existing transfer agreement part 1
     And the user is logged in on the Transfer Agreement Continued page
     And the user selects yes to all transfer agreement part 2 checks

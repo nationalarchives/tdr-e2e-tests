@@ -220,7 +220,7 @@ class Steps extends ScalaDsl with EN with Matchers {
            |
            |${webDriver.getPageSource}""".stripMargin
       }.until(
-        (driver: WebDriver) => webDriver.findElement(By.linkText(button)).click()
+        (driver: WebDriver) => webDriver.findElement(By.linkText(button.trim)).click()
       )
   }
 

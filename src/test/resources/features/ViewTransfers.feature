@@ -5,7 +5,7 @@ Feature: View Transfers
     And an existing standard consignment for transferring body MOCK1
     When the logged in user navigates to the View Transfers page
     Then the user will see a row with a consignment reference that correlates with their consignmentId
-    When the user clicks on the Back to homepage button
+    When the user clicks on the Back link
     Then the user should be on the homepage page
 
   Scenario: Show a link to start a new transfer on the View Transfers Page when a new user visits the page

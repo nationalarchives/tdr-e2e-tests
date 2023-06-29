@@ -212,7 +212,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       loadPage(page)
   }
 
-  And("^the user clicks on the (.*) button") {
+  And("^the user clicks on the (.*)(?: button|link)$") {
     button: String =>
       new WebDriverWait(webDriver, 30).withMessage {
         s"""Could not find button "$button" on this page ${webDriver.getCurrentUrl}
@@ -220,7 +220,7 @@ class Steps extends ScalaDsl with EN with Matchers {
            |
            |${webDriver.getPageSource}""".stripMargin
       }.until(
-        (driver: WebDriver) => webDriver.findElement(By.linkText(button)).click()
+        (driver: WebDriver) => webDriver.findElement(By.linkText(button.trim)).click()
       )
   }
 

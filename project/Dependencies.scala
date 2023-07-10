@@ -13,7 +13,7 @@ object Dependencies {
   lazy val scalaTestPlusPlay   = "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"
   lazy val keycloakCore        = "org.keycloak" % "keycloak-core" % keycloakVersion
   lazy val keycloakAdminClient = "org.keycloak" % "keycloak-admin-client" % keycloakVersion
-  lazy val tdrGenerateGraphQl  = "uk.gov.nationalarchives" %% "tdr-generated-graphql" % "0.0.335"
+  lazy val tdrGenerateGraphQl  = "uk.gov.nationalarchives" %% "tdr-generated-graphql" % "0.0.337"
   lazy val circeCore           = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric        = "io.circe" %% "circe-generic" % circeVersion
   lazy val softwareMillCore    = "com.softwaremill.sttp.client" %% "core" % softwareMillVersion

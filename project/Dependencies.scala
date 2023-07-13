@@ -6,7 +6,7 @@ object Dependencies {
   private val cucumberCoreVersion = "7.13.0"
   private val cucumberScalaVersion = "8.16.0"
   private val cucumberJUnitVersion = "7.13.0"
-  private val keycloakVersion = "21.1.2"
+  private val keycloakVersion = "22.0.0"
   private val softwareMillVersion = "2.3.0"
 
   lazy val tdrGraphQlClient    = "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.117"

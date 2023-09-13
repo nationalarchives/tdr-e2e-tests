@@ -4,7 +4,7 @@ name := "tdr-e2e-tests"
 
 version := "0.1"
 
-scalaVersion := "2.13.11"
+scalaVersion := "2.13.12"
 
 libraryDependencies ++= Seq(
   scalaTestPlusPlay % Test,

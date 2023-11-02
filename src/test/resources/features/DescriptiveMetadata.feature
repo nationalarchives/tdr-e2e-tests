@@ -37,7 +37,7 @@ Feature: Descriptive metadata pages
     Then the user will be on the "Descriptive metadata" "Add or edit descriptive metadata" page
     And the user de-selects "English" for the Language field
     When the user clicks the Save and Review button
-    Then the user will see a form error message "Search for and select at least one Language"
+    Then the user will see a form error message "Select at least one Language"
 
   Scenario: Standard user completes all fields on descriptive metadata form
     Given A logged in standard user

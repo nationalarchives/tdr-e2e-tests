@@ -36,6 +36,10 @@ Feature: Closure Metadata Pages
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files
+    And the logged in user navigates to the confirm closure status page for closure metadata
+    Then the user will be on the "Closure metadata" "Confirm closure status" page
+    When the user confirms the closure status of the selected file
+    And the user clicks the Continue button
     And the logged in user navigates to the add metadata page for closure metadata
     Then the user will be on the "Closure metadata" "Add or edit closure metadata" page
     When the user enters 01/01/2023 for the FOI decision asserted field
@@ -46,7 +50,10 @@ Feature: Closure Metadata Pages
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files
-    And the logged in user navigates to the add metadata page for closure metadata
+    And the logged in user navigates to the confirm closure status page for closure metadata
+    Then the user will be on the "Closure metadata" "Confirm closure status" page
+    When the user confirms the closure status of the selected file
+    And the user clicks the Continue button
     Then the user will be on the "Closure metadata" "Add or edit closure metadata" page
     When the user enters 01/01/2023 for the FOI decision asserted field
     And the user enters 07/03/2023 for the closure start date field

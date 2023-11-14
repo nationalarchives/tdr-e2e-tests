@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  private val awsSdkVersion = "2.21.16"
+  private val awsSdkVersion = "2.21.21"
   private val circeVersion = "0.14.6"
   private val cucumberCoreVersion = "7.14.0"
   private val cucumberScalaVersion = "8.18.0"
@@ -9,7 +9,7 @@ object Dependencies {
   private val keycloakVersion = "22.0.5"
   private val softwareMillVersion = "2.3.0"
 
-  lazy val tdrGraphQlClient    = "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.136"
+  lazy val tdrGraphQlClient    = "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.138"
   lazy val scalaTestPlusPlay   = "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.0"
   lazy val keycloakCore        = "org.keycloak" % "keycloak-core" % keycloakVersion
   lazy val keycloakAdminClient = "org.keycloak" % "keycloak-admin-client" % keycloakVersion

@@ -58,6 +58,7 @@ jobs:
     strategy:
       matrix:
         file: ${{ fromJSON(needs.setup-e2e-tests.outputs.files) }}
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v3

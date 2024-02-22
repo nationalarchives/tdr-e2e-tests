@@ -1,0 +1,20 @@
+name: Upsert `scala-steward-dependencies` branch
+
+on:
+  push:
+    branches: master
+jobs:
+  upsert-develop-branch:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    name: Rebase `scala-steward-dependencies` branch to latest `origin/master`
+    steps:
+      - name: Checkout scala-steward-dependencies branch
+        uses: actions/checkout@v2
+        with:
+          ref: scala-steward-dependencies
+          fetch-depth: 0
+      - name: Rebase `scala-steward-dependencies` branch to latest `origin/master`
+        run: |
+            git rebase origin/master
+            git push -f -u origin scala-steward-dependencies

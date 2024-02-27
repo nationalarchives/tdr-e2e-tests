@@ -16,5 +16,7 @@ jobs:
           fetch-depth: 0
       - name: Rebase `scala-steward-dependencies` branch to latest `origin/master`
         run: |
+            git config user.email digitalpreservation@nationalarchives.gov.uk
+            git config user.name tna-digital-archiving-jenkins
             git rebase origin/master
             git push -f -u origin scala-steward-dependencies

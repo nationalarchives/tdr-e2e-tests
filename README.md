@@ -178,4 +178,4 @@ or
 % TMPDIR=$HOME/tmp geckodriver
 ```
 Alternatively, geckodriver may be used with a Firefox install that is not packaged inside a sandbox e.g. from mozilla.org.
-Guide on how to [install Firefox via Apt](shorturl.at/ijuZ1).
+Guide on how to [install Firefox via Apt](https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04).

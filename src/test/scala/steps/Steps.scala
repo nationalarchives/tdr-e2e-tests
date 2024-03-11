@@ -600,7 +600,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       val metadataCsv = getDownloadedCsv(consignmentRef).last
       val source = Source.fromFile(metadataCsv.getAbsolutePath)
       val rows = source.getLines().toList
-      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,ClosureType-value,2022-09-28T14:31:17,1,FoiExemptionCode-value,2022-09-28T14:31:17,Yes,TitleAlternate-value,description-value,Yes,DescriptionAlternate-value,Language-value,2022-09-28T14:31:17,file_name_translation-value,former_reference_department-value")
+      def filterCsvRows(num: Int): Option[String] = rows.find(_ == s"path$num,ClosureType-value,2022-09-28,1,FoiExemptionCode-value,2022-09-28,Yes,TitleAlternate-value,description-value,Yes,DescriptionAlternate-value,Language-value,2022-09-28,file_name_translation-value,former_reference_department-value")
       case class DisplayProperty(active: Boolean, name: String, propertyName: String)
       Assert.assertEquals(rows.size, numberOfFiles + 1)
       val displayProperties = client.getDisplayProperties(consignmentId).map(_.displayProperties.map(dp => {

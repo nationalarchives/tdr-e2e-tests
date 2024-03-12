@@ -58,7 +58,6 @@ Feature: Confirm Transfer Page
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
     And an existing upload of 3 files
-#    And the file checks are complete
     And 3 of the antivirus scans for the standard transfer have finished
     And 3 of the FFID scans for the standard transfer have finished
     And 3 of the checksum scans for the standard transfer have finished

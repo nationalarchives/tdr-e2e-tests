@@ -641,6 +641,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
       val awsUtility = AWSUtility()
 
+      client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
       client.updateConsignmentStatus(consignmentId, "ClientChecks", "Completed")
       createdFilesIdToChecksum = addFilesAndMetadataResult.map(res => {
         val info: MatchIdInfo = matchIdInfo.find(_.matchId == res.matchId).get

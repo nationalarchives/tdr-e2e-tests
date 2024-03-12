@@ -624,6 +624,15 @@ class Steps extends ScalaDsl with EN with Matchers {
       }
   }
 
+  And("^all previous steps are complete") {
+    () =>
+    val client = GraphqlUtility(userCredentials)
+    client.addConsignmentStatus(consignmentId, "Series", "Completed")
+    client.addConsignmentStatus(consignmentId, "TransferAgreement", "Completed")
+    client.addConsignmentStatus(consignmentId, "Upload", "Completed")
+    client.addConsignmentStatus(consignmentId, "ClientChecks", "Completed")
+  }
+
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {

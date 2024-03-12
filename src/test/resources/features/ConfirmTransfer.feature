@@ -23,7 +23,6 @@ Feature: Confirm Transfer Page
     And an existing selected series MOCK1
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
-#    And an existing upload of 3 files
     And the file checks are complete
     And the user is logged in on the Confirm Transfer page
     When the user will be on a page with the title "Confirm transfer"
@@ -36,7 +35,6 @@ Feature: Confirm Transfer Page
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
     And the file checks are complete
-#    And an existing upload of 4 files
     And the user is logged in on the Confirm Transfer page
     When the user will be on a page with the title "Confirm transfer"
     Then the confirm transfer page shows the user that 2 files have been uploaded
@@ -56,10 +54,10 @@ Feature: Confirm Transfer Page
   Scenario: Submitting the Final Transfer Confirmation form creates a completed export
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1
-#    And an existing upload of 3 files
     And an existing selected series MOCK1
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
+    And an existing upload of 2 files
     And the file checks are complete
 #    And 3 of the antivirus scans for the standard transfer have finished
 #    And 3 of the FFID scans for the standard transfer have finished

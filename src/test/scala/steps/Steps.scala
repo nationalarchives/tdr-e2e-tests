@@ -538,6 +538,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     val client = GraphqlUtility(userCredentials)
     client.startUpload(consignmentId)
     client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
+    client.updateConsignmentStatus(consignmentId, "ClientChecks", "Completed")
     val files = List("testfile1", "testfile2")
     val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({
       case (fileName, idx) =>
@@ -640,6 +641,8 @@ class Steps extends ScalaDsl with EN with Matchers {
 
       val awsUtility = AWSUtility()
 
+      client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
+      client.updateConsignmentStatus(consignmentId, "ClientChecks", "Completed")
       createdFilesIdToChecksum = addFilesAndMetadataResult.map(res => {
         val info: MatchIdInfo = matchIdInfo.find(_.matchId == res.matchId).get
         awsUtility.uploadFileToS3(configuration.getString("s3.bucket.upload"), s"$consignmentId/${res.fileId}", info.path)

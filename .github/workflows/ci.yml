@@ -82,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ip-artifacts
-          path: ${{ runner.os }}-${{ matrix.node-version }}-ip.txt
+          path: ${{ runner.os }}-${{ matrix.file }}-ip.txt
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Configure AWS credentials

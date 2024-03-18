@@ -106,6 +106,8 @@ jobs:
         if: ${{ always() }}
         run: .github/scripts/update-security-group.sh DELETE ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
   print-ips:
+    needs: run-e2e-tests
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts

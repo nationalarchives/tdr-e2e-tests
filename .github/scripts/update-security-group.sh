@@ -1,11 +1,8 @@
 #!/bin/bash
 
-if [ $# -eq 0 ] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
-    echo "Usage: $0 [INSERT|DELETE] [IP_ADDRESS_FOR_DELETE]"
-    echo "INSERT: Automatically fetches and inserts the current public IP into the specified security group."
-    echo "DELETE: Requires an IP address as the second argument to remove from the security group."
-    exit 1
-fi
+# Helper script for managing security group during matrix e2e test runs
+# INSERT: Automatically fetches and inserts the current public IP into the specified security group.
+# DELETE: Requires an IP address as the second argument to remove from the security group.
 
 check_ip_authorized() {
     local ip=$1

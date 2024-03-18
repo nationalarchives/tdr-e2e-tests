@@ -24,7 +24,7 @@ permissions:
   contents: read
 jobs:
   setup-e2e-tests:
-    concurrency: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
+    concurrency: ${{ github.workflow }}
     runs-on: ubuntu-latest
     outputs:
       files: ${{ steps.generate-files.outputs.files }}
@@ -58,6 +58,7 @@ jobs:
     strategy:
       matrix:
         file: ${{ fromJSON(needs.setup-e2e-tests.outputs.files) }}
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -75,6 +76,13 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
+      - name: Get public IP
+        run: curl https://ipinfo.io/ip > ${{ runner.os }}-${{ matrix.node-version }}-ip.txt
+      - name: Upload IP as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ip-artifacts
+          path: ${{ runner.os }}-${{ matrix.node-version }}-ip.txt
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Configure AWS credentials
@@ -97,6 +105,19 @@ jobs:
       - name: Remove access
         if: ${{ always() }}
         run: .github/scripts/update-security-group.sh DELETE ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
+  print-ips:
+    needs: run-e2e-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: ip-artifacts
+          path: ip-artifacts
+
+      - name: Extract and print IPs
+        run: |
+          cat ip-artifacts/* | tr '\n' ' '
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

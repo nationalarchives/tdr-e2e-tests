@@ -105,20 +105,23 @@ jobs:
       - name: Remove access
         if: ${{ always() }}
         run: .github/scripts/update-security-group.sh DELETE ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
-  print-ips:
-    needs: run-e2e-tests
-    if: ${{ always() }}
+  remove-access:
+    needs: collect-ips
     runs-on: ubuntu-latest
+    if: always()
     steps:
-      - name: Download all artifacts
+      - name: Download IP artifacts
         uses: actions/download-artifact@v2
         with:
-          name: ip-artifacts
           path: ip-artifacts
-
-      - name: Extract and print IPs
+      - name: Remove each IP from security group
         run: |
-          cat ip-artifacts/* | tr '\n' ' '
+          for ip_file in ip-artifacts/*; do
+            while IFS= read -r ip; do
+              echo "Revoking IP: $ip from security group"
+              .github/scripts/update-security-group.sh DELETE "$ip"
+            done < "$ip_file"
+          done
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

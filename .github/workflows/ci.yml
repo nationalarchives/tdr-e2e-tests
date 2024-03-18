@@ -77,7 +77,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: UpdateWAF
       - name: Get public IP
-        run: curl https://ipinfo.io/ip > ${{ runner.os }}-${{ matrix.node-version }}-ip.txt
+        run: curl https://ipinfo.io/ip > ${{ runner.os }}-${{ matrix.file }}-ip.txt
       - name: Upload IP as artifact
         uses: actions/upload-artifact@v2
         with:

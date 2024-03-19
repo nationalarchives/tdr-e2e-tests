@@ -4,13 +4,13 @@
 # INSERT: Automatically fetches and inserts the current public IP into the specified security group.
 # DELETE: Requires an IP address as the second argument to remove from the security group.
 
+GROUP_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=frontend-load-balancer-security-group | jq -r '.SecurityGroups[0].GroupId')
+
 check_ip_authorized() {
     local ip=$1
     aws ec2 describe-security-groups --group-id "$GROUP_ID" \
         --query "SecurityGroups[*].IpPermissions[*].IpRanges[?CidrIp=='$ip'].CidrIp" --output text
 }
-
-GROUP_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values=frontend-load-balancer-security-group | jq -r '.SecurityGroups[0].GroupId')
 
 if [ "$1" = "INSERT" ]; then
   CURRENT_IP=$(curl -s https://ipinfo.io/ip)/32

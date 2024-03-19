@@ -110,7 +110,7 @@ jobs:
       - name: Download IP artifacts
         uses: actions/download-artifact@v2
         with:
-          path: ip-artifacts
+          name: ip-artifacts
       - name: Remove each IP from security group
         run: |
           for ip_file in ip-artifacts/*; do

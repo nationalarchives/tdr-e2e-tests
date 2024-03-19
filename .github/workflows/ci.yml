@@ -76,9 +76,9 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
-      - name: Get public IP
+      - name: Get runner IP
         run: curl https://ipinfo.io/ip > ${{ matrix.file }}-ip.txt
-      - name: Upload IP as artifact
+      - name: Upload runner IP as artifact
         uses: actions/upload-artifact@v2
         with:
           name: ip-artifacts

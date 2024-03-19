@@ -114,10 +114,14 @@ jobs:
       - name: Remove each IP from security group
         run: |
           for ip_file in ip-artifacts/*; do
-            while IFS= read -r ip; do
-              echo "Revoking IP: $ip from security group"
-              .github/scripts/update-security-group.sh DELETE "$ip"
-            done < "$ip_file"
+            if [ -f "$ip_file" ]; then
+              while IFS= read -r ip; do
+                echo "Revoking IP: $ip from security group"
+                .github/scripts/update-security-group.sh DELETE "$ip"
+              done < "$ip_file"
+            else
+              echo "$ip_file is not a file, skipping..."
+            fi
           done
   send-messages:
     runs-on: ubuntu-latest

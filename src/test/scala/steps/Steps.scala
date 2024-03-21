@@ -301,6 +301,11 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
   }
 
+  Then("^the user will be on a page with the fieldset heading \"(.*)\"") {
+    page: String =>
+      StepsUtility.waitForElementTitle(webDriver, page, "govuk-fieldset__heading")
+  }
+
   Then("^the user will be on a page with a panel titled \"(.*)\"") {
     panelTitle: String =>
       StepsUtility.waitForElementTitle(webDriver, panelTitle, "govuk-panel__title")
@@ -418,6 +423,12 @@ class Steps extends ScalaDsl with EN with Matchers {
     selectedSeries: String =>
       val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       seriesDropdown.selectByVisibleText(selectedSeries)
+  }
+
+  And("^the user selects the option (.*)") {
+    optionValue: String =>
+      val radioButton = webDriver.findElement(By.cssSelector(s"input[name='metadataRoute'][value='$optionValue']"))
+      radioButton.click()
   }
 
   And("^the user clicks the (.*) button") {

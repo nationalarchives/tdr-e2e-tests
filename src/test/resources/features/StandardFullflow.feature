@@ -32,9 +32,10 @@ Feature: Standard Full user journey
     Then the user will be on a page with the title "Results of your checks"
     And the user should see a banner titled Success
     When the user clicks on the Next button
-    Then the user will be on a page with the title "Descriptive & closure metadata"
+    Then the user will be on a page with the fieldset heading "How would you like to enter record metadata?"
     # The additional metadata is tested separately in DescriptiveMetadata.Feature & ClosureMetadata.Feature
-    And the user clicks the Next button
+    And the user selects the option None
+    And the user clicks the Continue button
     Then the user will be on a page with the title "Download and review metadata"
     When the user clicks on the Next button
     Then the user will be on a page with the title "Confirm transfer"

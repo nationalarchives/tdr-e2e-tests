@@ -24,6 +24,7 @@ import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.io.Source
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -438,9 +439,13 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user clicks the (.*) button") {
     button: String =>
-//      val button = webDriver.findElement(By.cssSelector("[type='submit']"))
-      val button = webDriver.findElement(By.cssSelector("[data-module='govuk-button']"))
-      button.click()
+      Try {
+        val button1 = webDriver.findElement(By.cssSelector("form [type='submit']"))
+        button1.click()
+      }.recover {
+        case _: NoSuchElementException =>
+          webDriver.findElement(By.cssSelector("[data-module='govuk-button']")).click()
+      }
   }
 
   And("^the user clicks the (.*) link") {

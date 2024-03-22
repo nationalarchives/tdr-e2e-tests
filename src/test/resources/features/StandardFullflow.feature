@@ -34,7 +34,7 @@ Feature: Standard Full user journey
     When the user clicks on the Next button
     Then the user will be on a page with the fieldset heading "How would you like to enter record metadata?"
     # The additional metadata is tested separately in DescriptiveMetadata.Feature & ClosureMetadata.Feature
-    And the user selects the option I don't have any metadata
+    When the user selects the option I don't have any metadata
     And the user clicks the Continue button
     Then the user will be on a page with the title "Download and review metadata"
     When the user clicks on the Next button

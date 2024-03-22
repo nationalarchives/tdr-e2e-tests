@@ -439,7 +439,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user clicks the (.*) button") {
     button: String =>
 //      val button = webDriver.findElement(By.cssSelector("[type='submit']"))
-      val button = webDriver.findElement(By.cssSelector(".govuk-button[data-module='govuk-button']"))
+      val button = webDriver.findElement(By.cssSelector("[data-module='govuk-button']"))
       button.click()
   }
 

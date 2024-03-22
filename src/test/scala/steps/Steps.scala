@@ -426,14 +426,20 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   And("^the user selects the option (.*)") {
-    optionValue: String =>
-      val radioButton = webDriver.findElement(By.cssSelector(s"input[name='metadataRoute'][value='$optionValue']"))
+    option: String =>
+      val selectedOption = option match {
+        case "Select records and add metadata" => "#metadata-route-manual"
+        case "Add metadata to a CSV and upload" => "#metadata-route-csv"
+        case "I don't have any metadata" => "#metadata-route-none"
+      }
+      val radioButton = webDriver.findElement(By.cssSelector(selectedOption))
       radioButton.click()
   }
 
   And("^the user clicks the (.*) button") {
     button: String =>
-      val button = webDriver.findElement(By.cssSelector("[type='submit']"))
+//      val button = webDriver.findElement(By.cssSelector("[type='submit']"))
+      val button = webDriver.findElement(By.cssSelector(".govuk-button[data-module='govuk-button']"))
       button.click()
   }
 

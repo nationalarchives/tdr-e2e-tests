@@ -9,7 +9,7 @@ Feature: File Checks results Page
     And the user will be on a page with the title "Results of your checks"
     And the user should see a banner titled Success
     When the user clicks on the Next button
-    Then the user will be on a page with the title "Descriptive & closure metadata"
+    Then the user will be on a page with the fieldset heading "How would you like to enter record metadata?"
 
   Scenario: The user will see an error when trying to access file check results for a consignment they don't own
     Given A logged out standard user

@@ -24,6 +24,7 @@ import java.util.UUID
 import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.io.Source
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 class Steps extends ScalaDsl with EN with Matchers {
   var webDriver: WebDriver = _
@@ -301,6 +302,11 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.waitForElementTitle(webDriver, page, "govuk-heading-l")
   }
 
+  Then("^the user will be on a page with the fieldset heading \"(.*)\"") {
+    page: String =>
+      StepsUtility.waitForElementTitle(webDriver, page, "govuk-fieldset__heading")
+  }
+
   Then("^the user will be on a page with a panel titled \"(.*)\"") {
     panelTitle: String =>
       StepsUtility.waitForElementTitle(webDriver, panelTitle, "govuk-panel__title")
@@ -420,10 +426,26 @@ class Steps extends ScalaDsl with EN with Matchers {
       seriesDropdown.selectByVisibleText(selectedSeries)
   }
 
+  And("^the user selects the option (.*)") {
+    option: String =>
+      val selectedOption = option match {
+        case "Select records and add metadata" => "#metadata-route-manual"
+        case "Add metadata to a CSV and upload" => "#metadata-route-csv"
+        case "I don't have any metadata" => "#metadata-route-none"
+      }
+      val radioButton = webDriver.findElement(By.cssSelector(selectedOption))
+      radioButton.click()
+  }
+
   And("^the user clicks the (.*) button") {
     button: String =>
-      val button = webDriver.findElement(By.cssSelector("[type='submit']"))
-      button.click()
+      Try {
+        val button1 = webDriver.findElement(By.cssSelector("form [type='submit']"))
+        button1.click()
+      }.recover {
+        case _: NoSuchElementException =>
+          webDriver.findElement(By.cssSelector("[data-module='govuk-button']")).click()
+      }
   }
 
   And("^the user clicks the (.*) link") {

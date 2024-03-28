@@ -1,11 +1,11 @@
 import sbt._
 
 object Dependencies {
-  private val awsSdkVersion = "2.25.12"
+  private val awsSdkVersion = "2.25.19"
   private val circeVersion = "0.14.6"
-  private val cucumberCoreVersion = "7.15.0"
+  private val cucumberCoreVersion = "7.16.1"
   private val cucumberScalaVersion = "8.20.0"
-  private val cucumberJUnitVersion = "7.15.0"
+  private val cucumberJUnitVersion = "7.16.1"
   private val keycloakVersion = "24.0.1"
   private val softwareMillVersion = "2.3.0"
 

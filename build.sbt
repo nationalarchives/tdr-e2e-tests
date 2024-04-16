@@ -18,6 +18,7 @@ libraryDependencies ++= Seq(
   softwareMillCirce,
   awsSdkS3,
   awsSdkSts,
+  scalaCsv,
   cucumberCore,
   cucumberScala,
   cucumberJunit

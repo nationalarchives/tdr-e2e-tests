@@ -1,5 +1,6 @@
 package steps
 
+import com.github.tototoshi.csv.{CSVReader, CSVWriter}
 import com.typesafe.config.{Config, ConfigFactory}
 import helpers.aws.AWSUtility
 import helpers.drivers.DriverUtility._
@@ -80,6 +81,8 @@ class Steps extends ScalaDsl with EN with Matchers {
       case "homepage" | "view-transfers" | "some-page" => s"$baseUrl/$hyphenatedPageName"
       case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$hyphenatedPageName" else s"$baseUrl/$hyphenatedPageName"
       case "download-metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/$hyphenatedPageName"
+      case "additional-metadata-entry" => s"$baseUrl/$path/$consignmentId/additional-metadata/entry-method"
+      case "draft-metadata-upload" => s"$baseUrl/$path/$consignmentId/draft-metadata/upload"
       case _ => s"$baseUrl/$path/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
@@ -92,6 +95,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       case "confirm-closure-status" => s"$baseUrl/consignment/$consignmentId/additional-metadata/status/closure?fileIds=${createdFiles.head}"
       case "add-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/add/$metadataType?fileIds=${createdFiles.head}"
       case "view-metadata" => s"$baseUrl/consignment/$consignmentId/additional-metadata/selected-summary/$metadataType?fileIds=${createdFiles.head}"
+      case "entry-method" => s"$baseUrl/consignment/$consignmentId/additional-metadata/entry-method"
       case _ => s"$baseUrl/consignment/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
@@ -121,12 +125,23 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   private def selectItem(fileName: String): Unit = {
-    //Wait for the cookies endpoint to respond. There is no visible change to the page when this happens so we just sleep.
-    Thread.sleep(15 * 1000)
+    val filePath = s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName"
 
-    val input: WebElement = webDriver.findElement(By.cssSelector("#file-selection"))
-    input.sendKeys(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
-    webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
+    if (fileName == "draft-metadata.csv" || fileName == "invalid-draft-metadata.csv") {
+      val reader = CSVReader.open(filePath)
+      val data = reader.all()
+      val fileIds = "UUID" :: createdFiles.map(_.toString)
+
+      val updatedValues = data.zip(fileIds).map(p => p._1 :+ p._2)
+      val writer = CSVWriter.open(s"/tmp/$fileName")
+      writer.writeAll(updatedValues)
+      webDriver.findElement(By.cssSelector("#file-selection")).sendKeys(s"/tmp/$fileName")
+    } else {
+      //Wait for the cookies endpoint to respond. There is no visible change to the page when this happens so we just sleep.
+      Thread.sleep(15 * 1000)
+      webDriver.findElement(By.cssSelector("#file-selection")).sendKeys(filePath)
+      webDriver.asInstanceOf[JavascriptExecutor].executeScript(s"Object.defineProperty(document.querySelector('#file-selection').files[0], 'webkitRelativePath', {value: 'testfiles/$fileName'})")
+    }
   }
 
   private def getDownloadedCsv(name: String, downloadPath: String = "/tmp/"): Array[File] = {
@@ -648,6 +663,19 @@ class Steps extends ScalaDsl with EN with Matchers {
       }
   }
 
+  Then("^the downloaded metadata csv should be same as (.*)") {
+    fileName: String =>
+      val client = GraphqlUtility(userCredentials)
+      val consignmentRef = client.getConsignmentReference(consignmentId)
+      val metadataCsv = getDownloadedCsv(consignmentRef).last
+      val source = Source.fromFile(metadataCsv.getAbsolutePath)
+      val actualRows = source.getLines().map(_.split(",").drop(3).mkString(",")).toList
+
+      val draftMetadataSource = Source.fromFile(s"/tmp/$fileName")
+      val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList
+      Assert.assertEquals(expectedRows, actualRows)
+  }
+
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
@@ -983,5 +1011,11 @@ class Steps extends ScalaDsl with EN with Matchers {
       val fieldValues = getSummaryMetadata
       Assert.assertTrue(fieldValues.contains(metadata))
       Assert.assertTrue(fieldValues.values.exists(_ == value))
+  }
+
+  And("^the draft metadata upload status should be \"(.*)\"") {
+    (status: String) =>
+      val value = webDriver.findElement(By.cssSelector(".govuk-summary-list__value .govuk-tag")).getText
+      Assert.assertEquals(status, value)
   }
 }

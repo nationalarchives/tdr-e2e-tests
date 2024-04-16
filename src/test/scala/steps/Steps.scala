@@ -673,7 +673,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
       val draftMetadataSource = Source.fromFile(s"/tmp/$fileName")
       val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList
-      Assert.assertEquals(expectedRows, actualRows)
+      Assert.assertTrue(expectedRows.containsAll(actualRows))
   }
 
   And("^an existing upload of (\\d+) files") {

@@ -17,7 +17,5 @@ Feature: Judgment Full user journey
     When the user clicks the Start upload button
     Then the user will be on a page with the title "Uploading judgment"
     Then the user will be on a page with the title "Checking your upload"
-    Then the user will be on a page with the title "Results of checks"
-    When the user clicks the Continue button
     Then the user will be on a page with a panel titled "Transfer complete"
     And the judgment transfer export will be complete

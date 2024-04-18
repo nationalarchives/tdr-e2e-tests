@@ -20,6 +20,7 @@ object Dependencies {
   lazy val softwareMillCirce   = "com.softwaremill.sttp.client" %% "circe" % softwareMillVersion
   lazy val awsSdkS3            = "software.amazon.awssdk" % "s3" % awsSdkVersion
   lazy val awsSdkSts           = "software.amazon.awssdk" % "sts" % awsSdkVersion
+  lazy val scalaCsv            = "com.github.tototoshi" %% "scala-csv" % "1.3.10"
   lazy val cucumberCore        = "io.cucumber" % "cucumber-core" % cucumberCoreVersion % "test"
   lazy val cucumberScala       = "io.cucumber" %% "cucumber-scala" % cucumberScalaVersion % "test"
   lazy val cucumberJunit       = "io.cucumber" % "cucumber-junit" % cucumberJUnitVersion % "test"

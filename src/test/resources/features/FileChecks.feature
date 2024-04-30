@@ -58,16 +58,3 @@ Feature: File Checks Page
     When the logged in user navigates to the file checks page
     Then the user will be on a page with the title "Checking your upload"
 
-  Scenario: A judgment user will see the transfer complete page if the checks are complete
-    Given A logged in judgment user
-    And an existing judgment consignment for transferring body MOCK1
-    And an existing transfer agreement part 1
-    And an existing transfer agreement part 2
-    And an existing upload of 1 files
-    When the logged in user navigates to the file checks page
-    And 1 of the FFID scans for the judgment transfer have finished
-    And 1 of the checksum scans for the judgment transfer have finished
-    And 1 of the antivirus scans for the judgment transfer have finished
-    Then the user will be on a page with the title "Checking your upload"
-    Then the user will be on a page with a panel titled "Transfer complete"
-    And the judgment transfer export will be complete

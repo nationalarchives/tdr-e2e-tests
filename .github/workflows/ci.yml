@@ -82,7 +82,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ip-artifacts
-          overwrite: true
           path: ${{ matrix.file }}-ip.txt
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}

@@ -115,13 +115,11 @@ jobs:
           merge-multiple: true
       - name: Remove each IP from security group
         run: |
-          ls -R
           for ip_file in ip-artifacts/*; do
             if [ -f "$ip_file" ]; then
-              while IFS= read -r ip; do
-                echo "Revoking IP: $ip from security group"
-                .github/scripts/update-security-group.sh DELETE "$ip"
-              done < "$ip_file"
+              ip=$(cat "$ip_file")
+              echo "Revoking IP: $ip from security group"
+              .github/scripts/update-security-group.sh DELETE "$ip"
             else
               echo "$ip_file is not a file, skipping..."
             fi

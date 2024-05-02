@@ -79,7 +79,7 @@ jobs:
       - name: Get runner IP
         run: curl https://ipinfo.io/ip > ${{ matrix.file }}-ip.txt
       - name: Upload runner IP as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: ip-artifacts
           path: ${{ matrix.file }}-ip.txt
@@ -114,6 +114,16 @@ jobs:
       - name: Remove each IP from security group
         run: |
           ls -R
+          for ip_file in *; do
+            if [ -f "$ip_file" ]; then
+              while IFS= read -r ip; do
+                echo "Revoking IP: $ip from security group"
+                .github/scripts/update-security-group.sh DELETE "$ip"
+              done < "$ip_file"
+            else
+              echo "$ip_file is not a file, skipping..."
+            fi
+          done
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

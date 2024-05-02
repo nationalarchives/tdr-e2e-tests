@@ -81,7 +81,7 @@ jobs:
       - name: Upload runner IP as artifact
         uses: actions/upload-artifact@v4.3.3
         with:
-          name: ip-artifacts
+          name: ip-artifacts-${{ matrix.file }}
           path: ${{ matrix.file }}-ip.txt
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
@@ -110,11 +110,13 @@ jobs:
       - name: Download IP artifacts
         uses: actions/download-artifact@v4.1.7
         with:
-          name: ip-artifacts
+          path: ip-artifacts
+          pattern: ip-artifacts-*
+          merge-multiple: true
       - name: Remove each IP from security group
         run: |
           ls -R
-          for ip_file in *; do
+          for ip_file in ip-artifacts/*; do
             if [ -f "$ip_file" ]; then
               while IFS= read -r ip; do
                 echo "Revoking IP: $ip from security group"

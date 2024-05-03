@@ -103,7 +103,7 @@ jobs:
           aws-region: eu-west-2
           role-session-name: UpdateWAF
   remove-access:
-    needs: run-e2e-tests
+    needs: [run-e2e-tests, setup-e2e-tests]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -115,6 +115,12 @@ jobs:
           path: ip-artifacts
           pattern: ip-artifacts-*
           merge-multiple: true
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
+          aws-region: eu-west-2
+          role-session-name: UpdateWAF
       - name: Remove each IP from security group
         run: |
           for ip_file in ip-artifacts/*; do

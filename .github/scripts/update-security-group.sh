@@ -28,6 +28,7 @@ elif [ "$1" = "DELETE" ]; then
   fi
   SUPPLIED_IP="$2/32"
   SUPPLIED_IP_AUTHORISATION_RESPONSE=$(check_ip_authorized "$SUPPLIED_IP")
+  echo ">>>>>>>>>>>>$SUPPLIED_IP_AUTHORISATION_RESPONSE"
   if [ -n "$SUPPLIED_IP_AUTHORISATION_RESPONSE" ]; then
     aws ec2 revoke-security-group-ingress --group-id "$GROUP_ID" --protocol tcp --port 443 --cidr "$SUPPLIED_IP"
     echo "IP $SUPPLIED_IP has been revoked."

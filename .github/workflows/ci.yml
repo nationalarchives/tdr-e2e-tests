@@ -59,6 +59,7 @@ jobs:
     strategy:
       matrix:
         file: ${{ fromJSON(needs.setup-e2e-tests.outputs.files) }}
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -76,6 +77,13 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
+      - name: Get runner IP
+        run: curl https://ipinfo.io/ip > ${{ matrix.file }}-ip.txt
+      - name: Upload runner IP as artifact
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: ip-artifacts-${{ matrix.file }}
+          path: ${{ matrix.file }}-ip.txt
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Configure AWS credentials
@@ -95,9 +103,31 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}:role/TDRUpdateWAFAndSecurityGroupsRole${{ needs.setup-e2e-tests.outputs.title_environment }}
           aws-region: eu-west-2
           role-session-name: UpdateWAF
-      - name: Remove access
-        if: ${{ always() }}
-        run: .github/scripts/update-security-group.sh DELETE ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
+
+  remove-access:
+    needs: run-e2e-tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download IP artifacts
+        uses: actions/download-artifact@v4.1.7
+        with:
+          path: ip-artifacts
+          pattern: ip-artifacts-*
+          merge-multiple: true
+      - name: Remove each IP from security group
+        run: |
+          for ip_file in ip-artifacts/*; do
+            if [ -f "$ip_file" ]; then
+              ip=$(cat "$ip_file")
+              echo "Revoking IP: $ip from security group"
+              .github/scripts/update-security-group.sh DELETE "$ip"
+            else
+              echo "$ip_file is not a file, skipping..."
+            fi
+          done
   send-messages:
     runs-on: ubuntu-latest
     if: ${{ always() }}

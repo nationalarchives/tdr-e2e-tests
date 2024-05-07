@@ -9,6 +9,7 @@ object Dependencies {
   private val keycloakVersion = "24.0.3"
   private val softwareMillVersion = "2.3.0"
 
+
   lazy val tdrGraphQlClient    = "uk.gov.nationalarchives" %% "tdr-graphql-client" % "0.0.157"
   lazy val scalaTestPlusPlay   = "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"
   lazy val keycloakCore        = "org.keycloak" % "keycloak-core" % keycloakVersion

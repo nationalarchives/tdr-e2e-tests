@@ -22,7 +22,6 @@ import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
-//import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.io.Source
 import scala.jdk.CollectionConverters._
 import scala.util.Try
@@ -675,7 +674,7 @@ class Steps extends ScalaDsl with EN {
 
       val draftMetadataSource = Source.fromFile(s"/tmp/$fileName")
       val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList
-      Assert.assertTrue(expectedRows.containsSlice(actualRows)) //Is this equivalent to containsAll?
+      Assert.assertTrue(expectedRows.containsSlice(actualRows))
   }
 
   And("^an existing upload of (\\d+) files") {

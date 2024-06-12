@@ -675,7 +675,7 @@ class Steps extends ScalaDsl with EN {
 
       val draftMetadataSource = Source.fromFile(s"/tmp/$fileName")
       val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList
-      Assert.assertTrue(expectedRows.contains(actualRows)) //Is this equivalent to containsAll?
+      Assert.assertTrue(expectedRows.containsSlice(actualRows)) //Is this equivalent to containsAll?
   }
 
   And("^an existing upload of (\\d+) files") {

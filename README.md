@@ -108,12 +108,12 @@ Cucumber provides "tagging" configuration to control what features/scenarios are
 
 ### "Headless" Chromedriver option
 
-**Note:** this command has been deprecated since Selenium version something - https://www.selenium.dev/blog/2023/headless-is-going-away/
-To view the tests running in the Chrome browser locally change the chromedriver option in the DriverUtility.scala to "false":
+To view the tests running in the Chrome browser locally change the chromedriver options in helpders/drivers/DriverUtility.scala and remove or comment out the following line:
+```
+chromeOptions.addArguments("--headless=new")
+```
 
-```
-chromeOptions.setHeadless(false)
-```
+(Previous command has been deprecated - for more information see https://www.selenium.dev/blog/2023/headless-is-going-away/ )
 
 #### Debugging in "Headless" Chromedriver
 

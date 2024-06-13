@@ -24,3 +24,13 @@ Feature: Download Metadata page
     And an existing judgment consignment for transferring body MOCK1
     When the logged in user navigates to the Download Metadata page
     Then the user should see a general service error "Page not found"
+
+  @wip
+  Scenario: Metadata CSV is downloaded by a logged in user
+    Given A logged out standard user
+    And an existing standard consignment for transferring body MOCK1
+    And the user is logged in on the Download Metadata page
+    And the file checks are complete
+    And the user has created additional metadata
+    And the user clicks the download metadata link
+    Then the metadata csv will have the correct columns for 2 files

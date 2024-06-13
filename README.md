@@ -10,9 +10,9 @@ This repository provides end-to-end tests for the TDR application.
 
 3. Depending on which browser you want to run the tests on:
    
-   (a) Download and unzip chromedriver locally: https://chromedriver.chromium.org/downloads
-   * **NOTE:** Ensure the chromedriver version is compatible with the local Chrome browser version
-   (b) Download and unzip geckodriver locally: https://github.com/mozilla/geckodriver/releases
+   - (a) Download and unzip chromedriver locally: https://chromedriver.chromium.org/downloads
+      * **NOTE:** Ensure the chromedriver version is compatible with the local Chrome browser version
+   - (b) Download and unzip geckodriver locally: https://github.com/mozilla/geckodriver/releases
  
 4. Clone the TDR End-to-End Tests project
 
@@ -108,11 +108,12 @@ Cucumber provides "tagging" configuration to control what features/scenarios are
 
 ### "Headless" Chromedriver option
 
-To view the tests running in the Chrome browser locally change the chromedriver option in the StepsUtility.scala to "false":
+To view the tests running in the Chrome browser locally change the chromedriver options in helpders/drivers/DriverUtility.scala and remove or comment out the following line:
+```
+chromeOptions.addArguments("--headless=new")
+```
 
-```
-chromeOptions.setHeadless(false)
-```
+(Previous command has been deprecated - for more information see https://www.selenium.dev/blog/2023/headless-is-going-away/ )
 
 #### Debugging in "Headless" Chromedriver
 

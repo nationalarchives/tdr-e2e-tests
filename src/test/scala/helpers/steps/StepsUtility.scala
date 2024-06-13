@@ -6,10 +6,11 @@ import helpers.keycloak.UserCredentials
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.{By, StaleElementReferenceException, WebDriver, WebElement}
 import scala.jdk.CollectionConverters._
+import java.time.Duration
 
 object StepsUtility {
   def waitForElementTitle(webDriver: WebDriver, title: String, elementClassName: String): Any = {
-    new WebDriverWait(webDriver, 180).withMessage{
+    new WebDriverWait(webDriver, Duration.ofSeconds(180)).withMessage{
       s"""\nCould not find title "$title" in any elements belonging to class "$elementClassName" on the page:
          |${webDriver.getCurrentUrl}
          |
@@ -34,7 +35,7 @@ object StepsUtility {
   }
 
   def enterUserCredentials(webDriver: WebDriver, userCredentials: UserCredentials): Unit = {
-    new WebDriverWait(webDriver, 30).withMessage{
+    new WebDriverWait(webDriver, Duration.ofSeconds(30)).withMessage{
       s"""Could not find username or password field on this page ${webDriver.getCurrentUrl}
           |Below is the page source:
           |

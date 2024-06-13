@@ -15,19 +15,18 @@ import io.cucumber.scala.{EN, ScalaDsl, Scenario}
 import org.junit.Assert
 import org.openqa.selenium._
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Select, WebDriverWait}
-import org.scalatest.Matchers
+import org.scalatest.matchers.should.Matchers._
 
 import java.io.File
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
 import java.util.UUID
-import scala.collection.convert.ImplicitConversions.`seq AsJavaList`
 import scala.io.Source
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
-class Steps extends ScalaDsl with EN with Matchers {
+class Steps extends ScalaDsl with EN {
   var webDriver: WebDriver = _
   var userId: String = ""
   var userType: String = ""
@@ -52,6 +51,8 @@ class Steps extends ScalaDsl with EN with Matchers {
   val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
   val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
+
+  def waitTime(n: Long): Duration = { Duration.ofSeconds(n)}
 
   Before { scenario : Scenario =>
     webDriver = initDriver
@@ -188,7 +189,7 @@ class Steps extends ScalaDsl with EN with Matchers {
       StepsUtility.userLogin(webDriver, userCredentials)
       val pageNameInUrl = page.toLowerCase.replaceAll(" ", "-")
 
-      new WebDriverWait(webDriver, 30).withMessage {
+      new WebDriverWait(webDriver, waitTime(30)).withMessage {
         s"""Could not find page name "$pageNameInUrl" in this URL ${webDriver.getCurrentUrl}
             |Below is the page source:
             |
@@ -230,7 +231,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   And("^the user clicks on the (.*)(?: button|link)$") {
     button: String =>
-      new WebDriverWait(webDriver, 30).withMessage {
+      new WebDriverWait(webDriver, waitTime(30)).withMessage {
         s"""Could not find button "$button" on this page ${webDriver.getCurrentUrl}
            |Below is the page source:
            |
@@ -246,7 +247,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   Then("^the logged out user should be on the login page") {
-    new WebDriverWait(webDriver, 30).withMessage {
+    new WebDriverWait(webDriver, waitTime(30)).withMessage {
       s"""URL ${webDriver.getCurrentUrl} did not start with $authUrl""".stripMargin
     }.until((driver: WebDriver) => {
       val currentUrl: String = webDriver.getCurrentUrl
@@ -266,7 +267,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   Then("^the user should be on the (.*) page") {
     page: String =>
-      new WebDriverWait(webDriver, 30).withMessage {
+      new WebDriverWait(webDriver, waitTime(30)).withMessage {
         s"""URL ${webDriver.getCurrentUrl} did not start or end with "$page"""".stripMargin
       }.until((driver: WebDriver) => {
         val currentUrl: String = webDriver.getCurrentUrl
@@ -280,7 +281,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user should be on a page with (.*) and a consignmentId in the URL") {
     page: String =>
       val nonConsignmentIds = Set("judgment", "consignment", "nationalarchives.gov.uk")
-      new WebDriverWait(webDriver, 30).withMessage {
+      new WebDriverWait(webDriver, waitTime(30)).withMessage {
         s"""Could not find consignmentId in url ${webDriver.getCurrentUrl}""".stripMargin
       }.until((driver: WebDriver) => {
         val currentUrl: String = webDriver.getCurrentUrl
@@ -302,8 +303,8 @@ class Steps extends ScalaDsl with EN with Matchers {
     val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
 
     val fluentWait = new FluentWait[WebDriver](webDriver)
-      .withTimeout(Duration.ofSeconds(600))
-      .pollingEvery(Duration.ofSeconds(10))
+      .withTimeout(waitTime(600))
+      .pollingEvery(waitTime(10))
 
     val foundExport: Boolean = fluentWait.until(_ => {
       val awsUtility = AWSUtility()
@@ -389,7 +390,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the user will see a form error message \"(.*)\"") {
     formErrorMessage: String =>
       val selector = ".govuk-error-message"
-      new WebDriverWait(webDriver, 30).withMessage {
+      new WebDriverWait(webDriver, waitTime(30)).withMessage {
         s"""Could not find error message $formErrorMessage on page ${webDriver.getCurrentUrl}
            |Below is the page source:
            |
@@ -487,7 +488,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   When("^the user selects yes for all checks except \"I confirm that the records are all Crown Copyright.\"") {
-    new WebDriverWait(webDriver, 30).withMessage {
+    new WebDriverWait(webDriver, waitTime(30)).withMessage {
       s"""Could not find id publicRecord or crownCopyright on page ${webDriver.getCurrentUrl}
          |Below is the page source:
          |
@@ -501,7 +502,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   }
 
   When("^the user selects yes to all transfer agreement part 1 checks") {
-    new WebDriverWait(webDriver, 30).withMessage {
+    new WebDriverWait(webDriver, waitTime(30)).withMessage {
       s"""Could not find id publicRecord or crownCopyright on page ${webDriver.getCurrentUrl}
          |Below is the page source:
          |
@@ -518,7 +519,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   When("^the user selects yes to all transfer agreement part 2 checks") {
 
-    new WebDriverWait(webDriver, 30).withMessage {
+    new WebDriverWait(webDriver, waitTime(30)).withMessage {
       s"""Could not find id droAppraisalSelection, droSensitivity or openRecords on page ${webDriver.getCurrentUrl}
          |Below is the page source:
          |
@@ -673,7 +674,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
       val draftMetadataSource = Source.fromFile(s"/tmp/$fileName")
       val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList
-      Assert.assertTrue(expectedRows.containsAll(actualRows))
+      Assert.assertTrue(expectedRows.containsSlice(actualRows))
   }
 
   And("^an existing upload of (\\d+) files") {
@@ -764,7 +765,7 @@ class Steps extends ScalaDsl with EN with Matchers {
 
   When("^the user selects (.+) checkbox") {
     targetIdName: String => {
-      val element = new WebDriverWait(webDriver, 5).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(s"[for=$targetIdName]")));
+      val element = new WebDriverWait(webDriver, waitTime(5)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(s"[for=$targetIdName]")));
       element.click()
     }
   }
@@ -772,7 +773,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) should be visible") {
     targetIdName: String => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 180).withMessage {
+      new WebDriverWait(webDriver, waitTime(180)).withMessage {
         s"""Could not find id $id on page ${webDriver.getCurrentUrl}
            |Below is the page source:
            |
@@ -787,7 +788,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the (.*) should not be visible") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 10).withMessage {
+      new WebDriverWait(webDriver, waitTime(10)).withMessage {
         s"""Could not find id $id on page ${webDriver.getCurrentUrl}
            |Below is the page source:
            |
@@ -815,7 +816,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   And("^the (.*) button should be enabled") {
     (targetIdName: String) => {
       val id = targetIdName.replaceAll(" ", "-")
-      new WebDriverWait(webDriver, 180).ignoring(classOf[AssertionError]).withMessage {
+      new WebDriverWait(webDriver, waitTime(180)).ignoring(classOf[AssertionError]).withMessage {
         s"""Could not find id $id on page ${webDriver.getCurrentUrl}
            |Below is the page source:
            |
@@ -867,7 +868,7 @@ class Steps extends ScalaDsl with EN with Matchers {
   Then("^the user will be on a page with the error message \"(.*)\"") {
     errorMessage: String =>
       val selector = ".govuk-heading-l"
-       new WebDriverWait(webDriver, 10).ignoring(classOf[AssertionError]).withMessage {
+       new WebDriverWait(webDriver, waitTime(10)).ignoring(classOf[AssertionError]).withMessage {
          s"""Could not find class $selector on page ${webDriver.getCurrentUrl}
             |Below is the page source:
             |
@@ -922,7 +923,7 @@ class Steps extends ScalaDsl with EN with Matchers {
     Assert.assertNotNull(elementMissingMessage(cssSelector), confirmTransferElement)
 
     Assert.assertTrue(confirmTransferKeys.size == 4)
-    confirmTransferKeys.forEach(key => {
+    confirmTransferKeys.foreach(key => {
      val keyText = key.getText
       Assert.assertTrue("Confirm transfer list key empty", !keyText.isEmpty)
       Assert.assertTrue("Confirm transfer list key is incorrect",expectedKeys.contains(keyText))

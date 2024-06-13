@@ -15,7 +15,7 @@ object DriverUtility {
   val chromeOptions: ChromeOptions = {
     val chromeOptions: ChromeOptions = new ChromeOptions
 
-    chromeOptions.setHeadless(true)
+    chromeOptions.addArguments("--headless=new")
     chromeOptions.addArguments("--no-sandbox")
     chromeOptions.addArguments("--disable-dev-shm-usage")
     chromeOptions.addArguments("--verbose")
@@ -30,8 +30,9 @@ object DriverUtility {
     firefoxOptions.addPreference("browser.download.dir", "/tmp")
     firefoxOptions.addPreference("browser.download.useDownloadDir", true)
     firefoxOptions.addPreference("browser.download.folderList", 2)
-    firefoxOptions.setHeadless(true)
+
     firefoxOptions.setBinary(firefoxBinaryLocation)
+    firefoxOptions.addArguments("-headless")
     firefoxOptions.addArguments("--no-sandbox")
     firefoxOptions.addArguments("--disable-dev-shm-usage")
     firefoxOptions.addArguments("--verbose")

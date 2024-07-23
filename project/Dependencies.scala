@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   private val awsSdkVersion = "2.26.21"
-  private val circeVersion = "0.14.8"
+  private val circeVersion = "0.14.9"
   private val cucumberCoreVersion = "7.18.1"
   private val cucumberScalaVersion = "8.23.1"
   private val cucumberJUnitVersion = "7.18.1"
@@ -21,7 +21,7 @@ object Dependencies {
   lazy val softwareMillCirce   = "com.softwaremill.sttp.client" %% "circe" % softwareMillVersion
   lazy val awsSdkS3            = "software.amazon.awssdk" % "s3" % awsSdkVersion
   lazy val awsSdkSts           = "software.amazon.awssdk" % "sts" % awsSdkVersion
-  lazy val scalaCsv            = "com.github.tototoshi" %% "scala-csv" % "1.4.0"
+  lazy val scalaCsv            = "com.github.tototoshi" %% "scala-csv" % "1.4.1"
   lazy val cucumberCore        = "io.cucumber" % "cucumber-core" % cucumberCoreVersion % "test"
   lazy val cucumberScala       = "io.cucumber" %% "cucumber-scala" % cucumberScalaVersion % "test"
   lazy val cucumberJunit       = "io.cucumber" % "cucumber-junit" % cucumberJUnitVersion % "test"

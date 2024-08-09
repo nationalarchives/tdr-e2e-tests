@@ -1,3 +1,4 @@
+@Magic
 Feature: Homepage Page
 
   Scenario: Homepage page is accessed by a logged out user
@@ -13,7 +14,7 @@ Feature: Homepage Page
   Scenario: Homepage page is accessed by a judgment user
     Given A logged in judgment user
     And the logged in user navigates to the homepage page
-    Then the user will be on a page with a heading "Before you start"
+    Then the user will be on a page with a heading "If this is an update to an existing judgment or decision"
 
   Scenario: Homepage page is submitted by a judgment user
     Given A logged in judgment user

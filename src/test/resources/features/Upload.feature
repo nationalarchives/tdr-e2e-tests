@@ -74,6 +74,6 @@ Feature: Upload
     When the user selects the file: testdocxfile.docx
     And the success and removal message container should be visible
     And the user clicks the continue button
-    Then the user will be on a page with the title "Uploading judgment"
+    Then the user will be on a page with the title "Uploading document"
     And the upload progress should be visible
-    Then the user will be on a page with the title "Checking your upload"
+    Then the user will be on a page with the title "Checking your document"

@@ -953,7 +953,7 @@ class Steps extends ScalaDsl with EN {
     val svg = webDriver.findElement(By.cssSelector("svg"))
 
     Assert.assertEquals(s"$baseUrl/consignment/$consignmentId/additional-metadata/download-metadata/csv", href)
-    Assert.assertEquals("Next", buttonText)
+    Assert.assertEquals("Continue", buttonText)
     Assert.assertNotNull(svg)
   }
 

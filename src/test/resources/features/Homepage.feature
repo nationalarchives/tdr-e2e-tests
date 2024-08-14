@@ -1,4 +1,3 @@
-@Magic
 Feature: Homepage Page
 
   Scenario: Homepage page is accessed by a logged out user

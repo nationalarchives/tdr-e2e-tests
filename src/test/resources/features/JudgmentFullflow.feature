@@ -11,11 +11,11 @@ Feature: Judgment Full user journey
     When the user clicks the Start transfer button
     Then the user should be on a page with before-uploading and a consignmentId in the URL
     When the user clicks on the Continue button
-    Then the user will be on a page with the title "Upload judgment"
+    Then the user will be on a page with the title "Upload document"
     When the user selects the file: testdocxfile.docx
     Then the success and removal message container should be visible
     When the user clicks the Start upload button
-    Then the user will be on a page with the title "Uploading judgment"
-    Then the user will be on a page with the title "Checking your upload"
+    Then the user will be on a page with the title "Uploading document"
+    Then the user will be on a page with the title "Checking your document"
     Then the user will be on a page with a panel titled "Transfer complete"
     And the judgment transfer export will be complete

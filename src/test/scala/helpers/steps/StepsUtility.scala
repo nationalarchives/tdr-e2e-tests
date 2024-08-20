@@ -24,6 +24,7 @@ object StepsUtility {
       so it doesn't matter if the same element on the first page has disappeared.*/
       .until((driver: WebDriver) => {
         val panels: List[WebElement] = webDriver.findElements(By.className(elementClassName)).asScala.toList
+        println(${webDriver.getPageSource})
         panels.exists(_.getText == title)
       })
   }

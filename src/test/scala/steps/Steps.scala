@@ -207,6 +207,7 @@ class Steps extends ScalaDsl with EN {
     _: String =>
       val client = GraphqlUtility(userCredentials)
       consignmentRef = client.getConsignmentReference(consignmentId)
+      Thread.sleep(1000)
       logout()
   }
 

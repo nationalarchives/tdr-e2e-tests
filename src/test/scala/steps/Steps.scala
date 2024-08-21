@@ -43,12 +43,14 @@ class Steps extends ScalaDsl with EN {
   val authUrl: String = configuration.getString("tdr.auth.url")
   val email: String = s"${RandomUtility.randomString()}@testSomething.com"
   val differentEmail: String = s"${RandomUtility.randomString()}@testSomething.com"
+  val tnaEmail: String = s"e2eTNAUser${RandomUtility.randomString(2)}@testSomething.com"
   val invalidEmail: String = "dgfhfdgjhgfj"
   val password: String = RandomUtility.randomString(10)
   val differentPassword: String = RandomUtility.randomString(10)
   val invalidPassword: String = "fdghfdgh"
   val userCredentials: UserCredentials = UserCredentials(email, password)
   val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
+  val tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, differentPassword)
   val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
 
@@ -190,7 +192,7 @@ class Steps extends ScalaDsl with EN {
   Given("^A logged in (.*) user") {
     userType: String =>
       val credential = userType match {
-        case "tna" => differentUserCredentials
+        case "tna" => tnaUserCredentials
         case _ => userCredentials
       }
       userId = KeycloakClient.createUser(credential, Some("Mock 1 Department"), Some(userType))
@@ -207,7 +209,6 @@ class Steps extends ScalaDsl with EN {
     _: String =>
       val client = GraphqlUtility(userCredentials)
       consignmentRef = client.getConsignmentReference(consignmentId)
-      Thread.sleep(1000)
       logout()
   }
 

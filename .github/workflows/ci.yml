@@ -87,7 +87,7 @@ jobs:
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Update WAF ipset
-        run: .github/scripts/update-waf-ipset.sh ${{ github.event.inputs.environment }}
+        run: .github/scripts/update-waf-ipset.sh INSERT ${{ github.event.inputs.environment }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
@@ -136,6 +136,8 @@ jobs:
               echo "$ip_file is not a file, skipping..."
             fi
           done
+      - name: Remove WAF ipset
+        run: .github/scripts/update-waf-ipset.sh DELETE ${{ github.event.inputs.environment }}
 
   send-messages:
     runs-on: ubuntu-latest

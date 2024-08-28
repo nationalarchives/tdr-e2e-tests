@@ -5,8 +5,8 @@ SCOPE="REGIONAL"
 REGION="eu-west-2"
 NEW_IP=$(curl -s https://ipinfo.io/ip)/32
 
-echo "The environment is: $1"
-echo "The environment setName is: tdr-apps-$1-whitelist"
+echo "The environment is: $2"
+echo "The environment setName is: tdr-apps-$2-whitelist"
 echo "New Ip: $NEW_IP"
 
 # Get the current IP set details
@@ -19,9 +19,14 @@ IP_SET_DETAILS=$(aws wafv2 get-ip-set --name "$IP_SET_NAME" --scope "$SCOPE" --i
 EXISTING_IPS=$(echo "$IP_SET_DETAILS" | jq -r '.IPSet.Addresses[]')
 LOCK_TOKEN=$(echo "$IP_SET_DETAILS" | jq -r '.LockToken')
 
-# Append the new IP to the list of existing IPs
-UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
-UPDATED_IPS="$UPDATED_IPS $NEW_IP"
+# Append/remove the new IP to the list of existing IPs
+if [ "$1" = "INSERT" ]; then
+  UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
+  UPDATED_IPS="$UPDATED_IPS $NEW_IP"
+  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV"
+elif [ "$1" = "DELETE" ]; then
+  UPDATED_IPS="$ORIGINAL_IPS"
+fi
 
 echo "ip setId" $IP_SET_ID
 #echo "Existing Ips: $EXISTING_IPS"

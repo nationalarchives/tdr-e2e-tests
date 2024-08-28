@@ -23,7 +23,7 @@ LOCK_TOKEN=$(echo "$IP_SET_DETAILS" | jq -r '.LockToken')
 if [ "$1" = "INSERT" ]; then
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   UPDATED_IPS="$UPDATED_IPS $NEW_IP"
-  echo "ORIGINAL_IPS=\"$EXISTING_IPS\"" >> "$GITHUB_ENV"
+  echo 'ORIGINAL_IPS=$EXISTING_IPS' >> $GITHUB_ENV
 elif [ "$1" = "DELETE" ]; then
   UPDATED_IPS="$ORIGINAL_IPS"
 fi

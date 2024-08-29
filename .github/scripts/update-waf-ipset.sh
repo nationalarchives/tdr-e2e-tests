@@ -33,6 +33,7 @@ update_ip_set() {
       break
     else
       echo "Update failed due to optimistic lock. Retrying..."
+      sleep $((RANDOM % 10 + 5))  # Random sleep between 5 and 15 seconds
       fetch_ip_set_details
     fi
 
@@ -54,7 +55,7 @@ fetch_ip_set_details
 if [ "$1" = "INSERT" ]; then
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   UPDATED_IPS="$UPDATED_IPS $NEW_IP"
-  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV"
+#  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
 elif [ "$1" = "DELETE" ]; then
   UPDATED_IPS="$ORIGINAL_IPS" # This could potentially contain newly added IPs because each e2e test adds its own IP
 fi

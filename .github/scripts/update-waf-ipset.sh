@@ -49,19 +49,27 @@ update_ip_set() {
 }
 
 # Fetch initial IP set details
-fetch_ip_set_details
+#fetch_ip_set_details
 
 # Append/remove the new IP to/from the list of existing IPs
-if [ "$1" = "INSERT" ]; then
+if [ "$1" = "GET" ]; then
+  fetch_ip_set_details
+#  echo "$EXISTING_IPS" > "$1"
+  UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
+  echo "ORIGINAL_IPS=$UPDATED_IPS" >> "$GITHUB_ENV" #Save original IPs
+elif [ "$1" = "INSERT" ]; then
+  fetch_ip_set_details
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   UPDATED_IPS="$UPDATED_IPS $NEW_IP"
+  update_ip_set
 #  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
 elif [ "$1" = "DELETE" ]; then
-  UPDATED_IPS="$ORIGINAL_IPS" # This could potentially contain newly added IPs because each e2e test adds its own IP
+#  UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
+  UPDATED_IPS="$ORIGINAL_IPS"
 fi
 
 echo "IP set ID: $IP_SET_ID"
 echo "Updated IPs: $UPDATED_IPS"
 
 # Attempt to update the IP set
-update_ip_set
+#update_ip_set

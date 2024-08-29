@@ -23,6 +23,7 @@ update_ip_set() {
   local retries=3
   local count=0
   local success=false
+  local backoff=5  # Initial backoff time in seconds
 
   while [ $count -lt $retries ]; do
     echo "Attempting to update IP set (try $((count + 1))/$retries)..."
@@ -33,7 +34,8 @@ update_ip_set() {
       break
     else
       echo "Update failed due to optimistic lock. Retrying..."
-      sleep $((RANDOM % 20 + 10))  # Random sleep between 10 and 30 seconds
+      sleep $((backoff + RANDOM % 5))  # Exponential backoff with a random jitter
+      backoff=$((backoff * 2))  # Double the backoff time
       fetch_ip_set_details
     fi
 
@@ -55,7 +57,7 @@ fetch_ip_set_details
 if [ "$1" = "INSERT" ]; then
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   UPDATED_IPS="$UPDATED_IPS $NEW_IP"
-#  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
+  echo ORIGINAL_IPS="$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
 elif [ "$1" = "DELETE" ]; then
   UPDATED_IPS="$ORIGINAL_IPS" # This could potentially contain newly added IPs because each e2e test adds its own IP
 fi

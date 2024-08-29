@@ -33,7 +33,7 @@ update_ip_set() {
       break
     else
       echo "Update failed due to optimistic lock. Retrying..."
-      sleep $((RANDOM % 10 + 5))  # Random sleep between 5 and 15 seconds
+      sleep $((RANDOM % 20 + 10))  # Random sleep between 10 and 30 seconds
       fetch_ip_set_details
     fi
 

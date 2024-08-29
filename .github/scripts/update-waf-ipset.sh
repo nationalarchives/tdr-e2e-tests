@@ -23,8 +23,6 @@ update_ip_set() {
   local retries=3
   local count=0
   local success=false
-  local initial_backoff=10  # Initial backoff time in seconds
-  local backoff=$initial_backoff
 
   while [ $count -lt $retries ]; do
     echo "Attempting to update IP set (try $((count + 1))/$retries)..."
@@ -34,11 +32,9 @@ update_ip_set() {
       success=true
       break
     else
-      sleep_time=$((backoff + RANDOM % 5))  # Exponential backoff with jitter
-      echo "Update failed due to optimistic lock Sleeping for $sleep_time seconds before retry..."
-      sleep $sleep_time
-      fetch_ip_set_details  # Refresh IP set details before retrying
-      backoff=$((backoff * 2))  # Exponentially increase the backoff time
+      echo "Update failed due to optimistic lock. Retrying..."
+      sleep $((RANDOM % 20 + 10))  # Random sleep between 10 and 30 seconds
+      fetch_ip_set_details
     fi
 
     count=$((count + 1))

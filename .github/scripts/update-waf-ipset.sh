@@ -5,9 +5,7 @@ SCOPE="REGIONAL"
 REGION="eu-west-2"
 NEW_IP=$(curl -s https://ipinfo.io/ip)/32
 
-echo "The environment is: $2"
 echo "The environment setName is: tdr-apps-$2-whitelist"
-echo "New Ip: $NEW_IP"
 
 # Get the current IP set details
 fetch_ip_set_details() {
@@ -48,29 +46,17 @@ update_ip_set() {
   fi
 }
 
-# Fetch initial IP set details
-#fetch_ip_set_details
-
-# Append/remove the new IP to/from the list of existing IPs
 if [ "$1" = "GET" ]; then
   fetch_ip_set_details
-#  echo "$EXISTING_IPS" > "$1" #Need to use ARTIFACT
   echo "$EXISTING_IPS" > waf-ip.txt
 elif [ "$1" = "INSERT" ]; then
   fetch_ip_set_details
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   UPDATED_IPS="$UPDATED_IPS $NEW_IP"
-#  update_ip_set
-  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
+  update_ip_set
 elif [ "$1" = "DELETE" ]; then
-  #NEED TO FETCH VALUE FROM DOWNLOADED ARTIFACT
+  fetch_ip_set_details
   EXISTING_IPS=$(cat waf-ip-artifacts/waf-ip.txt)
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   update_ip_set
 fi
-
-echo "IP set ID: $IP_SET_ID"
-echo "Updated IPs: $UPDATED_IPS"
-
-# Attempt to update the IP set
-#update_ip_set

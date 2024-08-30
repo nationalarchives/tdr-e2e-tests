@@ -60,11 +60,11 @@ elif [ "$1" = "INSERT" ]; then
   fetch_ip_set_details
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   UPDATED_IPS="$UPDATED_IPS $NEW_IP"
-  update_ip_set
-#  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
+#  update_ip_set
+  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
 elif [ "$1" = "DELETE" ]; then
   #NEED TO FETCH VALUE FROM DOWNLOADED ARTIFACT
-  EXISTING_IPS=$(cat waf-ip.txt)
+  EXISTING_IPS=$(cat waf-ip-artifacts/waf-ip.txt)
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
   update_ip_set
 fi

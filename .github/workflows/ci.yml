@@ -66,12 +66,11 @@ jobs:
           role-session-name: UpdateWAF
       - name: Get current IPs from WAF
         run: .github/scripts/update-waf-ipset.sh GET ${{ github.event.inputs.environment }}
-          #> ${{ matrix.file }}-waf-ip.txt
-#      - name: Upload runner IP as artifact
-#        uses: actions/upload-artifact@v4.3.3
-#        with:
-#          name: waf-ip-artifacts-${{ matrix.file }}
-#          path: ${{ matrix.file }}-waf-ip.txt
+      - name: Upload WAF IP as artifact
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: waf-ip-artifacts-${{ matrix.file }}
+          path: waf-ip.txt
   run-e2e-tests:
     runs-on: ubuntu-latest
     needs:
@@ -107,7 +106,6 @@ jobs:
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Update WAF ipset
-        if: success() || failure()
         run: .github/scripts/update-waf-ipset.sh INSERT ${{ github.event.inputs.environment }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
@@ -139,6 +137,12 @@ jobs:
         with:
           path: ip-artifacts
           pattern: ip-artifacts-*
+          merge-multiple: true
+      - name: Download WAF IP artifacts
+        uses: actions/download-artifact@v4.1.7
+        with:
+          path: waf-ip-artifacts
+          pattern: waf-ip-artifacts-*
           merge-multiple: true
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16

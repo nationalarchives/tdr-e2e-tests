@@ -54,9 +54,8 @@ update_ip_set() {
 # Append/remove the new IP to/from the list of existing IPs
 if [ "$1" = "GET" ]; then
   fetch_ip_set_details
-#  echo "$EXISTING_IPS" > "$1"
-  UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
-  echo "ORIGINAL_IPS=$UPDATED_IPS" >> "$GITHUB_ENV" #Save original IPs
+#  echo "$EXISTING_IPS" > "$1" #Need to use ARTIFACT
+  echo "$EXISTING_IPS" > waf-ip.txt
 elif [ "$1" = "INSERT" ]; then
   fetch_ip_set_details
   UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
@@ -64,8 +63,10 @@ elif [ "$1" = "INSERT" ]; then
   update_ip_set
 #  echo "ORIGINAL_IPS=$EXISTING_IPS" >> "$GITHUB_ENV" #Unable to process file command 'env' successfully. Invalid format '10.106.16.113/32'
 elif [ "$1" = "DELETE" ]; then
-#  UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
-  UPDATED_IPS="$ORIGINAL_IPS"
+  #NEED TO FETCH VALUE FROM DOWNLOADED ARTIFACT
+  EXISTING_IPS=$(cat waf-ip.txt)
+  UPDATED_IPS=$(echo "$EXISTING_IPS" | tr '\n' ' ')
+  update_ip_set
 fi
 
 echo "IP set ID: $IP_SET_ID"

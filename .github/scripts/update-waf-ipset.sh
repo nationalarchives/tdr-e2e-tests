@@ -1,15 +1,13 @@
 #!/bin/bash
 
-IP_SET_NAME="tdr-apps-intg-whitelist"
+IP_SET_NAME="tdr-apps-${2:-intg}-whitelist"
 SCOPE="REGIONAL"
 REGION="eu-west-2"
 NEW_IP=$(curl -s https://ipinfo.io/ip)/32
 
-echo "The environment setName is: tdr-apps-$2-whitelist"
-
 # Get the current IP set details
 fetch_ip_set_details() {
-  echo "Fetching current IP set details..."
+  echo "Fetching WAF IPSet details for: $IP_SET_NAME"
   IP_SET_ID=$(aws wafv2 list-ip-sets --scope "$SCOPE" --region "$REGION" | jq -r --arg ipset_name "$IP_SET_NAME" '.IPSets[] | select(.Name==$ipset_name) | .Id')
   IP_SET_DETAILS=$(aws wafv2 get-ip-set --name "$IP_SET_NAME" --scope "$SCOPE" --id "$IP_SET_ID" --region "$REGION")
   EXISTING_IPS=$(echo "$IP_SET_DETAILS" | jq -r '.IPSet.Addresses[]')

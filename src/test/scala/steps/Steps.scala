@@ -189,11 +189,14 @@ class Steps extends ScalaDsl with EN {
 
   Given("^A logged in (.*) user") {
     userType: String =>
-      val credential = userType match {
-        case "tna" => differentUserCredentials
-        case _ => userCredentials
+      val credential: UserCredentials = userType match {
+        case "transfer adviser" | "metadata viewer" =>
+          userId = KeycloakClient.createUser(differentUserCredentials, None, Some(userType.replace(" ", "_")))
+          differentUserCredentials
+        case _ =>
+          userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
+          userCredentials
       }
-      userId = KeycloakClient.createUser(credential, Some("Mock 1 Department"), Some(userType))
       login(credential)
       this.userType = userType
   }

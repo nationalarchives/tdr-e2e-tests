@@ -1047,6 +1047,12 @@ class Steps extends ScalaDsl with EN {
       client.saveMetadata(consignmentId, createdFiles, metadataType)
   }
 
+  And("^an existing metadata review is in progress") {
+    val client = GraphqlUtility(userCredentials)
+    val updateStatus = client.addConsignmentStatus(consignmentId, "MetadataReview", "InProgress")
+    Assert.assertTrue(updateStatus.nonEmpty)
+  }
+
   And("^existing metadata should contain (.*) values") {
     (numberOfMetadata: Int) =>
       val fieldValues = getSummaryMetadata
@@ -1082,5 +1088,11 @@ class Steps extends ScalaDsl with EN {
           found = true
         }
       }
+  }
+
+  And("^the label \"(.*)\" should not be visible for the (.*) user") {
+    (label: String, _: String) =>
+      val panels: List[WebElement] = webDriver.findElements(By.className("govuk-label")).asScala.toList
+      Assert.assertFalse(panels.exists(_.getText == label))
   }
 }

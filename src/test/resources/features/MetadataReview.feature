@@ -47,7 +47,7 @@ Feature: Metadata review pages
     When the logged in user navigates to the review-progress page
     Then the user will see the alert We found issues in your metadata
 
-  Scenario: Metadata review requested by user is rejected by metadata viewer
+  Scenario: The metadata viewer should not be able to set the status of a metadata review
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files

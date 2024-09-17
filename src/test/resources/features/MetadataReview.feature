@@ -1,5 +1,5 @@
 Feature: Metadata review pages
-  Scenario: Metadata review requested by user is approved by transfer advisor
+  Scenario: Metadata review requested by user is approved by transfer adviser
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files
@@ -23,7 +23,7 @@ Feature: Metadata review pages
     When the logged in user navigates to the review-progress page
     Then the user will see the alert You can now complete your transfer
 
-  Scenario: Metadata review requested by user is rejected by transfer advisor
+  Scenario: Metadata review requested by user is rejected by transfer adviser
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     And an existing upload of 2 files

@@ -95,6 +95,7 @@ class Steps extends ScalaDsl with EN {
       case "additional-metadata-entry" => s"$baseUrl/$path/$consignmentId/additional-metadata/entry-method"
       case "draft-metadata-upload" => s"$baseUrl/$path/$consignmentId/draft-metadata/upload"
       case "review-progress" => s"$baseUrl/$path/$consignmentId/metadata-review/review-progress"
+      case "metadata-review" => s"$baseUrl/admin/metadata-review/$consignmentId"
       case _ => s"$baseUrl/$path/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
@@ -157,7 +158,7 @@ class Steps extends ScalaDsl with EN {
   }
 
   private def getDownloadedCsv(name: String, downloadPath: String = "/tmp/"): Array[File] = {
-    val expectedFileExtension = ".csv"
+    val expectedFileExtension = ".xlsx"
     val dir = new File(downloadPath)
     val files = dir.listFiles()
     files.filter(f => f.getName.startsWith(name) && f.getName.endsWith(expectedFileExtension))

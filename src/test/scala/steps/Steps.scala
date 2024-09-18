@@ -15,7 +15,6 @@ import io.cucumber.scala.{EN, ScalaDsl, Scenario}
 import org.junit.Assert
 import org.openqa.selenium._
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Select, WebDriverWait}
-import org.scalatest.matchers.should.Matchers._
 
 import java.io.File
 import java.nio.file.Paths
@@ -32,6 +31,7 @@ class Steps extends ScalaDsl with EN {
   var userType: String = ""
   var differentUserId: String = ""
   var consignmentId: UUID = _
+  var consignmentRef: String = _
   var createdFiles: List[UUID] = _
   var createdFilesIdToChecksum: Map[UUID, String] = Map()
   var filesWithoutAVMetadata: List[UUID] = _
@@ -74,16 +74,27 @@ class Steps extends ScalaDsl with EN {
     StepsUtility.userLogin(webDriver, userCredentials)
   }
 
+  private def logout(): Unit = {
+    Try {
+      val signOutElement = webDriver.findElement(By.cssSelector("header[role='banner'] li:nth-child(2) a:nth-child(1)"))
+      signOutElement.click()
+    }.recover {
+      case _: NoSuchElementException =>
+        webDriver.findElement(By.cssSelector("a[class='govuk-header__link']")).click()
+    }
+  }
+
   private def loadPage(page: String): Unit = {
     val hyphenatedPageName = page.toLowerCase.replaceAll(" ", "-")
     val isJudgment = userType == "judgment"
-    val path = if(isJudgment) "judgment" else "consignment"
+    val path = if (isJudgment) "judgment" else "consignment"
     val pageWithConsignment = hyphenatedPageName match {
       case "homepage" | "view-transfers" | "some-page" => s"$baseUrl/$hyphenatedPageName"
-      case "faq" | "help" => if(isJudgment) s"$baseUrl/$path/$hyphenatedPageName" else s"$baseUrl/$hyphenatedPageName"
+      case "faq" | "help" => if (isJudgment) s"$baseUrl/$path/$hyphenatedPageName" else s"$baseUrl/$hyphenatedPageName"
       case "download-metadata" => s"$baseUrl/$path/$consignmentId/additional-metadata/$hyphenatedPageName"
       case "additional-metadata-entry" => s"$baseUrl/$path/$consignmentId/additional-metadata/entry-method"
       case "draft-metadata-upload" => s"$baseUrl/$path/$consignmentId/draft-metadata/upload"
+      case "review-progress" => s"$baseUrl/$path/$consignmentId/metadata-review/review-progress"
       case _ => s"$baseUrl/$path/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
@@ -178,9 +189,28 @@ class Steps extends ScalaDsl with EN {
 
   Given("^A logged in (.*) user") {
     userType: String =>
-      userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
-      login(userCredentials)
+      val credential: UserCredentials = userType match {
+        case "transfer adviser" | "metadata viewer" =>
+          userId = KeycloakClient.createUser(differentUserCredentials, None, Some(userType.replace(" ", "_")))
+          differentUserCredentials
+        case _ =>
+          userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
+          userCredentials
+      }
+      login(credential)
       this.userType = userType
+  }
+
+  Given("^an existing (.*) user logs in") {
+    userType: String =>
+      login(userCredentials)
+  }
+
+  Then("^the (.*) user logs out") {
+    _: String =>
+      val client = GraphqlUtility(userCredentials)
+      consignmentRef = client.getConsignmentReference(consignmentId)
+      logout()
   }
 
   And("^the user is logged in on the (.*) page") {
@@ -349,6 +379,16 @@ class Steps extends ScalaDsl with EN {
       StepsUtility.waitForElementTitle(webDriver, title, "govuk-heading-l")
   }
 
+  Then("^the user will be on a page with the label \"(.*)\"") {
+    page: String =>
+      StepsUtility.waitForElementTitle(webDriver, page, "govuk-label")
+  }
+
+  Then("^the user will see the alert (.*)") {
+    text: String =>
+      StepsUtility.waitForElementTitle(webDriver, text, "da-alert__heading")
+  }
+
   And("^the user will see a row with a consignment reference that correlates with their consignmentId") {
     () =>
       val client = GraphqlUtility(userCredentials)
@@ -440,6 +480,12 @@ class Steps extends ScalaDsl with EN {
     selectedSeries: String =>
       val seriesDropdown = new Select(webDriver.findElement(By.name("series")))
       seriesDropdown.selectByVisibleText(selectedSeries)
+  }
+
+  And("^the (.*) user (.*) the metadata") {
+    (userType: String, status: String) =>
+      val statusDropdown = new Select(webDriver.findElement(By.name("status")))
+      statusDropdown.selectByVisibleText(status)
   }
 
   And("^the user selects the option (.*)") {
@@ -1018,5 +1064,23 @@ class Steps extends ScalaDsl with EN {
     (status: String) =>
       val value = webDriver.findElement(By.cssSelector(".govuk-summary-list__value .govuk-tag")).getText
       Assert.assertEquals(status, value)
+  }
+
+  And("^the (.*) user clicks view request for consignment") {
+    (userType: String) =>
+      val rows: List[WebElement] = webDriver.findElements(By.cssSelector("tr.govuk-table__row")).asScala.toList
+      var found = false  // Boolean flag to control the loop
+
+      // Iterate through the rows to find the one with the header consignmentRef
+      for (row <- rows if !found) {
+        val header: WebElement = row.findElement(By.cssSelector("th.govuk-table__header"))
+
+        if (header.getText.contains(consignmentRef)) {
+          // Once found, click the "View request" link within that row
+          val viewRequestLink: WebElement = row.findElement(By.cssSelector("a.govuk-link"))
+          viewRequestLink.click()
+          found = true
+        }
+      }
   }
 }

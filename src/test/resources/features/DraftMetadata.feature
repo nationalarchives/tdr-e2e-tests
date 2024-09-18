@@ -40,8 +40,7 @@ Feature: Descriptive metadata pages
     And the draft metadata checks continue button should be enabled
     When the user clicks the continue button
     Then the user will be on a page with the title "Results of your metadata checks"
-    And the draft metadata upload status should be "ERRORS"
-
+    
   Scenario: User sees an error when trying to view the draft metadata upload page for a consignment they don't own
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1

@@ -35,7 +35,7 @@ Feature: Download Metadata page
     And the user clicks the download metadata link
     Then the metadata csv will have the correct columns for 2 files
 
-  Scenario: The transfer adviser should be able to download the metadata excel
+  Scenario Outline: The <user> should be able to download the metadata excel
     Given A logged in standard user
     And an existing standard consignment for transferring body MOCK1
     When the logged in user navigates to the Download Metadata page
@@ -43,20 +43,12 @@ Feature: Download Metadata page
     And the user has created additional metadata
     And an existing metadata review is in progress
     Then the standard user logs out
-    Given A logged in transfer adviser user
+    Given A logged in <user> user
     When the logged in user navigates to the metadata review page
     Then the user will be on a page with the label "1. Download and review transfer metadata"
     And the user clicks the download metadata link
 
-  Scenario: The metadata viewer should be able to download the metadata excel
-    Given A logged in standard user
-    And an existing standard consignment for transferring body MOCK1
-    When the logged in user navigates to the Download Metadata page
-    And the file checks are complete
-    And the user has created additional metadata
-    And an existing metadata review is in progress
-    Then the standard user logs out
-    Given A logged in metadata viewer user
-    When the logged in user navigates to the metadata review page
-    Then the user will be on a page with the label "1. Download and review transfer metadata"
-    And the user clicks the download metadata link
+    Examples:
+      | user             |
+      | transfer adviser |
+      | metadata viewer  |

@@ -385,9 +385,14 @@ class Steps extends ScalaDsl with EN {
       StepsUtility.waitForElementTitle(webDriver, page, "govuk-label")
   }
 
-  Then("^the user will see the alert (.*)") {
+  Then("^the user will see the (.*) alert") {
     text: String =>
-      StepsUtility.waitForElementTitle(webDriver, text, "da-alert__heading")
+      val expectedAlert = text match {
+        case "Approve" => "You can now complete your transfer"
+        case "Reject" => "We found issues in your metadata"
+        case _ => "Your review is in progress"
+      }
+      StepsUtility.waitForElementTitle(webDriver, expectedAlert, "da-alert__heading")
   }
 
   And("^the user will see a row with a consignment reference that correlates with their consignmentId") {

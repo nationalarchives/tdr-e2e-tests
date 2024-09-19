@@ -1,32 +1,30 @@
 package helpers.graphql
 
 import cats.implicits.catsSyntaxOptionId
-
-import java.time.Instant
-import java.util.UUID
 import graphql.codegen.AddBulkAntivirusMetadata.{addBulkAntivirusMetadata => abavmd}
-import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
-import graphql.codegen.StartUpload.{startUpload => su}
-import graphql.codegen.AddConsignment.{addConsignment => ac}
-import graphql.codegen.AddBulkFileMetadata.{addBulkFileMetadata => abfm}
 import graphql.codegen.AddBulkFFIDMetadata.{addBulkFFIDMetadata => abffm}
-import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPrivateBeta => atapb}
+import graphql.codegen.AddBulkFileMetadata.{addBulkFileMetadata => abfm}
+import graphql.codegen.AddConsignment.{addConsignment => ac}
+import graphql.codegen.AddConsignmentStatus.{addConsignmentStatus => acs}
+import graphql.codegen.AddFilesAndMetadata.{addFilesAndMetadata => afam}
 import graphql.codegen.AddTransferAgreementCompliance.{addTransferAgreementCompliance => atac}
+import graphql.codegen.AddTransferAgreementPrivateBeta.{addTransferAgreementPrivateBeta => atapb}
+import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
+import graphql.codegen.GetConsignmentSummary.{getConsignmentSummary => gcs}
 import graphql.codegen.GetCustomMetadata.{customMetadata => cm}
 import graphql.codegen.GetDisplayProperties.{displayProperties => dp}
 import graphql.codegen.GetSeries.{getSeries => gs}
-import graphql.codegen.GetConsignmentExport.{getConsignmentForExport => gcfe}
-import graphql.codegen.GetConsignmentSummary.{getConsignmentSummary => gcs}
 import graphql.codegen.StartUpload.{startUpload => su}
 import graphql.codegen.UpdateConsignmentSeriesId.{updateConsignmentSeriesId => ucs}
 import graphql.codegen.UpdateConsignmentStatus.{updateConsignmentStatus => ucst}
-import graphql.codegen.AddConsignmentStatus.{addConsignmentStatus => acs}
 import graphql.codegen.types._
 import graphql.codegen.{AddMultipleFileStatuses => amfs}
 import helpers.graphql.GraphqlUtility.MatchIdInfo
 import helpers.keycloak.UserCredentials
 
 import java.nio.file.Path
+import java.time.Instant
+import java.util.UUID
 
 class GraphqlUtility(userCredentials: UserCredentials) {
   val standardConsignmentType = "standard"

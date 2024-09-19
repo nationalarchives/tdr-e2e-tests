@@ -95,6 +95,7 @@ class Steps extends ScalaDsl with EN {
       case "additional-metadata-entry" => s"$baseUrl/$path/$consignmentId/additional-metadata/entry-method"
       case "draft-metadata-upload" => s"$baseUrl/$path/$consignmentId/draft-metadata/upload"
       case "review-progress" => s"$baseUrl/$path/$consignmentId/metadata-review/review-progress"
+      case "metadata-review" => s"$baseUrl/admin/metadata-review/$consignmentId"
       case _ => s"$baseUrl/$path/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
@@ -157,7 +158,7 @@ class Steps extends ScalaDsl with EN {
   }
 
   private def getDownloadedCsv(name: String, downloadPath: String = "/tmp/"): Array[File] = {
-    val expectedFileExtension = ".csv"
+    val expectedFileExtension = ".xlsx"
     val dir = new File(downloadPath)
     val files = dir.listFiles()
     files.filter(f => f.getName.startsWith(name) && f.getName.endsWith(expectedFileExtension))
@@ -384,9 +385,14 @@ class Steps extends ScalaDsl with EN {
       StepsUtility.waitForElementTitle(webDriver, page, "govuk-label")
   }
 
-  Then("^the user will see the alert (.*)") {
+  Then("^the user will see the (.*) alert") {
     text: String =>
-      StepsUtility.waitForElementTitle(webDriver, text, "da-alert__heading")
+      val expectedAlert = text match {
+        case "Approve" => "You can now complete your transfer"
+        case "Reject" => "We found issues in your metadata"
+        case _ => "Your review is in progress"
+      }
+      StepsUtility.waitForElementTitle(webDriver, expectedAlert, "da-alert__heading")
   }
 
   And("^the user will see a row with a consignment reference that correlates with their consignmentId") {
@@ -1047,6 +1053,12 @@ class Steps extends ScalaDsl with EN {
       client.saveMetadata(consignmentId, createdFiles, metadataType)
   }
 
+  And("^an existing metadata review is in progress") {
+    val client = GraphqlUtility(userCredentials)
+    val updateStatus = client.addConsignmentStatus(consignmentId, "MetadataReview", "InProgress")
+    Assert.assertTrue(updateStatus.nonEmpty)
+  }
+
   And("^existing metadata should contain (.*) values") {
     (numberOfMetadata: Int) =>
       val fieldValues = getSummaryMetadata
@@ -1082,5 +1094,11 @@ class Steps extends ScalaDsl with EN {
           found = true
         }
       }
+  }
+
+  And("^the label \"(.*)\" should not be visible for the (.*) user") {
+    (label: String, _: String) =>
+      val panels: List[WebElement] = webDriver.findElements(By.className("govuk-label")).asScala.toList
+      Assert.assertFalse(panels.exists(_.getText == label))
   }
 }

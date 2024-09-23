@@ -106,7 +106,7 @@ jobs:
       - name: Update security group
         run: .github/scripts/update-security-group.sh INSERT ${{ secrets[needs.setup-e2e-tests.outputs.account_number_secret] }}
       - name: Update WAF ipset
-        if: ${{ matrix.file == 'MetadataReview.feature' }}
+        if: ${{ matrix.file == 'MetadataReview.feature' || matrix.file == 'DownloadMetadata.feature' }}
         run: .github/scripts/update-waf-ipset.sh INSERT ${{ github.event.inputs.environment }}
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16

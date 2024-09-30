@@ -41,5 +41,5 @@ Feature: Metadata review pages
     And the user clicks the Transfers for review button
     Then the user will be on a page with the title "Metadata Reviews"
     And the metadata viewer user clicks view request for consignment
-    Then the user will be on a page with the label "1. Download and review transfer metadata"
+    Then the user will be on a page with a heading "1. Download and review transfer metadata"
     And the label "2. Set the status of this review" should not be visible for the metadata viewer user

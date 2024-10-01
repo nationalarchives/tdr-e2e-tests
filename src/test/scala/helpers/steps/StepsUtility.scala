@@ -54,16 +54,9 @@ object StepsUtility {
   }
 
   def elementIsHidden(id: String, webDriver: WebDriver): Boolean = {
-    val findElementByIdOrClass = {
-      Try(webDriver.findElement(By.cssSelector(s"#$id")))
-        .orElse(Try(webDriver.findElement(By.cssSelector(s".$id"))))
-        .toOption
-    }
-
-    findElementByIdOrClass.exists{ element =>
-      val hideCssClasses = List("hide", "govuk-visually-hidden")
-      hideCssClasses.exists(element.getAttribute("class").contains) || Option(element.getAttribute("hidden")).isDefined
-    }
+    val element = webDriver.findElement(By.cssSelector(s"#$id,.$id"))
+    val hideCssClasses = List("hide", "govuk-visually-hidden")
+    hideCssClasses.exists(element.getAttribute("class").contains) || Option(element.getAttribute("hidden")).isDefined
   }
 
   def elementIsSelected(id: String, webDriver: WebDriver): Boolean = {

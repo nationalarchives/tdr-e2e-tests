@@ -1,12 +1,14 @@
 package helpers.steps
 
-import java.nio.file.{Files, Path}
-import java.security.MessageDigest
 import helpers.keycloak.UserCredentials
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.openqa.selenium.{By, StaleElementReferenceException, WebDriver, WebElement}
-import scala.jdk.CollectionConverters._
+
+import java.nio.file.{Files, Path}
+import java.security.MessageDigest
 import java.time.Duration
+import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 object StepsUtility {
   def waitForElementTitle(webDriver: WebDriver, title: String, elementClassName: String): Any = {
@@ -52,9 +54,16 @@ object StepsUtility {
   }
 
   def elementIsHidden(id: String, webDriver: WebDriver): Boolean = {
-    val element = webDriver.findElement(By.cssSelector(s"#$id"))
-    val hideCssClasses = List("hide", "govuk-visually-hidden")
-    hideCssClasses.exists(element.getAttribute("class").contains) || Option(element.getAttribute("hidden")).isDefined
+    val findElementByIdOrClass = {
+      Try(webDriver.findElement(By.cssSelector(s"#$id")))
+        .orElse(Try(webDriver.findElement(By.cssSelector(s".$id"))))
+        .toOption
+    }
+
+    findElementByIdOrClass.exists{ element =>
+      val hideCssClasses = List("hide", "govuk-visually-hidden")
+      hideCssClasses.exists(element.getAttribute("class").contains) || Option(element.getAttribute("hidden")).isDefined
+    }
   }
 
   def elementIsSelected(id: String, webDriver: WebDriver): Boolean = {

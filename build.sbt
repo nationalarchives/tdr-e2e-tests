@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   tdrGenerateGraphQl,
   circeCore,
   circeGeneric,
+  fastexceReader,
   softwareMillCore,
   softwareMillCirce,
   awsSdkS3,

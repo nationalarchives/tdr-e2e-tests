@@ -746,7 +746,6 @@ class Steps extends ScalaDsl with EN {
       val wb = new ReadableWorkbook(metadataCsv)
       val sheet = wb.getFirstSheet
       val actualRows = sheet.read().asScala.map(_.asScala.map(_.getText).mkString(",")).toList
-      println(actualRows.mkString("\n"))
       val expectedErrorFilePath = s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName"
       val expectedErrorFile = Source.fromFile(expectedErrorFilePath)
       val expectedRows = expectedErrorFile.getLines().map(_.split(",").mkString(",")).toList

@@ -25,5 +25,5 @@ object Dependencies {
   lazy val cucumberCore        = "io.cucumber" % "cucumber-core" % cucumberCoreVersion % "test"
   lazy val cucumberScala       = "io.cucumber" %% "cucumber-scala" % cucumberScalaVersion % "test"
   lazy val cucumberJunit       = "io.cucumber" % "cucumber-junit" % cucumberJUnitVersion % "test"
-  lazy val fastexceReader       = "org.dhatim" % "fastexcel-reader" % "0.18.4" % "test"
+  lazy val fastexcelReader       = "org.dhatim" % "fastexcel-reader" % "0.18.4" % "test"
 }

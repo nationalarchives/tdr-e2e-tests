@@ -40,7 +40,12 @@ Feature: Descriptive metadata pages
     And the draft metadata checks continue button should be enabled
     When the user clicks the continue button
     Then the user will be on a page with the title "Results of your metadata checks"
-    
+    And the draft metadata upload status should be "ISSUES FOUND"
+    When the user clicks on the Download report button
+    Then the error report should be same as draft-metadata-error-report.csv
+    When the user clicks on the Re-upload metadata button
+    Then the user will be on a page with the title "Upload a metadata CSV"
+
   Scenario: User sees an error when trying to view the draft metadata upload page for a consignment they don't own
     Given A logged out standard user
     And an existing standard consignment for transferring body MOCK1

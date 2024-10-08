@@ -17,7 +17,7 @@ import org.junit.Assert
 import org.openqa.selenium._
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Select, WebDriverWait}
 
-import java.io.File
+import java.io.{BufferedOutputStream, File, FileOutputStream}
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
@@ -147,6 +147,10 @@ class Steps extends ScalaDsl with EN {
       val fileIds = "UUID" :: createdFiles.map(_.toString)
 
       val updatedValues = data.zip(fileIds).map(p => p._1 :+ p._2)
+      val utf8BOM = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
+      val bos = new BufferedOutputStream(new FileOutputStream(s"/tmp/$fileName"))
+      bos.write(utf8BOM)
+      bos.close()
       val writer = CSVWriter.open(s"/tmp/$fileName")
       writer.writeAll(updatedValues)
       webDriver.findElement(By.cssSelector("#file-selection")).sendKeys(s"/tmp/$fileName")

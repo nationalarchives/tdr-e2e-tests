@@ -151,7 +151,7 @@ class Steps extends ScalaDsl with EN {
       val bos = new BufferedOutputStream(new FileOutputStream(s"/tmp/$fileName"))
       bos.write(utf8BOM)
       bos.close()
-      val writer = CSVWriter.open(s"/tmp/$fileName")
+      val writer = CSVWriter.open(s"/tmp/$fileName", append=true)
       writer.writeAll(updatedValues)
       webDriver.findElement(By.cssSelector("#file-selection")).sendKeys(s"/tmp/$fileName")
     } else {

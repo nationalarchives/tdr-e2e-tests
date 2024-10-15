@@ -12,11 +12,12 @@ import helpers.steps.StepsUtility
 import helpers.steps.StepsUtility.calculateTestFileChecksum
 import helpers.users.RandomUtility
 import io.cucumber.scala.{EN, ScalaDsl, Scenario}
+import org.dhatim.fastexcel.reader.ReadableWorkbook
 import org.junit.Assert
 import org.openqa.selenium._
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Select, WebDriverWait}
 
-import java.io.File
+import java.io.{BufferedOutputStream, File, FileOutputStream}
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
@@ -146,7 +147,11 @@ class Steps extends ScalaDsl with EN {
       val fileIds = "UUID" :: createdFiles.map(_.toString)
 
       val updatedValues = data.zip(fileIds).map(p => p._1 :+ p._2)
-      val writer = CSVWriter.open(s"/tmp/$fileName")
+      val utf8BOM = Array(0xEF.toByte, 0xBB.toByte, 0xBF.toByte)
+      val bos = new BufferedOutputStream(new FileOutputStream(s"/tmp/$fileName"))
+      bos.write(utf8BOM)
+      bos.close()
+      val writer = CSVWriter.open(s"/tmp/$fileName", append=true)
       writer.writeAll(updatedValues)
       webDriver.findElement(By.cssSelector("#file-selection")).sendKeys(s"/tmp/$fileName")
     } else {
@@ -262,14 +267,24 @@ class Steps extends ScalaDsl with EN {
 
   And("^the user clicks on the (.*)(?: button|link)$") {
     button: String =>
-      new WebDriverWait(webDriver, waitTime(30)).withMessage {
-        s"""Could not find button "$button" on this page ${webDriver.getCurrentUrl}
-           |Below is the page source:
-           |
-           |${webDriver.getPageSource}""".stripMargin
-      }.until(
-        (driver: WebDriver) => webDriver.findElement(By.linkText(button.trim)).click()
-      )
+      if (button == "Download report") {
+        webDriver.findElement(By.linkText(button.trim)).click()
+        new WebDriverWait(webDriver, waitTime(10)).withMessage {
+          "There were no files in the directory containing the name ErrorReport"
+        }.until((driver: WebDriver) => {
+          val filteredFiles = getDownloadedCsv("ErrorReport")
+          filteredFiles.nonEmpty
+        })
+      } else {
+        new WebDriverWait(webDriver, waitTime(30)).withMessage {
+          s"""Could not find button "$button" on this page ${webDriver.getCurrentUrl}
+             |Below is the page source:
+             |
+             |${webDriver.getPageSource}""".stripMargin
+        }.until(
+          (driver: WebDriver) => webDriver.findElement(By.linkText(button.trim)).click()
+        )
+      }
   }
 
   Then("^the (.*) button is not displayed on the page") {
@@ -727,6 +742,18 @@ class Steps extends ScalaDsl with EN {
       val draftMetadataSource = Source.fromFile(s"/tmp/$fileName")
       val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList
       Assert.assertTrue(expectedRows.containsSlice(actualRows))
+  }
+
+  Then("^the error report should be same as (.*)") {
+    fileName: String =>
+      val metadataCsv = getDownloadedCsv("ErrorReport").last
+      val wb = new ReadableWorkbook(metadataCsv)
+      val sheet = wb.getFirstSheet
+      val actualRows = sheet.read().asScala.map(_.asScala.map(_.getText).mkString(",")).toList
+      val expectedErrorFilePath = s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName"
+      val expectedErrorFile = Source.fromFile(expectedErrorFilePath)
+      val expectedRows = expectedErrorFile.getLines().map(_.split(",").mkString(",")).toList
+      Assert.assertEquals(expectedRows, actualRows)
   }
 
   And("^an existing upload of (\\d+) files") {

@@ -45,7 +45,7 @@ Feature: Download Metadata page
     Then the standard user logs out
     Given A logged in <user> user
     When the logged in user navigates to the metadata review page
-    Then the user will be on a page with the label "1. Download and review transfer metadata"
+    Then the user will be on a page with a heading "1. Download and review transfer metadata"
     And the user clicks the download metadata link
 
     Examples:

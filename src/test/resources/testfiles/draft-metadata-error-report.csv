@@ -1,9 +1,9 @@
 Filepath,Field,Value,Error Message
+E2E_tests/original/path1,Date last modified,,"We are unable to recognise this as a valid date format, please provide a date in the format yyyy-mm-dd"
 E2E_tests/original/path1,Is the title sensitive for the public?,tret,Must be provided for a closed record
 E2E_tests/original/path1,Language,French,"Language must be one of a valid list, please refer to guidance for details of allowed values. If you cannot see the language you need in this list, please contact your Digital Transfer Advisor."
 E2E_tests/original/path1,Is the title sensitive for the public?,tret,Must be Yes or No
 E2E_tests/original/path1,Closure Period,we,Must be a number between 1 and 150
-E2E_tests/original/path1,Date last modified,,"We are unable to recognise this as a valid date format, please provide a date in the format yyyy-mm-dd"
 E2E_tests/original/path1,Date of the record,eee,"We are unable to recognise this as a valid date format, please provide a date in the format yyyy-mm-dd"
 E2E_tests/original/path1,Closure Start Date,eeee,"We are unable to recognise this as a valid date format, please provide a date in the format yyyy-mm-dd"
 E2E_tests/original/path1,FOI exemption code,www,"This must be a pipe delimited list of valid FOI codes, (eg. 31|33). Please see the guidance for more detail on valid codes"

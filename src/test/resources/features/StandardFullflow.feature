@@ -18,7 +18,7 @@ Feature: Standard Full user journey
     When the user selects yes to all transfer agreement part 2 checks
     And the user clicks the Agree and continue button
     Then the user will be on a page with the title "Upload your records"
-    When the user selects directory containing: testfile1
+    When the user selects directory containing: testfile1.txt
     Then the success and removal message container should be visible
     When the user clicks the Start upload button
     Then the user will be on a page with the title "Uploading your records"

@@ -640,7 +640,7 @@ class Steps extends ScalaDsl with EN {
     client.startUpload(consignmentId)
     client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
     client.updateConsignmentStatus(consignmentId, "ClientChecks", "Completed")
-    val files = List("testfile1", "testfile2")
+    val files = List("testfile3.txt", "testfile4.txt")
     val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({
       case (fileName, idx) =>
         val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")
@@ -755,7 +755,7 @@ class Steps extends ScalaDsl with EN {
   And("^an existing upload of (\\d+) files") {
     val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
-      val files = List("testfile1", "testfile2")
+      val files = List("testfile3.txt", "testfile4.txt")
 
       val matchIdInfo: List[MatchIdInfo] = List.tabulate(numberOfFiles)(n => n).map(idx => {
         val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/${files(idx % 2)}")

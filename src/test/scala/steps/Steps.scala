@@ -640,7 +640,7 @@ class Steps extends ScalaDsl with EN {
     client.startUpload(consignmentId)
     client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
     client.updateConsignmentStatus(consignmentId, "ClientChecks", "Completed")
-    val files = List("testfile3.txt", "testfile4.txt")
+    val files = List("testfile1.txt", "testfile2.txt")
     val checksumWithIndex: List[MatchIdInfo] = files.zipWithIndex.map({
       case (fileName, idx) =>
         val path = Paths.get(s"${System.getProperty("user.dir")}/src/test/resources/testfiles/$fileName")

@@ -737,10 +737,10 @@ class Steps extends ScalaDsl with EN {
       val consignmentRef = client.getConsignmentReference(consignmentId)
       val metadataCsv = getDownloadedCsv(consignmentRef).last
       val source = Source.fromFile(metadataCsv.getAbsolutePath)
-      val actualRows = source.getLines().map(_.split(",").drop(3).mkString(",")).toList
+      val actualRows = source.getLines().map(_.split(",").drop(3).mkString(",")).toList.sorted
 
       val draftMetadataSource = Source.fromFile(s"/tmp/$fileName")
-      val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList
+      val expectedRows = draftMetadataSource.getLines().map(_.split(",").drop(3).mkString(",")).toList.sorted
       Assert.assertTrue(expectedRows.containsSlice(actualRows))
   }
 

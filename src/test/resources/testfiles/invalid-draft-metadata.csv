@@ -1,3 +1,3 @@
-Filepath,Filename,Date last modified,Date of the record,Description,Former reference,Closure status,Closure Start Date,Closure Period,FOI exemption code,FOI decision asserted,Is the title sensitive for the public?,Add alternative title without the file extension,Is the description sensitive for the public?,Alternative description,Language,Translated title of record
+﻿Filepath,Filename,Date last modified,Date of the record,Description,Former reference,Closure status,Closure Start Date,Closure Period,FOI exemption code,FOI decision asserted,Is the title sensitive for the public?,Add alternative title without the file extension,Is the description sensitive for the public?,Alternative description,Language,Translated title of record
 E2E_tests/original/path1,path1,,eee,,,Closed,eeee,we,www,rrr,tret,,No,fsdfs,French,
 E2E_tests/original/path0,path0,wwww,,,,Closed,,-12,,,No,fsdfsd,Yes,,English,

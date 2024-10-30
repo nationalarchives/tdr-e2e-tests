@@ -18,7 +18,7 @@ Feature: Upload
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
     And the user is logged in on the upload page
-    When the user selects directory containing: testfile1
+    When the user selects directory containing: testfile1.txt
     Then the success and removal message container should be visible
 
   Scenario: The progress bar is shown after the 'includeTopLevelFolder' is selected and file is uploaded
@@ -39,7 +39,7 @@ Feature: Upload
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
     And the user is logged in on the upload page
-    When the user selects directory containing: testfile1
+    When the user selects directory containing: testfile1.txt
     And the user clicks the continue button
     Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible
@@ -51,7 +51,7 @@ Feature: Upload
     And an existing transfer agreement part 1
     And an existing transfer agreement part 2
     And the user is logged in on the upload page
-    When the user selects directory containing: testfile1
+    When the user selects directory containing: testfile1.txt
     And the user clicks the continue button
     Then the user will be on a page with the title "Uploading your records"
     And the upload progress should be visible

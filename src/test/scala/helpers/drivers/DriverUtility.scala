@@ -19,7 +19,7 @@ object DriverUtility {
     chromeOptions.addArguments("--no-sandbox")
     chromeOptions.addArguments("--disable-dev-shm-usage")
     chromeOptions.addArguments("--verbose")
-    chromeOptions.setExperimentalOption("download.default_directory", "/tmp")
+//    chromeOptions.setExperimentalOption("download.default_directory", "/tmp")
     System.setProperty("webdriver.chrome.driver", driverLocation)
 
     chromeOptions

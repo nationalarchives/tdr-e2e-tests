@@ -145,7 +145,7 @@ class Steps extends ScalaDsl with EN {
     }
   }
 
-  private def getDownloadedCsv(name: String, downloadPath: String = "/tmp/"): Array[File] = {
+  private def getDownloadedCsv(name: String, downloadPath: String = "~/Downloads"): Array[File] = {
     val expectedFileExtension = ".csv"
     val dir = new File(downloadPath)
     val files = dir.listFiles()

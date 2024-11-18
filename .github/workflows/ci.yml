@@ -26,7 +26,9 @@ run-name:  ${{ github.event_name != 'pull_request' && format('End to end tests (
 jobs:
   setup-e2e-tests:
     concurrency: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
-    runs-on: ubuntu-latest
+#    runs-on: ubuntu-latest
+    runs-on:
+      labels: Larger GitHub-hosted runners
     outputs:
       files: ${{ steps.generate-files.outputs.files }}
       environment: ${{ steps.set-secret-names.outputs.environment }}
@@ -97,7 +99,10 @@ jobs:
           aws-region: eu-west-2
           role-session-name: UpdateWAF
       - name: Get runner IP
-        run: curl https://ipinfo.io/ip > ${{ matrix.file }}-ip.txt
+        run: |
+          ip=$(curl -s https://ipinfo.io/ip)
+          echo "Runner IP: $ip"
+          echo "$ip" > ${{ matrix.file }}-ip.txt
       - name: Upload runner IP as artifact
         uses: actions/upload-artifact@v4.3.3
         with:

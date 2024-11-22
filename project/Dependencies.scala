@@ -6,7 +6,7 @@ object Dependencies {
   private val cucumberCoreVersion = "7.20.1"
   private val cucumberScalaVersion = "8.25.1"
   private val cucumberJUnitVersion = "7.20.1"
-  private val keycloakVersion = "26.0.2"
+  private val keycloakVersion = "26.0.6"
   private val softwareMillVersion = "2.3.0"
 
 

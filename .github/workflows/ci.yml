@@ -22,13 +22,14 @@ on:
       repo-details:
         description: 'The repo and version that triggered the e2e tests'
         required: false
+concurrency:
+  group: ${{ github.event.inputs.environment }}
 permissions:
   id-token: write
   contents: read
 run-name: ${{ github.event_name != 'pull_request' && format('End to end tests ({0}) - {1}', inputs.environment, inputs.repo-details) || '' }}
 jobs:
   setup-e2e-tests:
-    concurrency: ${{ github.event.inputs.environment != '' && github.event.inputs.environment || 'intg' }}
     runs-on: ubuntu-latest
     outputs:
       files: ${{ steps.generate-files.outputs.files }}

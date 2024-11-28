@@ -31,6 +31,7 @@ class Steps extends ScalaDsl with EN {
   var userId: String = ""
   var userType: String = ""
   var differentUserId: String = ""
+  var tnaUserId: String = ""
   var consignmentId: UUID = _
   var consignmentRef: String = _
   var createdFiles: List[UUID] = _
@@ -44,12 +45,15 @@ class Steps extends ScalaDsl with EN {
   val authUrl: String = configuration.getString("tdr.auth.url")
   val email: String = s"${RandomUtility.randomString()}@testSomething.com"
   val differentEmail: String = s"${RandomUtility.randomString()}@testSomething.com"
+  val tnaEmail: String = s"${RandomUtility.randomString()}@testSomething.com"
   val invalidEmail: String = "dgfhfdgjhgfj"
   val password: String = RandomUtility.randomString(10)
   val differentPassword: String = RandomUtility.randomString(10)
+  val tnaPassword: String = RandomUtility.randomString(10)
   val invalidPassword: String = "fdghfdgh"
   val userCredentials: UserCredentials = UserCredentials(email, password)
   val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
+  val tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, tnaPassword)
   val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
 
@@ -119,9 +123,12 @@ class Steps extends ScalaDsl with EN {
     this.userType = ""
     KeycloakClient.deleteUser(userId)
 
-    //Not all scenarios create the different user
-    if (!differentUserId.isEmpty) {
+    //Not all scenarios create the different and/or tna user
+    if (differentUserId.nonEmpty) {
       KeycloakClient.deleteUser(differentUserId)
+    }
+    if (tnaUserId.nonEmpty) {
+      KeycloakClient.deleteUser(tnaUserId)
     }
   }
 
@@ -197,8 +204,8 @@ class Steps extends ScalaDsl with EN {
     userType: String =>
       val credential: UserCredentials = userType match {
         case "transfer adviser" | "metadata viewer" =>
-          differentUserId = KeycloakClient.createUser(differentUserCredentials, None, Some(userType.replace(" ", "_")))
-          differentUserCredentials
+          tnaUserId = KeycloakClient.createUser(tnaUserCredentials, None, Some(userType.replace(" ", "_")))
+          tnaUserCredentials
         case _ =>
           userId = KeycloakClient.createUser(userCredentials, Some("Mock 1 Department"), Some(userType))
           userCredentials

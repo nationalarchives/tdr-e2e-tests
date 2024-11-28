@@ -61,7 +61,7 @@ class Steps extends ScalaDsl with EN {
   def waitTime(n: Long): Duration = { Duration.ofSeconds(n)}
 
   Before { scenario : Scenario =>
-    val featureName = scenario.getUri.toURL.getFile.split(".").head.take(250)
+    val featureName = scenario.getUri.toURL.getFile.take(250)
     val scenarioName = scenario.getName.take(250)
     println("===> " + featureName.take(250))
     println("===> " + scenarioName.take(250))

@@ -52,23 +52,25 @@ class Steps extends ScalaDsl with EN {
   val differentPassword: String = RandomUtility.randomString(10)
   val tnaPassword: String = RandomUtility.randomString(10)
   val invalidPassword: String = "fdghfdgh"
-  var userCredentials: UserCredentials = UserCredentials(email, password)
-  var differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
-  var tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, tnaPassword)
+  var userCredentials: UserCredentials = _
+  var differentUserCredentials: UserCredentials = _
+  var tnaUserCredentials: UserCredentials = _
   val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
 
   def waitTime(n: Long): Duration = { Duration.ofSeconds(n)}
 
   Before { scenario : Scenario =>
+    setUserCredentialsForScenario(scenario)
+    webDriver = initDriver
+  }
+
+  private def setUserCredentialsForScenario(scenario: Scenario): Unit = {
     val featureName = scenario.getUri.toURL.getFile.split('/').last
     val scenarioName = scenario.getName.take(250).replaceAll("[^a-zA-Z0-9]+"," ")
-    println("===> " + featureName)
-    println("===> " + scenarioName)
-    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
-    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
-    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
-    webDriver = initDriver
+    userCredentials = UserCredentials(email, password, lastName = featureName, firstName = scenarioName)
+    differentUserCredentials = UserCredentials(differentEmail, differentPassword, lastName = featureName, firstName = scenarioName)
+    tnaUserCredentials = UserCredentials(tnaEmail, tnaPassword, lastName = featureName, firstName = scenarioName)
   }
 
   After { scenario : Scenario =>
@@ -79,6 +81,8 @@ class Steps extends ScalaDsl with EN {
   implicit class JavaWebElementList(javaList: util.List[WebElement]) {
     def toScalaList: List[WebElement] = javaList.asScala.toList
   }
+
+
 
   private def login(userCredentials: UserCredentials): Unit = {
     webDriver.get(s"$baseUrl")

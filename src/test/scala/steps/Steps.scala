@@ -61,13 +61,13 @@ class Steps extends ScalaDsl with EN {
   def waitTime(n: Long): Duration = { Duration.ofSeconds(n)}
 
   Before { scenario : Scenario =>
-    val featureName = scenario.getUri.toURL.getFile.take(250)
+    val featureName = scenario.getUri.toURL.getFile.split('/').last
     val scenarioName = scenario.getName.take(250)
-    println("===> " + featureName.take(250))
-    println("===> " + scenarioName.take(250))
-    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
-    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
-    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
+    println("===> " + featureName)
+    println("===> " + scenarioName)
+//    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
+//    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
+//    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
     webDriver = initDriver
   }
 

@@ -61,9 +61,10 @@ class Steps extends ScalaDsl with EN {
 
   Before { scenario : Scenario =>
     val featureName = scenario.getId.split(";").head.replace("-"," ")
+    val featureNameAgain = scenario.getUri.toString
     val scenarioName = scenario.getName
 
-    println("===> " + featureName.take(250))
+    println("===> " + featureNameAgain.take(250))
     println("===> " + scenarioName.take(250))
     webDriver = initDriver
   }

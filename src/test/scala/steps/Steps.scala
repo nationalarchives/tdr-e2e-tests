@@ -18,6 +18,7 @@ import org.openqa.selenium._
 import org.openqa.selenium.support.ui.{ExpectedConditions, FluentWait, Select, WebDriverWait}
 
 import java.io.{BufferedOutputStream, File, FileOutputStream}
+import java.net.URI
 import java.nio.file.Paths
 import java.time.Duration
 import java.util
@@ -51,21 +52,22 @@ class Steps extends ScalaDsl with EN {
   val differentPassword: String = RandomUtility.randomString(10)
   val tnaPassword: String = RandomUtility.randomString(10)
   val invalidPassword: String = "fdghfdgh"
-  val userCredentials: UserCredentials = UserCredentials(email, password)
-  val differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
-  val tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, tnaPassword)
+  var userCredentials: UserCredentials = UserCredentials(email, password)
+  var differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
+  var tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, tnaPassword)
   val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
 
   def waitTime(n: Long): Duration = { Duration.ofSeconds(n)}
 
   Before { scenario : Scenario =>
-    val featureName = scenario.getId.split(";").head.replace("-"," ")
-    val featureNameAgain = scenario.getUri.toString
-    val scenarioName = scenario.getName
-
-    println("===> " + featureNameAgain.take(250))
+    val featureName = scenario.getUri.toURL.getFile.split(".").head.take(250)
+    val scenarioName = scenario.getName.take(250)
+    println("===> " + featureName.take(250))
     println("===> " + scenarioName.take(250))
+    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
+    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
+    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
     webDriver = initDriver
   }
 

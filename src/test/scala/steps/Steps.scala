@@ -60,6 +60,8 @@ class Steps extends ScalaDsl with EN {
   def waitTime(n: Long): Duration = { Duration.ofSeconds(n)}
 
   Before { scenario : Scenario =>
+    val name = scenario.getName
+    println("===> " + name)
     webDriver = initDriver
   }
 

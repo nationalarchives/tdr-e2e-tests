@@ -243,7 +243,7 @@ class Steps extends ScalaDsl with EN {
 
   Then("^the (.*) user logs out") {
     _: String =>
-      val client = GraphqlUtility(userCredentials)
+      lazy val client = GraphqlUtility(userCredentials)
       consignmentRef = client.getConsignmentReference(consignmentId)
       logout()
   }
@@ -374,7 +374,7 @@ class Steps extends ScalaDsl with EN {
 
   And("^the (.*) transfer export will be complete") {
     consignmentType: String =>
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     val consignmentRef = client.getConsignmentExport(consignmentId).get.getConsignment.get.consignmentReference
 
     val fluentWait = new FluentWait[WebDriver](webDriver)
@@ -441,7 +441,7 @@ class Steps extends ScalaDsl with EN {
 
   And("^the user will see a row with a consignment reference that correlates with their consignmentId") {
     () =>
-      val client = GraphqlUtility(userCredentials)
+      lazy val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
       StepsUtility.waitForElementTitle(webDriver, s"$consignmentRef", "govuk-table__header")
   }
@@ -566,7 +566,7 @@ class Steps extends ScalaDsl with EN {
         val linkClass = linkName.toLowerCase.replaceAll(" ", "-")
         val link = webDriver.findElement(By.cssSelector(s"a.$linkClass"))
         link.click()
-        val client = GraphqlUtility(userCredentials)
+        lazy val client = GraphqlUtility(userCredentials)
         val consignmentRef = client.getConsignmentReference(consignmentId)
         val filteredFiles = getDownloadedCsv(consignmentRef)
 
@@ -647,29 +647,29 @@ class Steps extends ScalaDsl with EN {
 
   And("^an existing (.*) consignment for transferring body (.*)") {
     (consignmentType:String, body: String) =>
-      val client = GraphqlUtility(userCredentials)
+      lazy val client = GraphqlUtility(userCredentials)
       consignmentId = client.createConsignment(consignmentType, body).get.addConsignment.consignmentid.get
   }
 
   And("^an existing selected series (.*)") {
     (body: String) =>
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     client.addConsignmentStatus(consignmentId, "Series", "Completed")
     client.updateSeries(consignmentId, body)
   }
 
   And("^an existing transfer agreement part 1") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     client.createTransferAgreementPrivateBeta(consignmentId)
   }
 
   And("^an existing transfer agreement part 2") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     client.createTransferAgreementCompliance(consignmentId)
   }
 
   And("^the file checks are complete") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     client.startUpload(consignmentId)
     client.updateConsignmentStatus(consignmentId, "Upload", "Completed")
     client.updateConsignmentStatus(consignmentId, "ClientChecks", "Completed")
@@ -693,7 +693,7 @@ class Steps extends ScalaDsl with EN {
   }
 
   And("^the (checksum|antivirus|FFID) check has (.*)") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     (checkName: String, result: String) => {
       val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
       val id = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
@@ -712,7 +712,7 @@ class Steps extends ScalaDsl with EN {
 
   And("^the FFID \"(.*)\" check has failed") {
     (checkName: String) => {
-      val client = GraphqlUtility(userCredentials)
+      lazy val client = GraphqlUtility(userCredentials)
       val matchIdInfo = List(MatchIdInfo(checksumValue, Paths.get("."), 0))
       val id: UUID = client.addFilesAndMetadata(consignmentId, "E2E TEST UPLOAD FOLDER", matchIdInfo).map(_.fileId).head
       val statusValue = checkName match {
@@ -724,13 +724,13 @@ class Steps extends ScalaDsl with EN {
   }
 
   And("^the user has created additional metadata") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     client.createCustomMetadata(consignmentId)
   }
 
   Then("^the metadata csv will have the correct columns for (.*) files") {
     numberOfFiles: Int =>
-      val client = GraphqlUtility(userCredentials)
+      lazy val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
       val metadataCsv = getDownloadedCsv(consignmentRef).last
       val source = Source.fromFile(metadataCsv.getAbsolutePath)
@@ -762,7 +762,7 @@ class Steps extends ScalaDsl with EN {
 
   Then("^the downloaded metadata csv should be same as (.*)") {
     fileName: String =>
-      val client = GraphqlUtility(userCredentials)
+      lazy val client = GraphqlUtility(userCredentials)
       val consignmentRef = client.getConsignmentReference(consignmentId)
       val metadataCsv = getDownloadedCsv(consignmentRef).last
       val source = Source.fromFile(metadataCsv.getAbsolutePath)
@@ -787,7 +787,7 @@ class Steps extends ScalaDsl with EN {
   }
 
   And("^an existing upload of (\\d+) files") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     numberOfFiles: Int => {
       val files = List("testfile1.txt", "testfile2.txt")
 
@@ -812,7 +812,7 @@ class Steps extends ScalaDsl with EN {
   }
 
   And("^(\\d+) of the (.*) scans for the (.*) transfer have finished") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     (filesToProcess: Int, metadataType: String, consignmentType: String) => {
       val fileRangeToProcess = createdFiles.slice(0, filesToProcess)
       metadataType match {
@@ -840,7 +840,7 @@ class Steps extends ScalaDsl with EN {
   }
 
   And("^the user waits for the checks to complete") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     filesWithoutChecksumMetadata.foreach {
       id =>
         client.createBackendChecksumMetadata(consignmentId, List(id), createdFilesIdToChecksum.get(id))
@@ -1106,12 +1106,12 @@ class Steps extends ScalaDsl with EN {
 
   And("^an existing completed (.*) form") {
     (metadataType: String) =>
-      val client = GraphqlUtility(userCredentials)
+      lazy val client = GraphqlUtility(userCredentials)
       client.saveMetadata(consignmentId, createdFiles, metadataType)
   }
 
   And("^an existing metadata review is in progress") {
-    val client = GraphqlUtility(userCredentials)
+    lazy val client = GraphqlUtility(userCredentials)
     val updateStatus = client.addConsignmentStatus(consignmentId, "MetadataReview", "InProgress")
     Assert.assertTrue(updateStatus.nonEmpty)
   }

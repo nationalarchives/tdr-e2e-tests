@@ -65,9 +65,9 @@ class Steps extends ScalaDsl with EN {
     val scenarioName = scenario.getName.take(250)
     println("===> " + featureName)
     println("===> " + scenarioName)
-//    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
-//    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
-//    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
+    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
+    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
+    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
     webDriver = initDriver
   }
 

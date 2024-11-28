@@ -62,7 +62,7 @@ class Steps extends ScalaDsl with EN {
 
   Before { scenario : Scenario =>
     val featureName = scenario.getUri.toURL.getFile.split('/').last
-    val scenarioName = scenario.getName.take(250)
+    val scenarioName = scenario.getName.take(250).replaceAll("[^a-zA-Z0-9]+"," ")
     println("===> " + featureName)
     println("===> " + scenarioName)
     userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)

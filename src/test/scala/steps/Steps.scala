@@ -52,13 +52,13 @@ class Steps extends ScalaDsl with EN {
   val differentPassword: String = RandomUtility.randomString(10)
   val tnaPassword: String = RandomUtility.randomString(10)
   val invalidPassword: String = "fdghfdgh"
-//  var userCredentials: UserCredentials = _
-//  var differentUserCredentials: UserCredentials = _
-//  var tnaUserCredentials: UserCredentials = _
+  var userCredentials: UserCredentials = _
+  var differentUserCredentials: UserCredentials = _
+  var tnaUserCredentials: UserCredentials = _
 
-  var userCredentials: UserCredentials = UserCredentials(email, password)
-  var differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
-  var tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, tnaPassword)
+//  var userCredentials: UserCredentials = UserCredentials(email, password)
+//  var differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
+//  var tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, tnaPassword)
 
   val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
@@ -74,13 +74,13 @@ class Steps extends ScalaDsl with EN {
     val featureName = scenario.getUri.toURL.getFile.split('/').last
     val scenarioName = scenario.getName.take(250).replaceAll("[^a-zA-Z0-9]+"," ")
 
-    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
-    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
-    tnaUserCredentials = tnaUserCredentials.copy(lastName = featureName, firstName = scenarioName)
+//    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
+//    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
+//    tnaUserCredentials = tnaUserCredentials.copy(lastName = featureName, firstName = scenarioName)
 
-//    userCredentials = UserCredentials(email, password, lastName = featureName, firstName = scenarioName)
-//    differentUserCredentials = UserCredentials(differentEmail, differentPassword, lastName = featureName, firstName = scenarioName)
-//    tnaUserCredentials = UserCredentials(tnaEmail, tnaPassword, lastName = featureName, firstName = scenarioName)
+    userCredentials = UserCredentials(email, password, lastName = featureName, firstName = scenarioName)
+    differentUserCredentials = UserCredentials(differentEmail, differentPassword, lastName = featureName, firstName = scenarioName)
+    tnaUserCredentials = UserCredentials(tnaEmail, tnaPassword, lastName = featureName, firstName = scenarioName)
   }
 
   After { scenario : Scenario =>

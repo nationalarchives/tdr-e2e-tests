@@ -55,11 +55,6 @@ class Steps extends ScalaDsl with EN {
   var userCredentials: UserCredentials = _
   var differentUserCredentials: UserCredentials = _
   var tnaUserCredentials: UserCredentials = _
-
-//  var userCredentials: UserCredentials = UserCredentials(email, password)
-//  var differentUserCredentials: UserCredentials = UserCredentials(differentEmail, differentPassword)
-//  var tnaUserCredentials: UserCredentials = UserCredentials(tnaEmail, tnaPassword)
-
   val invalidUserCredentials: UserCredentials = UserCredentials(invalidEmail, invalidPassword)
   val checksumValue = "checksum"
 
@@ -68,19 +63,6 @@ class Steps extends ScalaDsl with EN {
   Before { scenario : Scenario =>
     setUserCredentialsForScenario(scenario)
     webDriver = initDriver
-  }
-
-  private def setUserCredentialsForScenario(scenario: Scenario): Unit = {
-    val featureName = scenario.getUri.toURL.getFile.split('/').last
-    val scenarioName = scenario.getName.take(250).replaceAll("[^a-zA-Z0-9]+"," ")
-
-//    userCredentials = userCredentials.copy(lastName = featureName, firstName = scenarioName)
-//    differentUserCredentials = differentUserCredentials.copy(lastName = featureName, firstName = scenarioName)
-//    tnaUserCredentials = tnaUserCredentials.copy(lastName = featureName, firstName = scenarioName)
-
-    userCredentials = UserCredentials(email, password, lastName = featureName, firstName = scenarioName)
-    differentUserCredentials = UserCredentials(differentEmail, differentPassword, lastName = featureName, firstName = scenarioName)
-    tnaUserCredentials = UserCredentials(tnaEmail, tnaPassword, lastName = featureName, firstName = scenarioName)
   }
 
   After { scenario : Scenario =>
@@ -139,6 +121,14 @@ class Steps extends ScalaDsl with EN {
       case _ => s"$baseUrl/consignment/$consignmentId/$hyphenatedPageName"
     }
     webDriver.get(pageWithConsignment)
+  }
+
+  private def setUserCredentialsForScenario(scenario: Scenario): Unit = {
+    val featureName = scenario.getUri.toURL.getFile.split('/').last
+    val scenarioName = scenario.getName.take(250).replaceAll("[^a-zA-Z0-9]+"," ")
+    userCredentials = UserCredentials(email, password, lastName = featureName, firstName = scenarioName)
+    differentUserCredentials = UserCredentials(differentEmail, differentPassword, lastName = featureName, firstName = scenarioName)
+    tnaUserCredentials = UserCredentials(tnaEmail, tnaPassword, lastName = featureName, firstName = scenarioName)
   }
 
   private def userCleanUp(): Unit = {

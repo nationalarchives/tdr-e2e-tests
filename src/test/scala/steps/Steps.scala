@@ -74,8 +74,6 @@ class Steps extends ScalaDsl with EN {
     def toScalaList: List[WebElement] = javaList.asScala.toList
   }
 
-
-
   private def login(userCredentials: UserCredentials): Unit = {
     webDriver.get(s"$baseUrl")
     val startElement = webDriver.findElement(By.cssSelector(".govuk-button--start"))

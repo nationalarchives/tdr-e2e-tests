@@ -49,6 +49,7 @@ jobs:
       - id: get-last-status
         env:
           WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+          TESTING_ENV: "TEST"
         run: pip install requests && python .github/scripts/get_last_status.py
       - id: set-secret-names
         run: python .github/scripts/set_secret_names.py ${{ github.event.inputs.environment }}

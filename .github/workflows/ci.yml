@@ -48,7 +48,7 @@ jobs:
         run: python .github/scripts/get_driver_location.py ${{ github.event.inputs.browser }}
       - id: get-last-status
         env:
-          WORKFLOW_PAT: ${{ secrets.SLACK_WEBHOOK }}
+          WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
           TESTING_ENV: "TEST"
         run: pip install requests && python .github/scripts/get_last_status.py
       - id: set-secret-names

@@ -1,11 +1,11 @@
 import requests
 import os
-GITHUB_TOKEN = os.getenv("WORKFLOW_PAT")
-if GITHUB_TOKEN == "":
-    print("WORKFLOW_PAT is empty")
+WORKFLOW_PAT = os.getenv("WORKFLOW_PAT")
+if not WORKFLOW_PAT:
+    raise ValueError("WORKFLOW_PAT environment variable is not set.")
 print(os.getenv("TESTING_ENV"))
 url = "https://api.github.com/repos/nationalarchives/tdr-e2e-tests/actions/workflows/ci.yml/runs"
-headers = {"Authorization": f"Bearer {GITHUB_TOKEN}"}
+headers = {"Authorization": f"Bearer {WORKFLOW_PAT}"}
 resp = requests.get(url, headers=headers)
 print(f"Status Code: {resp.status_code}")
 print(f"Response: {resp.text}")

@@ -1,7 +1,8 @@
 import requests
 import os
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-print(if GITHUB_TOKEN == "":)
+if GITHUB_TOKEN == "":
+    print("GITHUB_TOKEN is empty")
 url = "https://api.github.com/repos/nationalarchives/tdr-e2e-tests/actions/workflows/ci.yml/runs"
 headers = {"Authorization": f"Bearer {GITHUB_TOKEN}"}
 resp = requests.get(url, header=headers)

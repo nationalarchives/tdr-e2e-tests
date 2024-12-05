@@ -47,6 +47,8 @@ jobs:
       - id: get-driver
         run: python .github/scripts/get_driver_location.py ${{ github.event.inputs.browser }}
       - id: get-last-status
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
         run: pip install requests && python .github/scripts/get_last_status.py
       - id: set-secret-names
         run: python .github/scripts/set_secret_names.py ${{ github.event.inputs.environment }}

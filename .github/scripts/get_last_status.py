@@ -1,8 +1,8 @@
 import requests
 import os
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-if GITHUB_TOKEN == "":
-    print("GITHUB_TOKEN is empty")
+GITHUB_TOKEN = os.getenv("WORKFLOW_PAT")
+if WORKFLOW_PAT == "":
+    print("WORKFLOW_PAT is empty")
 url = "https://api.github.com/repos/nationalarchives/tdr-e2e-tests/actions/workflows/ci.yml/runs"
 headers = {"Authorization": f"Bearer {GITHUB_TOKEN}"}
 resp = requests.get(url, header=headers)

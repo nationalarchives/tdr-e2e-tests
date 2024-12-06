@@ -58,6 +58,9 @@ jobs:
         run: |
           FILES=$(ls src/test/resources/features/ | jq -R -s -c 'split("\n")[:-1]')
           echo files=${FILES} >> $GITHUB_OUTPUT
+      - name: Debug Outputs
+        run: |
+          echo "title_environment=${{ steps.set-secret-names.outputs.title_environment }}"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
@@ -88,6 +91,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Debug Outputs
+        run: |
+          echo "title_environment=${{ needs.setup-e2e-tests.outputs.title_environment }}"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:

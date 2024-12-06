@@ -82,6 +82,7 @@ jobs:
           path: waf-ip.txt
   run-e2e-tests:
     runs-on: ubuntu-latest
+    environment: intg
     needs:
       - setup-e2e-tests
     strategy:

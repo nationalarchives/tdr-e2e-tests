@@ -52,7 +52,6 @@ jobs:
       - id: get-last-status
         env:
           WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
-          TESTING_ENV: "TEST"
         run: pip install requests && python .github/scripts/get_last_status.py
       - name: Set feature file names
         id: generate-files

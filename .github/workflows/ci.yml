@@ -81,7 +81,7 @@ jobs:
           name: waf-ip-artifacts-${{ matrix.file }}
           path: waf-ip.txt
   run-e2e-tests:
-#    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     needs:
       - setup-e2e-tests
     strategy:
